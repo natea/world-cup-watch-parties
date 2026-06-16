@@ -1,0 +1,74 @@
+{
+  "teams": [
+    {"name": "Scotland", "fifa_code": "SCO", "flag_emoji": "\ud83c\udff4\udb40\udc67\udb40\udc62\udb40\udc73\udb40\udc63\udb40\udc74\udb40\udc7f", "group": "C", "confederation": "UEFA"},
+    {"name": "Haiti", "fifa_code": "HAI", "flag_emoji": "\ud83c\udded\ud83c\uddf9", "group": "C", "confederation": "CONCACAF"},
+    {"name": "France", "fifa_code": "FRA", "flag_emoji": "\ud83c\uddeb\ud83c\uddf7", "fifa_rank": 3, "group": "I", "confederation": "UEFA"},
+    {"name": "Norway", "fifa_code": "NOR", "flag_emoji": "\ud83c\uddf3\ud83c\uddf4", "group": "I", "confederation": "UEFA"}
+  ],
+  "matches": [
+    {"fifa_match_number": 22, "stage": "group", "group": "C", "kickoff": "2026-06-14T01:00:00Z",
+     "host_city": "Foxborough", "host_stadium": "Gillette Stadium", "home_team_code": "HAI", "away_team_code": "SCO"},
+    {"fifa_match_number": 71, "stage": "group", "group": "I", "kickoff": "2026-06-26T19:00:00Z",
+     "host_city": "Foxborough", "host_stadium": "Gillette Stadium", "home_team_code": "NOR", "away_team_code": "FRA"}
+  ],
+  "venues": [
+    {
+      "name": "The Haven", "slug": "the-haven", "venue_type": "bar", "environment": "indoor",
+      "address": "284 Amory St", "city": "Jamaica Plain", "region": "greater_boston",
+      "latitude": 42.3187, "longitude": -71.1043,
+      "serves_alcohol": true, "default_min_age": 21,
+      "source": "research-2026-06", "needs_review": false,
+      "notes": "Boston's only Scottish pub; official Tartan Army HQ.",
+      "affiliations": [
+        {"affiliation_type": "national_hub", "team_code": "SCO", "note": "Tartan Army HQ"}
+      ],
+      "policies": []
+    },
+    {
+      "name": "Lucky Strike Somerville", "slug": "lucky-strike-somerville",
+      "venue_type": "entertainment", "environment": "mixed",
+      "city": "Somerville", "region": "cambridge_somerville",
+      "serves_alcohol": true, "default_min_age": null,
+      "evening_min_age": 21, "evening_cutoff": "20:00:00",
+      "source": "research-2026-06",
+      "notes": "All ages by day, 21+ after 8pm.",
+      "affiliations": [], "policies": []
+    },
+    {
+      "name": "FIFA Fan Festival - City Hall Plaza", "slug": "fifa-fan-festival-city-hall-plaza",
+      "venue_type": "plaza", "environment": "outdoor",
+      "address": "1 City Hall Square", "city": "Boston", "region": "greater_boston",
+      "latitude": 42.3603, "longitude": -71.0578,
+      "serves_alcohol": true, "default_min_age": null,
+      "capacity": 5000, "source": "research-2026-06",
+      "notes": "Free but registration + lottery; entry not guaranteed.",
+      "affiliations": [], "policies": []
+    },
+    {
+      "name": "The Banshee", "slug": "the-banshee", "venue_type": "bar", "environment": "indoor",
+      "address": "934 Dorchester Ave", "city": "Dorchester", "region": "greater_boston",
+      "latitude": 42.3138, "longitude": -71.0573,
+      "serves_alcohol": true, "default_min_age": 21,
+      "source": "research-2026-06",
+      "notes": "Home of the Boston American Outlaws (USMNT); shows every match on 16 screens.",
+      "affiliations": [
+        {"affiliation_type": "national_hub", "team_code": "FRA", "note": "example club/nation hub"}
+      ],
+      "policies": [
+        {"policy_type": "all_matches", "default_cost_type": "free_open"}
+      ]
+    }
+  ],
+  "screenings": [
+    {"venue_slug": "the-haven", "match_number": 22, "starts_at": "2026-06-14T01:00:00Z",
+     "cost_type": "free_open", "source": "research-2026-06"},
+    {"venue_slug": "fifa-fan-festival-city-hall-plaza", "match_number": 22, "starts_at": "2026-06-14T01:00:00Z",
+     "cost_type": "free_lottery", "registration_required": true, "entry_guaranteed": false,
+     "source": "research-2026-06"},
+    {"venue_slug": "fifa-fan-festival-city-hall-plaza", "match_number": 71, "starts_at": "2026-06-26T19:00:00Z",
+     "cost_type": "free_lottery", "registration_required": true, "entry_guaranteed": false,
+     "source": "research-2026-06"},
+    {"venue_slug": "lucky-strike-somerville", "match_number": 71, "starts_at": "2026-06-26T19:00:00Z",
+     "cost_type": "free_open", "source": "research-2026-06"}
+  ]
+}
