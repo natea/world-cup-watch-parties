@@ -25,6 +25,7 @@
 - [x] 4b.1 Add `image_url` (blank URLField) to `Venue` for the Wikimedia tier; migration (Google stays proxy-resolved, does not use it)
 - [x] 4b.2 Extend `resolvevenueplaces` with `--confirm <slug> …` (promote to `google_places`, resolve+store attribution, clear `needs_review`; no-op cleanly without key) and `--reject <slug> …` (clear candidate `place_id` + `needs_review` → next tier)
 - [x] 4b.3 Add Django admin actions on `Venue`: "Confirm Google photo match" / "Reject match" for multi-select review
+- [x] 4b.3a Admin photo review: changelist thumbnail + change-form candidate-photo preview (with place_id + a Google Maps verify link), so low-confidence matches can be confirmed/rejected by sight
 - [x] 4b.4 Add isolated `events/wikimedia.py` Commons client: `find_image(name, city, lat, lng) -> WikiImage|None`; free-license gate; HTTP behind a private `_get` seam; fails closed (returns `None`) on any error; no new pip dependency
 - [x] 4b.5 Add `resolvevenuewikimedia` backfill: store `image_url` + `image_attribution` + `image_source="wikimedia"` on a confident hit; idempotent (skip google/wikimedia unless `--refresh`); `--dry-run`
 - [x] 4b.6 Extend serializer `get_image` to three tiers (google_places → wikimedia → fallback)

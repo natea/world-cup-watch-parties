@@ -1,4 +1,5 @@
 from django.contrib import admin
+from django.utils.html import format_html
 
 from . import places
 from .models import (
@@ -40,6 +41,7 @@ class ScreeningPolicyInline(admin.TabularInline):
 @admin.register(Venue)
 class VenueAdmin(admin.ModelAdmin):
     list_display = (
+        "photo_thumb",
         "name",
         "venue_type",
         "environment",
@@ -48,11 +50,49 @@ class VenueAdmin(admin.ModelAdmin):
         "image_source",
         "needs_review",
     )
+    list_display_links = ("name",)
     list_filter = ("needs_review", "image_source", "venue_type", "environment", "region")
     search_fields = ("name", "city", "slug")
     prepopulated_fields = {"slug": ("name",)}
+    readonly_fields = ("candidate_photo_preview",)
     inlines = (VenueAffiliationInline, ScreeningPolicyInline)
     actions = ("confirm_google_match", "reject_match")
+
+    @admin.display(description="Photo")
+    def photo_thumb(self, obj):
+        """Small thumbnail in the changelist so a reviewer can eyeball matches.
+        Loads via the photo proxy (302 → Google / Wikimedia / fallback)."""
+        if not obj.pk:
+            return "—"
+        return format_html(
+            '<img src="/api/venues/{}/photo" loading="lazy" '
+            'style="height:40px;width:64px;object-fit:cover;border-radius:4px" />',
+            obj.slug,
+        )
+
+    @admin.display(description="Candidate / current photo")
+    def candidate_photo_preview(self, obj):
+        """Larger preview on the change form to confirm a low-confidence match.
+        Shows the candidate photo plus a Google Maps link to verify the place."""
+        if not obj or not obj.pk:
+            return "—"
+        if not obj.place_id and obj.image_source != "wikimedia":
+            return "No place match — venue uses the category-illustration fallback."
+        maps = format_html(
+            '<a href="https://www.google.com/maps/search/?api=1&query={}" '
+            'target="_blank" rel="noreferrer">Verify on Google Maps ↗</a>',
+            f"{obj.name}, {obj.address}, {obj.city}".strip(", "),
+        )
+        return format_html(
+            '<div><img src="/api/venues/{}/photo" '
+            'style="max-height:260px;border-radius:8px;display:block;margin-bottom:8px" />'
+            "<div>source: <b>{}</b> &middot; place_id: <code>{}</code></div>"
+            "<div>{}</div></div>",
+            obj.slug,
+            obj.image_source or "(unconfirmed)",
+            obj.place_id or "—",
+            maps,
+        )
 
     @admin.action(description="Confirm Google photo match")
     def confirm_google_match(self, request, queryset):

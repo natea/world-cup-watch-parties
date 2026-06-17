@@ -47,6 +47,11 @@ The system SHALL let a reviewer confirm or reject a flagged candidate match (a v
 - **WHEN** a reviewer confirms a candidate while the photo API key is not configured
 - **THEN** the venue is still promoted to the place tier with empty attribution, and no external photo call is made (the proxy resolves the photo at request time)
 
+#### Scenario: Reviewer sees the candidate photo in admin
+
+- **WHEN** a reviewer opens a flagged venue in the admin (or scans the venue changelist)
+- **THEN** the candidate photo is shown as a preview (with the place identifier and a link to verify the place) so the match can be confirmed or rejected by sight, and venues are filterable by review flag and image source
+
 ### Requirement: Wikimedia Commons photo tier
 
 The system SHALL resolve a Creative-Commons-licensed Wikimedia Commons photo for venues that are not confirmed on the Google tier, store its stable URL and required attribution, and fail closed when no licensed image is available.
