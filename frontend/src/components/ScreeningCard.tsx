@@ -1,5 +1,5 @@
 import type { Match, Screening } from "../types";
-import { costLabel, localDateShort, localTime } from "../format";
+import { costLabel, localDateShort, localTime, matchDisplayLabel } from "../format";
 
 // Reused across schedule/team views and inside map popups. `venue` may be
 // omitted (map popups already name the venue via the pin).
@@ -27,7 +27,9 @@ export function ScreeningCard(p: Props) {
           {p.showDate && <span className="kickoff-date">{localDateShort(p.starts_at)} · </span>}
           {localTime(p.starts_at)}
         </span>
-        <span className={`match-label ${p.match.is_resolved ? "" : "tbd"}`}>{p.match.label}</span>
+        <span className={`match-label ${p.match.is_resolved ? "" : "tbd"}`}>
+          {matchDisplayLabel(p.match)}
+        </span>
       </div>
       {p.venueName &&
         (p.venueSlug && p.onOpenVenue ? (
@@ -48,21 +50,9 @@ export function ScreeningCard(p: Props) {
         {p.entry_guaranteed === false && <span className="badge warn">Entry not guaranteed</span>}
         {!p.match.is_resolved && <span className="badge tbd-badge">TBD matchup</span>}
       </div>
-      {(p.source || p.needs_review) && (
+      {p.needs_review && (
         <div className="provenance">
-          {p.source && (
-            <span>
-              Source:{" "}
-              {p.source_url ? (
-                <a href={p.source_url} target="_blank" rel="noreferrer">
-                  {p.source}
-                </a>
-              ) : (
-                p.source
-              )}
-            </span>
-          )}
-          {p.needs_review && <span className="review">⚠ needs review</span>}
+          <span className="review">⚠ needs review</span>
         </div>
       )}
     </div>

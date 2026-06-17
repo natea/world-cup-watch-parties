@@ -28,6 +28,16 @@ export function filtersToParams(filters: Filters): URLSearchParams {
   return p;
 }
 
+/** URL of the category-illustration fallback for a venue type (no Places call). */
+export function fallbackImageUrl(venueType: string): string {
+  return `/venue-fallbacks/${venueType}.png`;
+}
+
+/** URL of the attributed photo proxy for a venue. Used on the detail view only. */
+export function venuePhotoUrl(slug: string): string {
+  return `${BASE}/venues/${encodeURIComponent(slug)}/photo`;
+}
+
 async function getJSON<T>(path: string, params?: URLSearchParams): Promise<T> {
   const qs = params && [...params.keys()].length ? `?${params.toString()}` : "";
   const res = await fetch(`${BASE}${path}${qs}`);

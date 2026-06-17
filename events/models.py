@@ -229,6 +229,36 @@ class Venue(models.Model):
     has_food = models.BooleanField(default=True)
     website = models.URLField(blank=True)
 
+    # --- venue imagery (rights-safe) ---
+    # We persist only the Google place_id (allowed long-term) plus image-source
+    # metadata; we NEVER store photo bytes. The photo is fetched on demand
+    # through the attributed backend proxy. When place_id is empty the venue
+    # falls back to a category illustration keyed by venue_type.
+    place_id = models.CharField(
+        max_length=255, blank=True,
+        help_text="Google Place ID; resolved once via `resolvevenueplaces`.",
+    )
+    image_source = models.CharField(
+        max_length=32, blank=True,
+        help_text=(
+            'How the image is sourced: "google_places" or "wikimedia" (confirmed, '
+            'shown), "candidate" (a Google match awaiting review — falls back until '
+            "confirmed), or blank = category fallback. Independent of `needs_review`, "
+            "which is a data-quality flag from the import."
+        ),
+    )
+    image_url = models.URLField(
+        max_length=500, blank=True,
+        help_text=(
+            "Stable external image URL for the Wikimedia tier. Google photos stay "
+            "proxy-resolved and do NOT use this field."
+        ),
+    )
+    image_attribution = models.CharField(
+        max_length=255, blank=True,
+        help_text="Required attribution text captured from the image source metadata.",
+    )
+
     # provenance / data-quality
     source = models.CharField(max_length=120, blank=True)
     source_url = models.URLField(blank=True)

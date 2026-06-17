@@ -120,6 +120,90 @@ Environment variables (optional; sensible dev defaults):
 | `DJANGO_DEBUG`         | `true`                                        |                                     |
 | `DJANGO_ALLOWED_HOSTS` | `localhost,127.0.0.1,testserver`              |                                     |
 | `CORS_ALLOWED_ORIGINS` | `http://localhost:5173,http://127.0.0.1:5173` |                                     |
+| `GOOGLE_PLACES_API_KEY`  | _(unset → venue images use the fallback)_     | server-only; see "Venue images"     |
+| `VENUE_PHOTO_CACHE_SECONDS` | `86400`                                  | client/CDN cache TTL for the photo proxy redirect |
+
+### Venue images (rights-safe)
+
+Each venue exposes a single `image` object in the API — `{ url, attribution, source }` —
+resolved over a **three-tier chain**:
+
+1. **Confirmed Google photo** (`source: "google_places"`). When a venue has been
+   resolved to a Google `place_id` *and confirmed*, its `image.url` points at the
+   backend **photo proxy** (`GET /api/venues/<slug>/photo`). The proxy keeps
+   `GOOGLE_PLACES_API_KEY` server-side, resolves the current Google Places photo,
+   and **302-redirects** to it (`attribution` set). We **never store photo bytes** —
+   only the `place_id` (which Google's terms permit long-term) and the attribution
+   text. The proxy sets a long `Cache-Control` (default 24h,
+   `VENUE_PHOTO_CACHE_SECONDS`) on the redirect to bound per-photo cost; it caches
+   the *redirect*, not the bytes.
+2. **Wikimedia Commons photo** (`source: "wikimedia"`). For public places not
+   confirmed on the Google tier, a **CC-licensed Commons image** is stored as a
+   stable `image_url` + attribution. Commons needs no API key, so this tier is
+   always-on, but it **fails closed** (any error / no free-licensed hit → next tier).
+   All Commons access is isolated in `events/wikimedia.py`.
+3. **Category fallback** (`source: "fallback"`, `attribution: null`). When neither
+   photo source yields an image (or the key is unset / a lookup fails), `image` is a
+   clean, rights-free **category illustration** keyed by `venue_type`
+   (`/venue-fallbacks/<type>.png`). It is deliberately non-photographic so it never
+   implies it's a real photo of the venue. Regenerate with
+   `python scripts/make_venue_fallbacks.py` (requires `rsvg-convert`).
+
+The frontend renders the **attribution caption** whenever it is present (both photo
+sources), and swaps to the category fallback on any image load error.
+
+> **Stock imagery (e.g. Unsplash) was considered and rejected** — a generic stock
+> photo misrepresents the *specific* venue, so the honest illustration is preferred.
+- **Lists/cards/map pins** use the fallback only — there is **no per-row photo
+  proxy call**; the full photo loads on the **detail view** only.
+- **No key configured?** The feature degrades cleanly: every venue shows the
+  fallback, the proxy redirects to the fallback, and nothing errors.
+
+**Backfill — resolve venues to `place_id`s:**
+
+```bash
+# set GOOGLE_PLACES_API_KEY first (a Places API (New) enabled key)
+uv run python manage.py resolvevenueplaces            # resolve unresolved venues
+uv run python manage.py resolvevenueplaces --refresh   # re-resolve resolved ones
+uv run python manage.py resolvevenueplaces --dry-run    # report only, write nothing
+```
+
+`resolvevenueplaces` matches each venue by name + address/city via Google Places
+Text Search, stores a **confident** match's `place_id` + `image_source`, and
+flags **low-confidence/ambiguous** matches with `needs_review=True` rather than
+trusting a guess. It is **idempotent** — already-resolved venues are skipped unless
+`--refresh` — and **no-ops without the API key**. All Google access is isolated in
+`events/places.py`.
+
+**Confirm/reject flagged candidates.** Ambiguous matches keep a candidate
+`place_id` but leave `image_source` blank, so they stay on the next tier until a
+reviewer decides. Either in the **admin** (multi-select the `needs_review` venues
+and run the "Confirm Google photo match" / "Reject match" actions) or via the CLI:
+
+```bash
+uv run python manage.py resolvevenueplaces --confirm <slug> [<slug> ...]  # promote
+uv run python manage.py resolvevenueplaces --reject  <slug> [<slug> ...]  # discard → next tier
+```
+
+`--confirm` sets `image_source="google_places"`, resolves+stores the attribution
+(no-ops cleanly without the key — attribution stays blank, the proxy re-resolves
+the URL), and clears `needs_review`. `--reject` clears the candidate `place_id` +
+`needs_review`, dropping the venue to the next tier.
+
+**Backfill — Wikimedia Commons (tier 2):**
+
+```bash
+uv run python manage.py resolvevenuewikimedia            # resolve eligible venues
+uv run python manage.py resolvevenuewikimedia --refresh   # re-resolve wikimedia ones
+uv run python manage.py resolvevenuewikimedia --dry-run    # report only, write nothing
+```
+
+For venues **not** confirmed on the Google tier, `resolvevenuewikimedia` queries
+Wikimedia Commons for a **free-licensed** photo and, on a confident hit, stores
+`image_url` + `image_attribution` + `image_source="wikimedia"`. It is **idempotent**
+(skips google/wikimedia venues unless `--refresh`, never overwrites a confirmed
+Google photo), **needs no API key**, and **fails closed** (no hit / any error →
+the venue stays on the category fallback).
 
 ### SQLite vs PostgreSQL — the family-friendly caveat
 
@@ -160,7 +244,10 @@ DB-level family-friendly filter is active (see caveat below).
 
 Production env vars are declared in the Blueprint: `DJANGO_SECRET_KEY`
 (auto-generated), `DJANGO_DEBUG=false`, `DATABASE_URL` (from the DB),
-`CORS_ALLOWED_ORIGINS`, and `CSRF_TRUSTED_ORIGINS`. `ALLOWED_HOSTS` /
+`CORS_ALLOWED_ORIGINS`, `CSRF_TRUSTED_ORIGINS`, and `GOOGLE_PLACES_API_KEY`
+(declared as a `sync: false` secret on `worldcup-api` — set it in the Render
+dashboard; leave it unset to ship venue images as the category fallback).
+`ALLOWED_HOSTS` /
 `CSRF_TRUSTED_ORIGINS` automatically include the Render hostname via
 `RENDER_EXTERNAL_HOSTNAME`. When `DEBUG=false`, settings also enable HTTPS
 redirect, secure cookies, HSTS, and the proxy SSL header — all skipped in dev so

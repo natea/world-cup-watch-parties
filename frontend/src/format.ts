@@ -1,5 +1,36 @@
+import type { Match } from "./types";
+
 // Times are stored UTC; render in Massachusetts local time.
 const TZ = "America/New_York";
+
+// Expand a FIFA bracket placeholder code into plain English.
+//   "1E"      → "Winner Group E"
+//   "2A"      → "Runner-up Group A"
+//   "3ABCDF"  → "3rd place (A/B/C/D/F)"  (best-third-placed team, group TBD)
+//   "W73"/"L73" → "Winner/Loser of Match 73"
+export function teamPlaceholder(code: string): string {
+  if (!code) return "TBD";
+  const group = code.match(/^([123])([A-L]+)$/);
+  if (group) {
+    const [, pos, letters] = group;
+    if (pos === "1") return `Winner Group ${letters}`;
+    if (pos === "2") return `Runner-up Group ${letters}`;
+    return letters.length === 1
+      ? `3rd place Group ${letters}`
+      : `3rd place (${letters.split("").join("/")})`;
+  }
+  const wl = code.match(/^([WL])(\d+)$/i);
+  if (wl) return `${wl[1].toUpperCase() === "W" ? "Winner" : "Loser"} of Match ${wl[2]}`;
+  return code;
+}
+
+// Display label for a match: resolved teams when known, otherwise the
+// humanized placeholders (so the schedule reads "Winner Group E vs 3rd place
+// (A/B/C/D/F)" instead of the cryptic "1E vs 3ABCDF").
+export function matchDisplayLabel(match: Match): string {
+  if (match.is_resolved) return match.label;
+  return `${teamPlaceholder(match.home_placeholder)} vs ${teamPlaceholder(match.away_placeholder)}`;
+}
 
 export function localTime(iso: string): string {
   return new Date(iso).toLocaleTimeString("en-US", {

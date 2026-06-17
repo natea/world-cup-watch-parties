@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="800" viewBox="0 0 1200 800" role="img" aria-label="Food hall / market (illustration)">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#3b2d13"/>
+      <stop offset="1" stop-color="#1c1505"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="800" fill="url(#bg)"/>
+  <svg x="420" y="190" width="360" height="360" viewBox="0 0 100 100">
+    <g fill="none" stroke="#facc15" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round" color="#facc15">
+      <path d="M30 40 H70 L66 70 H34 Z"/><path d="M30 40 L34 30 H66 L70 40"/><line x1="50" y1="40" x2="50" y2="70"/>
+    </g>
+  </svg>
+  <text x="600" y="650" text-anchor="middle" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="46" font-weight="700" fill="#f8fafc">Food hall / market</text>
+  <text x="600" y="696" text-anchor="middle" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="26" font-weight="400" fill="#8aa0bd">Illustration · not a photo of this venue</text>
+</svg>

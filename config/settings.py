@@ -158,6 +158,17 @@ REST_FRAMEWORK = {
     "DEFAULT_PERMISSION_CLASSES": ["rest_framework.permissions.AllowAny"],
 }
 
+# Venue imagery: server-only Google Maps/Places key. When unset the photo
+# proxy and the `resolvevenueplaces` backfill no-op and every venue uses the
+# category-illustration fallback — the feature degrades cleanly and never
+# breaks a build or a page. Never expose this to the client.
+GOOGLE_PLACES_API_KEY = os.environ.get("GOOGLE_PLACES_API_KEY", "")
+
+# How long (seconds) the photo proxy lets clients/CDN cache a redirect to a
+# resolved Places photo. Within Google's terms (we cache the redirect, not the
+# bytes); kept long to bound per-photo cost.
+VENUE_PHOTO_CACHE_SECONDS = int(os.environ.get("VENUE_PHOTO_CACHE_SECONDS", str(60 * 60 * 24)))
+
 # CORS: allow the Vite dev origin to call the API during development.
 CORS_ALLOWED_ORIGINS = os.environ.get(
     "CORS_ALLOWED_ORIGINS",
