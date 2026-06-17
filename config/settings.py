@@ -104,6 +104,12 @@ def _database_config() -> dict:
 
 DATABASES = {"default": _database_config()}
 
+# Reuse DB connections across requests (avoids a fresh connect per request,
+# which is a big chunk of latency against a managed Postgres). Harmless on
+# SQLite. Health-check stale connections before reuse (Django ≥4.1).
+DATABASES["default"]["CONN_MAX_AGE"] = int(os.environ.get("DJANGO_CONN_MAX_AGE", "600"))
+DATABASES["default"]["CONN_HEALTH_CHECKS"] = True
+
 # True when running on PostgreSQL, where the DB-level family_friendly filter is
 # supported. Views consult this to choose the Python-predicate fallback on SQLite.
 USING_POSTGRES = DATABASES["default"]["ENGINE"].endswith("postgresql")

@@ -18,10 +18,15 @@ def _truthy(value: str | None) -> bool:
 
 
 def base_screening_queryset():
-    """Screenings with their venue/match prefetched for serialization."""
+    """Screenings with everything the serializers touch fetched up front.
+
+    select_related covers the to-one hops (venue, match, both teams);
+    prefetch_related covers the venue's reverse affiliations (+ their team),
+    which VenueSerializer embeds — without it, serializing a list of screenings
+    is an N+1 (one affiliations query per screening)."""
     return Screening.objects.select_related(
         "venue", "match", "match__home_team", "match__away_team"
-    )
+    ).prefetch_related("venue__affiliations", "venue__affiliations__team")
 
 
 def apply_screening_filters(qs, params):
