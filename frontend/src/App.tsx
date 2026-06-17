@@ -8,6 +8,7 @@ import { MapView } from "./components/MapView";
 import { TeamView } from "./components/TeamView";
 import { VenueDetail } from "./components/VenueDetail";
 import { SearchBox } from "./components/SearchBox";
+import { useTheme } from "./useTheme";
 import type { Suggestion } from "./types";
 import "./App.css";
 
@@ -37,6 +38,7 @@ export default function App() {
       setView("team");
     }
   };
+  const { theme, toggle } = useTheme();
   const [meta, setMeta] = useState<Meta | null>(null);
   const [teams, setTeams] = useState<Team[]>([]);
 
@@ -67,6 +69,15 @@ export default function App() {
             ))}
           </nav>
           <SearchBox onSelect={onSearchSelect} />
+          <button
+            type="button"
+            className="theme-toggle"
+            onClick={toggle}
+            aria-label={`Switch to ${theme === "dark" ? "light" : "dark"} mode`}
+            title={`Switch to ${theme === "dark" ? "light" : "dark"} mode`}
+          >
+            {theme === "dark" ? "☀️" : "🌙"}
+          </button>
         </div>
       </header>
 
