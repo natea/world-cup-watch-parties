@@ -23,6 +23,20 @@ The system SHALL, when a knockout fixture's opponents become known upstream, upd
 - **WHEN** a knockout match that previously had placeholder opponents resolves to include a real team, and the refresh runs
 - **THEN** the match's teams are filled in (same fixture number / bracket slot) and that team's `by_team` supporter venues gain screenings for the match without manual edits
 
+### Requirement: Resolved fixtures are never downgraded
+
+The system SHALL NOT replace a match's already-resolved teams with placeholder labels during a refresh or re-seed, so that a stale source or a transient upstream gap cannot un-resolve a knockout fixture. Genuine corrections between two known states (a real team changing, a kickoff time changing) are still applied.
+
+#### Scenario: Stale re-seed does not revert a resolved knockout
+
+- **WHEN** a knockout fixture has been resolved to real teams and a load runs from an older source whose same fixture still carries placeholders
+- **THEN** the resolved teams are retained (not reverted to placeholders)
+
+#### Scenario: Real correction still applies
+
+- **WHEN** an upstream refresh changes a match's resolved team to a different resolved team, or changes its kickoff time
+- **THEN** the change is applied
+
 ### Requirement: Fail-safe on unavailable or implausible data
 
 The system SHALL leave the existing data unchanged when the upstream fetch fails or returns an implausible payload, rather than corrupting or emptying the schedule.
@@ -50,6 +64,20 @@ The system SHALL record the time of the last successful refresh and expose it so
 
 - **WHEN** a refresh completes successfully
 - **THEN** a "fixtures last refreshed" timestamp is recorded and retrievable by the client
+
+### Requirement: Staleness-based alerting
+
+The system SHALL treat an individual failed refresh as a logged non-event, and SHALL escalate an alert only when no refresh has succeeded within a staleness threshold, so transient upstream failures do not generate noise while genuinely stale data is surfaced.
+
+#### Scenario: Transient failure does not alert
+
+- **WHEN** a single refresh fails but the last successful refresh was within the threshold (e.g. 24h)
+- **THEN** the failure is logged and no alert is raised
+
+#### Scenario: Prolonged staleness alerts
+
+- **WHEN** refreshes have not succeeded for longer than the staleness threshold
+- **THEN** an alert is raised (and the run signals failure)
 
 ### Requirement: Scheduled execution
 

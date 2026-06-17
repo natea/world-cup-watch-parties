@@ -19,27 +19,31 @@ Reference data (teams + the 104-match fixture list) comes from FIFA's v3 calenda
 
 **One command, `refreshfixtures`, chaining the existing idempotent pieces.** It calls the FIFA fetch+map, validates, upserts teams/matches, then re-materializes policies and logs a diff (newly-resolved fixtures, new screenings). Rationale: reuse the proven, idempotent paths; a single entry point is what cron invokes and what we test. Alternative: separate cron steps — rejected; a single transactional-ish command is easier to reason about and guard.
 
-**Run on Render Cron.** The app already deploys on Render; a Cron Job sharing the web service's env/DB runs `refreshfixtures` on a schedule. Cadence: once daily during the group stage; a few times daily on knockout days (Jun 29 R32, Jul 9 QF, etc.) when the prior round's results resolve opponents. Rationale: matches the data's actual change rate; cheap. Alternative: in-process scheduler / Celery beat — rejected as heavier than warranted.
+**Run on Render Cron, every 6 hours, one fixed schedule.** The app already deploys on Render; a Cron Job sharing the web service's env/DB runs `refreshfixtures` every 6 hours throughout the tournament. Rationale: the refresh is a cheap API call + idempotent upsert, every-6h keeps the data within a few hours of fresh, and a single fixed schedule avoids date-based ramp logic — a "where to watch" finder doesn't need minute-fresh matchups (people plan ahead; this isn't live scores). Alternatives considered: per-phase ramping / hourly on knockout days (more moving parts than warranted — can tighten later if desired); in-process scheduler / Celery beat (heavier than warranted).
 
-**Guardrails / fail-safe.** Before writing: validate against the Pydantic contract (already), and sanity-check the payload (e.g. plausible match count, all kickoffs parse). On fetch failure, HTTP error, or an implausible payload, the command logs and exits non-zero **without modifying data** — the last good state stands. Authored venue/affiliation/policy rows are never deleted; only generated screenings are rebuilt (the importer already does a clean rebuild of `is_generated` rows, which `refreshfixtures` reuses).
+**Deploy seeds from the committed snapshot, then runs a fail-safe live refresh.** `build.sh` keeps seeding from `data/fifa_reference.json` (deterministic, offline-safe — a FIFA outage can never block a deploy), then runs `refreshfixtures` immediately after as a fail-safe step. When FIFA is reachable the deploy ends fully fresh; when it isn't, the snapshot stands. Cron then keeps it fresh between deploys. Rationale: determinism + freshness without making deploys depend on an undocumented upstream. Alternative: live-fetch as the only seed — rejected (a FIFA outage would fail or empty a deploy).
+
+**Resolved fixtures are never downgraded (no-downgrade guard).** The upsert MUST NOT replace a match's already-resolved teams with placeholders. This makes the snapshot-vs-live question moot: re-seeding from a stale snapshot (at deploy) can never un-resolve a knockout that cron already filled in. It also protects against an upstream blip that momentarily drops team data. (Genuine corrections — a real team→different real team, a kickoff change — still flow through; only resolved→placeholder regressions are blocked.)
+
+**Guardrails / fail-safe.** Before writing: validate against the Pydantic contract (already), and sanity-check the payload (e.g. plausible match count, all kickoffs parse). On fetch failure, HTTP error, or an implausible payload, the command logs a warning and **leaves existing data untouched**. Authored venue/affiliation/policy rows are never deleted; only generated screenings are rebuilt (the importer already does a clean rebuild of `is_generated` rows, which `refreshfixtures` reuses).
 
 **Knockout resolution propagates automatically.** When FIFA fills in a knockout's teams, `loadreferencedata` updates the `Match` in place (same `fifa_match_number`/`bracket_slot`); re-materializing `by_team` policies then creates screenings for venues that follow a now-involved team. `all_matches` venues already covered it. So "team advances → its bar lights up for the next match" happens with no manual edit.
 
-**Freshness signal.** Stamp a `fixtures_refreshed_at` (settings/singleton or a tiny model row) on each successful run and expose it (e.g. in `/api/meta/`), so the UI can show "fixtures updated <when>". Complements the existing per-record provenance / `needs_review`.
+**Freshness signal, doubling as the alert trigger.** Stamp a `fixtures_refreshed_at` on each successful run and expose it (e.g. in `/api/meta/`) so the UI can show "fixtures updated <when>". The same timestamp drives **staleness-based alerting**: an individual failed fetch is a non-event (data retained, logged), but if a run can't refresh **and** the last success was more than 24h ago, the command escalates (alert + non-zero exit). This avoids alert noise from transient FIFA hiccups while still flagging genuinely stale data. Channel: a Slack webhook (tooling already on hand) or email — whichever is one line of config.
 
 ## Risks / Trade-offs
 
 - **Undocumented FIFA endpoint drifts or blocks the cron** → fail-safe keeps existing data; alert on repeated failures (log + optional notification). The committed snapshot still serves fresh deploys.
 - **Upstream returns subtly wrong data** (e.g. a shifted kickoff) → contract validation + sanity thresholds catch gross errors; subtle changes flow through (which is the point) but are logged so they're auditable.
-- **Cron updates prod DB out of band from git** → intended; the snapshot is the seed, the DB is the source of truth at runtime. Document that a redeploy re-seeds from the snapshot (so periodically refreshing the committed snapshot, or having deploy run `refreshfixtures`, avoids a deploy reverting to older fixtures). Open question below.
-- **Concurrent refresh + deploy seed** → both idempotent upserts by natural key; last writer wins harmlessly.
+- **Cron updates prod DB out of band from git** → intended; the snapshot is the deploy seed, the DB is the runtime source of truth. The no-downgrade guard + the fail-safe `refreshfixtures` step in `build.sh` mean a redeploy can't revert resolved fixtures, so the committed snapshot can lag without harm (refresh it occasionally via `fetchfixtures` for a good cold-start baseline).
+- **Concurrent refresh + deploy seed** → both idempotent upserts by natural key; last writer wins harmlessly, and the no-downgrade guard prevents a stale writer from regressing resolved data.
 
 ## Migration Plan
 
-Additive. Ship `refreshfixtures` + a Render Cron entry. Backfill the freshness timestamp on first run. Rollback = remove the cron job; nothing else depends on it. No data migration beyond an optional timestamp field.
+Additive. Ship `refreshfixtures` + the `build.sh` fail-safe refresh step + a Render Cron entry (every 6h). Backfill the freshness timestamp on first run. Rollback = remove the cron job and the `build.sh` line; nothing else depends on it. No data migration beyond a small timestamp.
 
-## Open Questions
+## Resolved Decisions
 
-- Should a deploy run `refreshfixtures` (live FIFA) in `build.sh`, or keep seeding from the committed snapshot and let cron catch up? (Leaning: seed from snapshot at deploy for determinism, cron for freshness; optionally refresh the committed snapshot on a slower cadence.)
-- Exact cron cadence and whether to ramp automatically around known knockout dates.
-- Failure alerting channel (log-only vs. email/Slack) if the FIFA fetch fails N times.
+- **Deploy seeding:** committed snapshot at deploy + a fail-safe live `refreshfixtures` step in `build.sh`; cron for ongoing freshness. The no-downgrade guard makes a stale snapshot harmless.
+- **Cron cadence:** every 6 hours, one fixed schedule (no per-phase ramp); tighten to hourly during knockouts only if a need appears.
+- **Failure alerting:** log every run; escalate (alert + non-zero exit) only when no successful refresh in >24h, derived from `fixtures_refreshed_at`. Channel: Slack webhook or email.

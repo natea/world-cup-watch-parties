@@ -7,9 +7,11 @@ The building blocks already exist and are idempotent (`fetchfixtures` → FIFA A
 ## What Changes
 
 - Add a **`refreshfixtures` management command** that runs the full chain in one idempotent step: fetch the FIFA calendar API → validate → upsert teams/matches (resolving knockout placeholders into real teams in place) → re-materialize screening policies so `by_team` venues pick up newly-resolved fixtures → log a summary of what changed.
-- Run it on a **schedule via a Render Cron Job** — daily during the group stage, and more frequently on knockout days (when results resolve the next round) — updating the live production database between deploys. (The committed `data/fifa_reference.json` remains the deploy-time seed.)
-- **Data-integrity guardrails:** validate the payload against the Pydantic contract; abort and keep existing data if the fetch fails or the payload is implausible (e.g. not ~104 matches); never touch authored venue/affiliation data; only rebuild generated screenings.
-- **Surface freshness:** record and expose a "fixtures last refreshed" timestamp (alongside the existing per-record provenance / `needs_review`).
+- Run it on a **Render Cron Job, every 6 hours** on one fixed schedule, updating the live production database between deploys. (The committed `data/fifa_reference.json` remains the deploy-time seed.)
+- **Deploy stays deterministic:** `build.sh` seeds from the committed snapshot, then runs `refreshfixtures` as a **fail-safe** step — fresh when FIFA is reachable, snapshot fallback when it isn't, so an upstream outage never blocks or empties a deploy.
+- **No-downgrade guard:** the upsert never replaces a match's already-resolved teams with placeholders, so re-seeding from a stale snapshot (or an upstream blip) can't un-resolve a knockout.
+- **Data-integrity guardrails:** validate the payload against the Pydantic contract; keep existing data untouched if the fetch fails or the payload is implausible (e.g. not ~104 matches); never touch authored venue/affiliation data; only rebuild generated screenings.
+- **Freshness + alerting:** record and expose a "fixtures last refreshed" timestamp (UI badge). The same timestamp drives **staleness-based alerting** — log routine failures quietly, but escalate (Slack/email) only when no successful refresh has happened in >24h.
 
 ## Capabilities
 
