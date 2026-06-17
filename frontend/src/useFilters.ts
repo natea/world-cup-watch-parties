@@ -5,7 +5,7 @@ import type { Anchor, Filters } from "./types";
 // switching views preserves filters and keeps results consistent. The URL is
 // the source of truth, so a filtered view is shareable/bookmarkable.
 
-const BOOL_KEYS: (keyof Filters)[] = ["exclude_bars", "family_friendly"];
+const BOOL_KEYS: (keyof Filters)[] = ["exclude_bars", "family_friendly", "show_past"];
 
 // Keys tracked separately from the filter set (view, open venue, map anchor).
 const NON_FILTER_KEYS = new Set(["view", "venue", "alat", "alng", "aprec", "alabel"]);
