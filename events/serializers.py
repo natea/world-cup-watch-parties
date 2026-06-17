@@ -87,20 +87,23 @@ class VenueSerializer(serializers.ModelSerializer):
 
     def get_image(self, obj: Venue) -> dict:
         """Uniform image object: a licensed place photo (served via the
-        attributed proxy) when the venue has a place_id, else the honest
-        category fallback.
+        attributed proxy) when the venue has a *confirmed* place match, else the
+        honest category fallback.
 
-        The proxy itself decides at request time whether a real photo is
-        available (key configured, photo resolvable) and otherwise redirects to
-        this same fallback — so the client always has a usable URL.
+        Confirmation is `image_source == "google_places"`, which the backfill
+        sets only for high-confidence matches. Ambiguous matches keep a
+        candidate `place_id` (for a reviewer) but leave `image_source` blank, so
+        they fall back here rather than show an unverified photo of the wrong
+        place. The proxy still decides at request time whether a real photo is
+        resolvable and otherwise redirects to this same fallback.
         """
-        if obj.place_id:
+        if obj.place_id and obj.image_source == "google_places":
             request = self.context.get("request")
             url = reverse("events:venue-photo", kwargs={"slug": obj.slug}, request=request)
             return {
                 "url": url,
                 "attribution": obj.image_attribution or None,
-                "source": obj.image_source or "google_places",
+                "source": "google_places",
             }
         return {
             "url": fallback_image_url(obj.venue_type),

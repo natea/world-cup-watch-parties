@@ -53,6 +53,22 @@ def test_serializer_photo_case_has_attribution_and_proxy_url():
 
 
 @pytest.mark.django_db
+def test_serializer_ambiguous_match_falls_back_until_confirmed():
+    # A flagged/ambiguous match keeps a candidate place_id but leaves
+    # image_source blank — it must fall back, not show an unverified photo.
+    venue = _make_venue(
+        venue_type=VenueType.WATERFRONT,
+        place_id="ChIJcandidate",
+        image_source="",
+        needs_review=True,
+    )
+    img = VenueSerializer(venue).data["image"]
+    assert img["source"] == "fallback"
+    assert img["attribution"] is None
+    assert img["url"] == "/venue-fallbacks/waterfront.png"
+
+
+@pytest.mark.django_db
 def test_serializer_fallback_case_by_venue_type_no_attribution():
     venue = _make_venue(venue_type=VenueType.BREWERY)  # no place_id
     data = VenueSerializer(venue).data
@@ -134,11 +150,20 @@ def test_backfill_stores_confident_match_and_is_idempotent(monkeypatch):
         )
 
     monkeypatch.setattr(places, "find_place", fake_find)
+    # Confident matches resolve the photo once to store its attribution.
+    monkeypatch.setattr(
+        places,
+        "photo_for_place",
+        lambda place_id, **k: places.PlacePhoto(
+            url="https://example.com/p.jpg", attribution="Photo by The Banshee via Google"
+        ),
+    )
 
     call_command("resolvevenueplaces")
     venue.refresh_from_db()
     assert venue.place_id == "ChIJbanshee"
     assert venue.image_source == "google_places"
+    assert venue.image_attribution == "Photo by The Banshee via Google"
     assert venue.needs_review is False
     assert calls["n"] == 1
 

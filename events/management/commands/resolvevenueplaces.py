@@ -10,7 +10,7 @@ are flagged with `needs_review=True` rather than storing a guessed identifier.
     python manage.py resolvevenueplaces --dry-run    # report, write nothing
 
 Idempotent: venues that already have a `place_id` are skipped unless
-`--refresh`. No-ops with no console error when `GOOGLE_MAPS_API_KEY` is unset
+`--refresh`. No-ops with no console error when `GOOGLE_PLACES_API_KEY` is unset
 (the feature degrades to the category fallback). All Google access goes through
 `events.places`, which tests monkeypatch — this command makes NO live network
 call under test.
@@ -51,7 +51,7 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         if not places.is_enabled():
             self.stdout.write(
-                "GOOGLE_MAPS_API_KEY not configured — nothing to resolve "
+                "GOOGLE_PLACES_API_KEY not configured — nothing to resolve "
                 "(venues use the category fallback)."
             )
             return
@@ -82,9 +82,18 @@ class Command(BaseCommand):
                     f"  ✓ {venue.name} → {match.display_name} ({score:.2f})"
                 )
                 if not dry_run:
+                    # Resolve the photo once now to capture the required
+                    # attribution string, so it can be rendered with the image
+                    # without a per-request lookup (Google requires attribution
+                    # be displayed). The URL itself is short-lived, so we store
+                    # only the attribution and let the proxy re-resolve the URL.
+                    photo = places.photo_for_place(match.place_id)
                     venue.place_id = match.place_id
                     venue.image_source = "google_places"
-                    venue.save(update_fields=["place_id", "image_source"])
+                    venue.image_attribution = photo.attribution if photo else ""
+                    venue.save(
+                        update_fields=["place_id", "image_source", "image_attribution"]
+                    )
             else:
                 flagged += 1
                 self.stdout.write(

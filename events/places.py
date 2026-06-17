@@ -14,7 +14,7 @@ Design notes
 * The exact HTTP transport is confined to the private `_post`/`_get` helpers so
   tests monkeypatch one seam (or the public functions) and never hit the
   network.
-* Everything no-ops (returns ``None``) when ``settings.GOOGLE_MAPS_API_KEY`` is
+* Everything no-ops (returns ``None``) when ``settings.GOOGLE_PLACES_API_KEY`` is
   empty, so the feature degrades to the category fallback with no key.
 * We never download or persist photo bytes — `photo_for_place` returns a URL
   the proxy 302-redirects to, honoring Google's terms.
@@ -55,7 +55,7 @@ class PlacePhoto:
 
 def is_enabled() -> bool:
     """True when a Google Maps/Places API key is configured."""
-    return bool(getattr(settings, "GOOGLE_MAPS_API_KEY", ""))
+    return bool(getattr(settings, "GOOGLE_PLACES_API_KEY", ""))
 
 
 # ---------------------------------------------------------------------------
@@ -147,7 +147,7 @@ def _attribution_from_photo(photo: dict) -> str:
 def _headers(field_mask: Optional[str] = None) -> dict:
     headers = {
         "Content-Type": "application/json",
-        "X-Goog-Api-Key": settings.GOOGLE_MAPS_API_KEY,
+        "X-Goog-Api-Key": settings.GOOGLE_PLACES_API_KEY,
     }
     if field_mask:
         headers["X-Goog-FieldMask"] = field_mask

@@ -10,7 +10,7 @@ A watch-party finder is a "should I go here?" tool, and people decide partly on 
 - **API:** the venue serializer exposes an `image` block (`{url, attribution, source}` or the fallback), and a proxy endpoint (e.g. `GET /api/venues/<slug>/photo`) streams/redirects to the current Places photo with short-lived caching to bound cost.
 - **Backfill:** a `resolvevenueplaces` management command matches each venue by name + address to a `place_id` (Places Text Search / Find Place), flags ambiguous matches for review, and is idempotent.
 - **Frontend:** `VenueDetail` shows the image with a required attribution caption; lists/cards and map pins use the lightweight fallback (or a single cached thumbnail) to avoid a Places call per row.
-- **Config:** a server-only `GOOGLE_MAPS_API_KEY`, wired in `render.yaml` as a secret (`sync: false`).
+- **Config:** a server-only `GOOGLE_PLACES_API_KEY`, wired in `render.yaml` as a secret (`sync: false`).
 
 ## Capabilities
 
@@ -21,6 +21,6 @@ A watch-party finder is a "should I go here?" tool, and people decide partly on 
 
 - **Schema:** additive `Venue` fields (`place_id`, `image_source`, `image_attribution`); a migration. No stored image bytes.
 - **New code:** a photo-proxy view + URL; a `resolvevenueplaces` backfill command; category-illustration assets + generator; `VenueDetail` image rendering with attribution.
-- **External dependency & cost:** Google Places (Place Photos + a Places lookup for backfill) — pay-per-call with a monthly free credit; cost bounded by storing `place_id`, fetching photos mostly on the detail view, and caching/CDN. A `GOOGLE_MAPS_API_KEY` secret is required; the feature degrades to the fallback when unset.
+- **External dependency & cost:** Google Places (Place Photos + a Places lookup for backfill) — pay-per-call with a monthly free credit; cost bounded by storing `place_id`, fetching photos mostly on the detail view, and caching/CDN. A `GOOGLE_PLACES_API_KEY` secret is required; the feature degrades to the fallback when unset.
 - **Compliance:** attribution always rendered; `place_id` cached long-term, photo bytes not rehosted — per Google Places terms.
 - **Tests:** serializer image block (photo vs fallback), proxy behavior when key/place_id missing, backfill matching + idempotency.

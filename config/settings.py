@@ -162,7 +162,7 @@ REST_FRAMEWORK = {
 # proxy and the `resolvevenueplaces` backfill no-op and every venue uses the
 # category-illustration fallback — the feature degrades cleanly and never
 # breaks a build or a page. Never expose this to the client.
-GOOGLE_MAPS_API_KEY = os.environ.get("GOOGLE_MAPS_API_KEY", "")
+GOOGLE_PLACES_API_KEY = os.environ.get("GOOGLE_PLACES_API_KEY", "")
 
 # How long (seconds) the photo proxy lets clients/CDN cache a redirect to a
 # resolved Places photo. Within Google's terms (we cache the redirect, not the

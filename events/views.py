@@ -140,7 +140,7 @@ class VenueDetailView(APIView):
 class VenuePhotoView(APIView):
     """Attributed photo proxy: `GET /api/venues/<slug>/photo`.
 
-    Keeps `GOOGLE_MAPS_API_KEY` server-side. On success it 302-redirects to the
+    Keeps `GOOGLE_PLACES_API_KEY` server-side. On success it 302-redirects to the
     current Places photo URL (we never rehost the bytes). When the key is unset,
     the venue has no place_id, or the lookup fails, it redirects to the venue's
     category fallback illustration — so the client always lands on a usable

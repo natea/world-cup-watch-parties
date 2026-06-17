@@ -1,8 +1,8 @@
 ## 1. Model & config
 
 - [x] 1.1 Add `place_id`, `image_source`, `image_attribution` (nullable/blank) to `Venue`; make the migration
-- [x] 1.2 Add a server-only `GOOGLE_MAPS_API_KEY` setting (env-driven; absent → feature disabled); document it
-- [x] 1.3 Wire `GOOGLE_MAPS_API_KEY` in `render.yaml` as a secret (`sync: false`)
+- [x] 1.2 Add a server-only `GOOGLE_PLACES_API_KEY` setting (env-driven; absent → feature disabled); document it
+- [x] 1.3 Wire `GOOGLE_PLACES_API_KEY` in `render.yaml` as a secret (`sync: false`)
 
 ## 2. Category-illustration fallback
 
@@ -31,4 +31,4 @@
 - [x] 6.1 Serializer tests: photo case (with attribution) vs fallback case (by venue type, no attribution)
 - [x] 6.2 Proxy tests: returns fallback when key/place_id missing; does not rehost bytes
 - [x] 6.3 Backfill tests: confident match stored + idempotent; ambiguous match flagged for review (mock the Places client — no live calls)
-- [x] 6.4 README: document the image feature, `GOOGLE_MAPS_API_KEY`, the backfill command, attribution/caching compliance, and the no-key fallback behavior
+- [x] 6.4 README: document the image feature, `GOOGLE_PLACES_API_KEY`, the backfill command, attribution/caching compliance, and the no-key fallback behavior

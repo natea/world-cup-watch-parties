@@ -10,7 +10,7 @@ Venues are real Massachusetts businesses (bars, breweries, plazas, hotels). The 
 ## Decisions
 
 ### Store the `place_id`, proxy the photo
-We persist `place_id` (allowed long-term) and resolve the actual photo on demand through a **backend proxy** (`GET /api/venues/<slug>/photo`). The proxy holds the `GOOGLE_MAPS_API_KEY` (never shipped to the client), calls the Place Photos endpoint, and 302-redirects to (or streams) the photo URL. This keeps the key server-side, centralizes attribution/caching policy, and sidesteps CORS. Photo bytes are not written to our storage.
+We persist `place_id` (allowed long-term) and resolve the actual photo on demand through a **backend proxy** (`GET /api/venues/<slug>/photo`). The proxy holds the `GOOGLE_PLACES_API_KEY` (never shipped to the client), calls the Place Photos endpoint, and 302-redirects to (or streams) the photo URL. This keeps the key server-side, centralizes attribution/caching policy, and sidesteps CORS. Photo bytes are not written to our storage.
 
 ### Cost control: where and how often we call
 - **Lists, map pins, cards** do **not** trigger a Places call per row — they use the category-illustration fallback (or a single small cached thumbnail per venue). The full photo loads on the **detail view** only.
@@ -27,7 +27,7 @@ When a venue has no `place_id` or the photo fetch fails, the serializer returns 
 `VenueSerializer` gains an `image` object: `{ "url": <proxy or fallback url>, "attribution": <text|null>, "source": "google_places"|"fallback" }`. The client renders the caption only when `attribution` is present. Keeping it one nested object means the frontend has a single, uniform thing to render.
 
 ### Key handling and graceful degradation
-`GOOGLE_MAPS_API_KEY` is a server-only secret (`sync: false` in `render.yaml`). When it's unset (local dev, un-configured deploys), the proxy and backfill no-op and every venue uses the fallback — the feature is additive and never breaks a build or a page.
+`GOOGLE_PLACES_API_KEY` is a server-only secret (`sync: false` in `render.yaml`). When it's unset (local dev, un-configured deploys), the proxy and backfill no-op and every venue uses the fallback — the feature is additive and never breaks a build or a page.
 
 ## Risks / Trade-offs
 
@@ -41,7 +41,7 @@ When a venue has no `place_id` or the photo fetch fails, the serializer returns 
 1. Migration adds the three nullable/blank `Venue` fields — safe on existing rows (all default to fallback).
 2. Generate the category-illustration assets.
 3. Ship serializer `image` block + proxy + `VenueDetail` rendering (everything shows fallback until backfilled).
-4. Set `GOOGLE_MAPS_API_KEY`; run `resolvevenueplaces`; review flagged matches in admin.
+4. Set `GOOGLE_PLACES_API_KEY`; run `resolvevenueplaces`; review flagged matches in admin.
 
 Each step is independently deployable; the UI is correct at every stage (fallback first, photos as `place_id`s land).
 
