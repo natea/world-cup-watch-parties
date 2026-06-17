@@ -65,6 +65,50 @@ upserts every record by its natural key (idempotent), and finishes by
 **materializing screening policies** (e.g. a bar's "shows every match" rule fans
 out into concrete screenings across the full fixture list).
 
+### Keeping fixtures fresh (`refreshfixtures`)
+
+As the tournament progresses FIFA fills in the bracket — knockout placeholders
+("Winner Group C") resolve to real teams, kickoff times occasionally shift.
+`refreshfixtures` automates the whole chain in one idempotent, guarded step:
+
+```bash
+uv run python manage.py refreshfixtures
+```
+
+It fetches the FIFA v3 calendar API, maps + contract-validates the payload,
+**sanity-checks** it (plausible match count ≥ 64), upserts teams/matches inside
+a transaction, then **re-materializes every screening policy** so `by_team`
+supporter venues automatically gain screenings for newly-resolved fixtures, and
+logs a one-line change summary (newly-resolved fixtures, screenings created).
+
+- **Scheduled in production:** a Render **Cron Job** (`worldcup-refresh` in
+  [`render.yaml`](./render.yaml)) runs it **every 6 hours** (`0 */6 * * *`),
+  sharing the API service's runtime and `DATABASE_URL`, so the live DB stays
+  current between deploys.
+- **Deploy fail-safe:** [`build.sh`](./build.sh) seeds from the committed
+  `data/fifa_reference.json` snapshot, then runs `refreshfixtures || true` — so
+  a deploy ends fully fresh when FIFA is reachable, falls back to the snapshot
+  when it isn't, and a FIFA outage can **never** fail a deploy.
+- **FIFA dependency + fail-safe behavior:** the undocumented FIFA endpoint is
+  the only external dependency. On any fetch failure, HTTP error, or implausible
+  payload the command leaves **all** data unmodified (no partial writes) and
+  logs a warning. Authored venue/affiliation/policy rows are never deleted; only
+  generated (`is_generated`) screenings are rebuilt by re-materialize.
+- **No-downgrade guard:** the shared match upsert (used by *both* the seed
+  loader and the refresh) NEVER overwrites an already-resolved
+  `home_team`/`away_team` with a null/placeholder. So re-seeding from a stale
+  snapshot, or a transient upstream blip that momentarily drops team data, can't
+  un-resolve a knockout. Genuine resolved→different-resolved corrections and
+  kickoff/stage changes still apply.
+- **Freshness + staleness alerting:** each successful run stamps
+  `fixtures_refreshed_at`, exposed at `GET /api/meta/` and shown as
+  "Fixtures updated <when>" in the site footer. A single failed run is a quiet
+  non-event (logged, data retained, exit 0). But if a run can't refresh **and**
+  the last success was > 24h ago (or never), it escalates: a clearly-marked
+  `log.error` ALERT line plus a non-zero exit. (The alert "channel" is a single
+  log line today; a Slack/email webhook is a one-line config hook — see the
+  `TODO(alerting)` comment in `refreshfixtures.py`.)
+
 ### Run the API
 
 ```bash

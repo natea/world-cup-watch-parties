@@ -500,6 +500,22 @@ class ScreeningPolicy(models.Model):
 
 
 # ---------------------------------------------------------------------------
+# RefreshState: a tiny singleton holding the last successful fixture refresh
+# time. Drives the UI "fixtures updated <when>" badge and staleness alerting.
+# ---------------------------------------------------------------------------
+class RefreshState(models.Model):
+    fixtures_refreshed_at = models.DateTimeField(null=True, blank=True)
+
+    @classmethod
+    def get(cls) -> "RefreshState":
+        obj, _ = cls.objects.get_or_create(pk=1)
+        return obj
+
+    def __str__(self) -> str:
+        return f"RefreshState(fixtures_refreshed_at={self.fixtures_refreshed_at})"
+
+
+# ---------------------------------------------------------------------------
 def _haversine_km(lat1, lng1, lat2, lng2) -> float:
     r = 6371.0
     p1, p2 = math.radians(lat1), math.radians(lat2)

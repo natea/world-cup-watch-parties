@@ -18,6 +18,22 @@ const TABS = [
   { id: "team", label: "By team" },
 ];
 
+// Short, friendly "fixtures updated <when>" label. Returns null for missing/bad input.
+function fixturesUpdatedLabel(iso: string | null | undefined): string | null {
+  if (!iso) return null;
+  const then = new Date(iso);
+  if (Number.isNaN(then.getTime())) return null;
+  const diffMs = Date.now() - then.getTime();
+  const mins = Math.round(diffMs / 60000);
+  if (mins < 1) return "just now";
+  if (mins < 60) return `${mins} min ago`;
+  const hours = Math.round(mins / 60);
+  if (hours < 24) return `${hours}h ago`;
+  const days = Math.round(hours / 24);
+  if (days < 7) return `${days}d ago`;
+  return then.toLocaleDateString(undefined, { month: "short", day: "numeric" });
+}
+
 export default function App() {
   const { filters, setFilter, clear, view, setView, venue, openVenue, closeVenue, anchor, setLocation } =
     useFilters();
@@ -119,6 +135,11 @@ export default function App() {
           </a>
           , Events That Bring People Together.
         </p>
+        {fixturesUpdatedLabel(meta?.fixtures_refreshed_at) && (
+          <p className="footer-freshness">
+            Fixtures updated {fixturesUpdatedLabel(meta?.fixtures_refreshed_at)}
+          </p>
+        )}
       </footer>
     </div>
   );

@@ -32,3 +32,31 @@ def test_kickoffs_are_timezone_aware():
     call_command("loadreferencedata", builtin=True)
     for m in Match.objects.all():
         assert m.kickoff.tzinfo is not None
+
+
+@pytest.mark.django_db
+def test_shared_no_downgrade_guard_protects_seed_loader():
+    """The no-downgrade guard lives in the shared upsert, so even a re-seed from
+    a stale source can't revert an already-resolved knockout to placeholders."""
+    from events.import_contract import MatchIn, TeamIn
+    from events.management.commands.loadreferencedata import upsert_matches, upsert_teams
+
+    teams = [TeamIn.model_validate({"name": "Argentina", "fifa_code": "ARG"}),
+             TeamIn.model_validate({"name": "Brazil", "fifa_code": "BRA"})]
+    by_code = upsert_teams(teams)
+
+    resolved = MatchIn.model_validate({
+        "fifa_match_number": 73, "stage": "r32", "kickoff": "2026-06-28T20:00:00Z",
+        "home_team_code": "ARG", "away_team_code": "BRA", "bracket_slot": "r32-73",
+    })
+    upsert_matches([resolved], by_code)
+    assert Match.objects.get(fifa_match_number=73).is_resolved
+
+    stale = MatchIn.model_validate({
+        "fifa_match_number": 73, "stage": "r32", "kickoff": "2026-06-28T20:00:00Z",
+        "home_placeholder": "W1", "away_placeholder": "W2", "bracket_slot": "r32-73",
+    })
+    result = upsert_matches([stale], by_code)
+    m = Match.objects.get(fifa_match_number=73)
+    assert m.is_resolved and m.home_team.fifa_code == "ARG"
+    assert result["newly_resolved"] == []

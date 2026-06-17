@@ -94,6 +94,84 @@ SEED_MATCHES = [
 ]
 
 
+# ---------------------------------------------------------------------------
+# Shared, importable upsert functions. Both this command and `refreshfixtures`
+# delegate to these so the no-downgrade guard protects the seed AND the refresh.
+# ---------------------------------------------------------------------------
+def upsert_teams(teams) -> dict[str, Team]:
+    """Upsert teams by `fifa_code` (idempotent). `teams` are validated `TeamIn`
+    objects. Returns a {fifa_code: Team} map covering all teams in the DB."""
+    out: dict[str, Team] = {}
+    for t in teams:
+        obj, _ = Team.objects.update_or_create(
+            fifa_code=t.fifa_code,
+            defaults=dict(
+                name=t.name,
+                flag_emoji=t.flag_emoji,
+                fifa_rank=t.fifa_rank,
+                group=t.group,
+                confederation=t.confederation,
+            ),
+        )
+        out[t.fifa_code] = obj
+    for team in Team.objects.all():
+        out.setdefault(team.fifa_code, team)
+    return out
+
+
+def upsert_matches(matches, team_by_code) -> dict:
+    """Upsert matches by `fifa_match_number` (idempotent), applying the
+    no-downgrade guard: an already-resolved `home_team`/`away_team` is NEVER
+    overwritten with null (a placeholder). Genuine resolved->different-resolved
+    corrections and kickoff/stage/etc. changes still apply.
+
+    Returns {"count": int, "newly_resolved": [fifa_match_number, ...]} where
+    newly_resolved lists matches that gained both teams in this upsert (were
+    unresolved before, are resolved now).
+    """
+    newly_resolved: list[int] = []
+    for m in matches:
+        existing = Match.objects.filter(fifa_match_number=m.fifa_match_number).first()
+        was_resolved = bool(existing and existing.is_resolved)
+
+        incoming_home = team_by_code.get(m.home_team_code) if m.home_team_code else None
+        incoming_away = team_by_code.get(m.away_team_code) if m.away_team_code else None
+
+        # No-downgrade guard: never replace an already-resolved team with null.
+        # Retain the existing resolved team (and its placeholder text) instead.
+        home_team = incoming_home
+        home_placeholder = m.home_placeholder
+        if existing and existing.home_team_id is not None and incoming_home is None:
+            home_team = existing.home_team
+            home_placeholder = existing.home_placeholder
+
+        away_team = incoming_away
+        away_placeholder = m.away_placeholder
+        if existing and existing.away_team_id is not None and incoming_away is None:
+            away_team = existing.away_team
+            away_placeholder = existing.away_placeholder
+
+        obj, _ = Match.objects.update_or_create(
+            fifa_match_number=m.fifa_match_number,
+            defaults=dict(
+                stage=m.stage.value,
+                group=m.group,
+                kickoff=m.kickoff,
+                host_city=m.host_city,
+                host_stadium=m.host_stadium,
+                home_team=home_team,
+                away_team=away_team,
+                home_placeholder=home_placeholder,
+                away_placeholder=away_placeholder,
+                bracket_slot=m.bracket_slot,
+            ),
+        )
+        if not was_resolved and obj.is_resolved:
+            newly_resolved.append(m.fifa_match_number)
+
+    return {"count": len(matches), "newly_resolved": newly_resolved}
+
+
 class Command(BaseCommand):
     help = "Load teams and the canonical FIFA fixture list from a structured source (no LLM)."
 
@@ -132,48 +210,11 @@ class Command(BaseCommand):
         matches = [MatchIn.model_validate(m) for m in matches_raw]
 
         with transaction.atomic():
-            team_by_code = self._load_teams(teams)
-            n_matches = self._load_matches(matches, team_by_code)
+            team_by_code = upsert_teams(teams)
+            result = upsert_matches(matches, team_by_code)
 
         self.stdout.write(
             self.style.SUCCESS(
-                f"OK: {len(team_by_code)} teams, {n_matches} matches loaded (idempotent)."
+                f"OK: {len(team_by_code)} teams, {result['count']} matches loaded (idempotent)."
             )
         )
-
-    def _load_teams(self, teams) -> dict[str, Team]:
-        out = {}
-        for t in teams:
-            obj, _ = Team.objects.update_or_create(
-                fifa_code=t.fifa_code,
-                defaults=dict(
-                    name=t.name,
-                    flag_emoji=t.flag_emoji,
-                    fifa_rank=t.fifa_rank,
-                    group=t.group,
-                    confederation=t.confederation,
-                ),
-            )
-            out[t.fifa_code] = obj
-        for team in Team.objects.all():
-            out.setdefault(team.fifa_code, team)
-        return out
-
-    def _load_matches(self, matches, team_by_code) -> int:
-        for m in matches:
-            Match.objects.update_or_create(
-                fifa_match_number=m.fifa_match_number,
-                defaults=dict(
-                    stage=m.stage.value,
-                    group=m.group,
-                    kickoff=m.kickoff,
-                    host_city=m.host_city,
-                    host_stadium=m.host_stadium,
-                    home_team=team_by_code.get(m.home_team_code) if m.home_team_code else None,
-                    away_team=team_by_code.get(m.away_team_code) if m.away_team_code else None,
-                    home_placeholder=m.home_placeholder,
-                    away_placeholder=m.away_placeholder,
-                    bracket_slot=m.bracket_slot,
-                ),
-            )
-        return len(matches)

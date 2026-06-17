@@ -24,6 +24,7 @@ from .serializers import fallback_image_url
 from .models import (
     CostType,
     Region,
+    RefreshState,
     Screening,
     Team,
     Venue,
@@ -209,6 +210,7 @@ class MetaView(APIView):
     """Filter vocabulary for the client (enum labels for the UI controls)."""
 
     def get(self, request):
+        refreshed_at = RefreshState.get().fixtures_refreshed_at
         return Response(
             {
                 "venue_types": [{"value": v, "label": l} for v, l in VenueType.choices],
@@ -216,5 +218,6 @@ class MetaView(APIView):
                 "cost_types": [{"value": v, "label": l} for v, l in CostType.choices],
                 "environments": ["indoor", "outdoor"],
                 "team_modes": ["playing", "hub"],
+                "fixtures_refreshed_at": refreshed_at.isoformat() if refreshed_at else None,
             }
         )
