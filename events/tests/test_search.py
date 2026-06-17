@@ -70,6 +70,39 @@ def test_short_and_empty_query_return_empty(seeded, client):
 
 
 @pytest.mark.django_db
+def test_fuzzy_typo_matches_team(seeded, client):
+    # "croatica" is a typo for Croatia — fuzzy fallback should still find it.
+    body = client.get("/api/search/?q=croatica").json()["suggestions"]
+    assert any(s["target"] == {"kind": "team", "code": "CRO"} for s in body)
+
+
+@pytest.mark.django_db
+def test_fuzzy_typo_matches_venue(seeded, client):
+    body = client.get("/api/search/?q=banshe").json()["suggestions"]
+    slugs = {s["target"].get("slug") for s in body if s["type"] == "venue"}
+    assert "the-banshee" in slugs
+
+
+@pytest.mark.django_db
+def test_alias_matches_official_short_name(db, client):
+    """FIFA's official US team name is "USA"; common names must alias to it.
+    (The minimal seed names it "United States", so load the FIFA reference where
+    it is "USA" to exercise the alias path.)"""
+    from pathlib import Path
+
+    from django.core.management import call_command
+
+    if not Path("data/fifa_reference.json").exists():
+        pytest.skip("FIFA reference snapshot not present")
+    call_command("loadreferencedata", path="data/fifa_reference.json")
+
+    usa = client.get("/api/search/?q=united states").json()["suggestions"]
+    assert any(s["target"] == {"kind": "team", "code": "USA"} for s in usa)
+    turkey = client.get("/api/search/?q=turkey").json()["suggestions"]
+    assert any(s["target"] == {"kind": "team", "code": "TUR"} for s in turkey)
+
+
+@pytest.mark.django_db
 def test_suggestion_shape(seeded, client):
     s = client.get("/api/search/?q=haven").json()["suggestions"][0]
     assert set(s) == {"type", "label", "sublabel", "target"}

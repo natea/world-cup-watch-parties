@@ -41,6 +41,24 @@ The system SHALL match the query against venue name/city, team name and FIFA cod
 - **WHEN** the query matches a keyword that appears only in a venue's notes/description
 - **THEN** that venue is returned as a suggestion, ranked below name and code matches
 
+### Requirement: Common-name aliases for teams
+
+The system SHALL resolve common everyday team names to teams whose official FIFA name differs, so that a query using the familiar name returns the team even when it shares no characters with the official name.
+
+#### Scenario: Official short name found by common name
+
+- **WHEN** the query is a common name for a team whose FIFA name is an official short form (e.g. "united states" for "USA", "turkey" for "Türkiye", "ivory coast" for "Côte d'Ivoire")
+- **THEN** a team suggestion for that team is returned
+
+### Requirement: Typo-tolerant fuzzy fallback
+
+The system SHALL apply a fuzzy similarity fallback for queries at or above a minimum length, returning close-but-inexact matches on venue names, team names/aliases, and supporter-hub names, ranked below all exact and substring matches.
+
+#### Scenario: Misspelled query still matches
+
+- **WHEN** the query is a near-miss of a venue or team name (e.g. "banshe" for "The Banshee", "croatica" for "Croatia")
+- **THEN** the intended result is returned, ordered after exact and substring matches
+
 ### Requirement: Ranked, most-likely-first ordering
 
 The system SHALL rank suggestions so that prefix and whole-word matches on names and codes appear before substring matches in descriptions.

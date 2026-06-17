@@ -7,15 +7,25 @@ has no backend-specific collation surprises — and (b) is trivially fast at the
 current scale (~150 venues, 48 teams). A PostgreSQL trigram / full-text index
 is the documented upgrade path if the dataset grows; it is not needed here.
 
+Two matching aids on top of plain substring matching:
+  * Aliases — FIFA uses official short names ("USA", "Türkiye", "Côte d'Ivoire",
+    "Korea Republic"). A small synonym map lets the common names people type
+    ("united states", "turkey", "ivory coast", "south korea") resolve. Fuzzy
+    matching can't bridge these — "united states" and "USA" share no characters.
+  * Fuzzy fallback — a difflib similarity pass (no extra dependency) tolerates
+    typos ("croatica" → Croatia, "banshe" → Banshee), ranked below exact matches.
+
 Ranking tiers (lower = better, surfaced first):
-  0  name / FIFA-code prefix
-  1  whole-word (or word-prefix) name match, city, FIFA-code substring, or a
-     supporter-hub match (club / affiliated team / affiliation note)
+  0  name / FIFA-code / alias prefix
+  1  whole-word (or word-prefix) name match, city, FIFA-code substring,
+     alias substring, or a supporter-hub match (club / affiliated team)
   2  name substring (not a prefix or word match)
   3  description-only match (venue notes)
+  4  fuzzy (typo-tolerant) match
 """
 from __future__ import annotations
 
+import difflib
 import re
 
 from .models import Team, Venue, VenueType
@@ -23,6 +33,26 @@ from .models import Team, Venue, VenueType
 MIN_QUERY_LEN = 2
 DEFAULT_LIMIT = 10
 MAX_LIMIT = 25
+
+# Fuzzy matching kicks in only as a fallback, for queries long enough that a
+# similarity score is meaningful.
+FUZZY_TIER = 4
+FUZZY_THRESHOLD = 0.8
+FUZZY_MIN_LEN = 4
+
+# Common names people type -> FIFA code, for teams whose official FIFA name
+# differs from the everyday name. Keyed by fifa_code; values are lowercase.
+TEAM_ALIASES = {
+    "USA": ["united states", "america", "usmnt", "stars and stripes"],
+    "KOR": ["south korea", "korea"],
+    "TUR": ["turkey", "turkiye"],
+    "CIV": ["ivory coast", "cote d'ivoire", "cote divoire"],
+    "CPV": ["cape verde"],
+    "COD": ["dr congo", "democratic republic of congo", "congo"],
+    "NED": ["holland"],
+    "IRN": ["iran"],
+    "KSA": ["saudi arabia", "saudi"],
+}
 
 _VENUE_TYPE_LABELS = dict(VenueType.choices)
 
@@ -44,6 +74,32 @@ def _name_tier(text: str, ql: str) -> int | None:
     return None
 
 
+def _alias_tier(aliases: list[str], ql: str) -> int | None:
+    best: int | None = None
+    for a in aliases:
+        if a == ql or a.startswith(ql):
+            return 0
+        if ql in a:
+            best = 1
+    return best
+
+
+def _fuzzy_match(ql: str, targets: list[str]) -> bool:
+    """True if the query is similar enough to any target (or one of its words)."""
+    if len(ql) < FUZZY_MIN_LEN:
+        return False
+    for t in targets:
+        if not t:
+            continue
+        tl = t.lower()
+        if difflib.SequenceMatcher(None, ql, tl).ratio() >= FUZZY_THRESHOLD:
+            return True
+        for w in _words(tl):
+            if len(w) >= 3 and difflib.SequenceMatcher(None, ql, w).ratio() >= FUZZY_THRESHOLD:
+                return True
+    return False
+
+
 def _score_venue(v: Venue, ql: str) -> int | None:
     best: int | None = None
 
@@ -59,13 +115,22 @@ def _score_venue(v: Venue, ql: str) -> int | None:
     # intentful match. (Affiliation free-text notes are intentionally NOT matched
     # here: substrings like "England crowd" would spuriously hit "cro". Named
     # supporters groups like "Tartan Army" are caught via the venue's own notes.)
+    hub_names: list[str] = []
     for a in v.affiliations.all():
-        if a.club and ql in a.club.lower():
-            consider(1)
-        if a.team and (ql in a.team.name.lower() or ql == a.team.fifa_code.lower()):
-            consider(1)
+        if a.club:
+            hub_names.append(a.club)
+            if ql in a.club.lower():
+                consider(1)
+        if a.team:
+            hub_names.append(a.team.name)
+            if ql in a.team.name.lower() or ql == a.team.fifa_code.lower():
+                consider(1)
     if v.notes and ql in v.notes.lower():
         consider(3)
+    # Fuzzy fallback over the venue name and its supporter-hub names (so a typo'd
+    # club like "liverpol" still surfaces the Liverpool bars).
+    if best is None and _fuzzy_match(ql, [v.name, *hub_names]):
+        consider(FUZZY_TIER)
     return best
 
 
@@ -83,6 +148,10 @@ def _score_team(t: Team, ql: str) -> int | None:
     elif ql in code:
         consider(1)
     consider(_name_tier(t.name, ql))
+    aliases = TEAM_ALIASES.get(t.fifa_code, [])
+    consider(_alias_tier(aliases, ql))
+    if best is None and _fuzzy_match(ql, [t.name, *aliases]):
+        consider(FUZZY_TIER)
     return best
 
 
