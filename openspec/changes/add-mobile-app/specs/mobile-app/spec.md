@@ -78,3 +78,31 @@ The system SHALL present native chrome appropriate to mobile devices: content cl
 
 - **WHEN** the user is in light or dark mode
 - **THEN** the status bar styling matches it
+
+#### Scenario: Safe areas are inset exactly once
+
+- **WHEN** the app applies device safe-area insets
+- **THEN** content is inset once (no doubled gap at the top, no controls pushed off the bottom)
+
+### Requirement: iOS bottom tab navigation
+
+In the native iOS app only, the system SHALL present the primary navigation (schedule / map / by-team) as a bottom tab bar for thumb reach, with icons, leaving the website's top tabs unchanged.
+
+#### Scenario: iOS shows a bottom tab bar
+
+- **WHEN** the app runs on native iOS
+- **THEN** the schedule/map/by-team tabs appear as an icon-labelled bottom bar, while the website continues to show top tabs
+
+#### Scenario: Bottom bar stays above the map
+
+- **WHEN** the map view is shown in the iOS app
+- **THEN** the bottom tab bar renders above the map content rather than being obscured by it
+
+### Requirement: Focusing a field does not zoom the viewport
+
+The system SHALL size tappable form controls so that focusing them does not trigger the mobile webview's automatic focus-zoom.
+
+#### Scenario: Tapping search does not zoom
+
+- **WHEN** the user taps the search box (or a filter input/select) on a phone
+- **THEN** the viewport does not zoom and the layout is not pushed off-screen
