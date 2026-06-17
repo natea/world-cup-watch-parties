@@ -17,6 +17,16 @@ const icon = L.icon({
   popupAnchor: [1, -34],
 });
 
+// The user's searched location — a distinct red dot, clearly different from the
+// blue venue pins, so distances are easy to read off the map.
+const anchorIcon = L.divIcon({
+  className: "anchor-marker",
+  html: '<span class="anchor-dot"></span>',
+  iconSize: [20, 20],
+  iconAnchor: [10, 10],
+  popupAnchor: [0, -10],
+});
+
 // Default map center + anchor (downtown Boston / City Hall Plaza) when the user
 // hasn't set a location.
 const CENTER: [number, number] = [42.34, -71.08];
@@ -76,6 +86,18 @@ export function MapView({
               attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
               url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
             />
+            {anchor && (
+              <Marker
+                position={[anchor.lat, anchor.lng]}
+                icon={anchorIcon}
+                zIndexOffset={1000}
+              >
+                <Popup>
+                  📍 {anchor.label || "Your location"}
+                  {!exact && <div className="popmeta">approximate (ZIP centroid)</div>}
+                </Popup>
+              </Marker>
+            )}
             {venues.map((mv) => (
               <Marker
                 key={mv.venue.slug}

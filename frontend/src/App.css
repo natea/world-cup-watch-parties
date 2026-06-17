@@ -540,6 +540,18 @@ button.pop-venue-link {
   color: var(--warn);
 }
 
+/* "You are here" anchor marker — a red dot with a soft pulse, distinct from
+   the blue venue pins. */
+.anchor-dot {
+  display: block;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: #ff3b30;
+  border: 2px solid #fff;
+  box-shadow: 0 0 0 4px rgba(255, 59, 48, 0.3);
+}
+
 .mapwrap .leaflet {
   height: 520px;
   border-radius: 10px;
