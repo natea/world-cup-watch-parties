@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="2732" height="2732" viewBox="0 0 2732 2732">
+  <defs>
+    <linearGradient id="pitch" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#1fa85a"/>
+      <stop offset="1" stop-color="#0b6e3b"/>
+    </linearGradient>
+  </defs>
+  <rect width="2732" height="2732" fill="url(#pitch)"/>
+  <g transform="translate(1366,1230) scale(1.05)">
+    <!-- ball, centered (icon coords are 1024-based, centered at 0 here) -->
+    <g transform="translate(-512,-512)">
+      <circle cx="512" cy="512" r="330" fill="#ffffff" stroke="#0d0d0d" stroke-width="10"/>
+      <g stroke="#0d0d0d" stroke-width="18" stroke-linecap="round">
+        <line x1="512" y1="392" x2="512" y2="194"/>
+        <line x1="626.1" y1="474.9" x2="814.4" y2="413.7"/>
+        <line x1="582.5" y1="609.1" x2="699" y2="769.3"/>
+        <line x1="441.5" y1="609.1" x2="325" y2="769.3"/>
+        <line x1="397.9" y1="474.9" x2="209.6" y2="413.7"/>
+      </g>
+      <polygon points="512,392 626.1,474.9 582.5,609.1 441.5,609.1 397.9,474.9" fill="#0d0d0d"/>
+    </g>
+  </g>
+  <text x="1366" y="2010" text-anchor="middle" font-family="-apple-system, Helvetica, Arial, sans-serif"
+        font-size="170" font-weight="700" fill="#ffffff">WorldCup Watcher</text>
+</svg>

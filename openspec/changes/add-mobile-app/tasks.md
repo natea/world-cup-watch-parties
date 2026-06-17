@@ -19,7 +19,7 @@
 
 - [x] 4.1 `viewport-fit=cover` + `env(safe-area-inset-*)` padding on `.app` (verified inset in the simulator)
 - [x] 4.2 Status bar themed to light/dark (`@capacitor/status-bar`); splash background configured (`@capacitor/splash-screen`)
-- [ ] 4.3 Generate app icons + splash artwork (needs a 1024px source image) — pending before store submission
+- [x] 4.3 Generated app icons + splash (soccer-ball-on-pitch) via @capacitor/assets from source SVGs (frontend/assets/); verified the icon on the simulator home screen
 
 ## 5. Build, test, docs
 
