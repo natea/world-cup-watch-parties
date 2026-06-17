@@ -41,7 +41,7 @@ header h1 {
 .header-row {
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: flex-start;
   gap: 12px;
   flex-wrap: wrap;
   margin-bottom: 12px;
@@ -52,11 +52,10 @@ header h1 {
   gap: 8px;
 }
 
-/* Search box */
+/* Search box — sits next to the tabs, growing only on wider screens. */
 .searchbox {
   position: relative;
-  flex: 1;
-  max-width: 320px;
+  flex: 0 1 280px;
   min-width: 200px;
 }
 
@@ -418,6 +417,19 @@ button.pop-venue-link {
   color: var(--muted);
 }
 
+/* Venue-detail screenings grouped by day (date shown once per group). */
+.vd-day {
+  margin-bottom: 14px;
+}
+
+.vd-day-head {
+  font-size: 0.95rem;
+  color: var(--muted);
+  border-bottom: 1px solid var(--line);
+  padding-bottom: 5px;
+  margin: 16px 0 10px;
+}
+
 .vd-provenance {
   margin-top: 18px;
   font-size: 0.74rem;
@@ -650,6 +662,19 @@ footer {
   border-top: 1px solid var(--line);
   color: var(--muted);
   font-size: 0.78rem;
+}
+
+footer p {
+  margin: 4px 0;
+}
+
+.footer-credit a {
+  color: var(--accent);
+  text-decoration: none;
+}
+
+.footer-credit a:hover {
+  text-decoration: underline;
 }
 
 @media (max-width: 720px) {
