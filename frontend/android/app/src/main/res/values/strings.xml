@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">WorldCup Watcher</string>
+    <string name="title_activity_main">WorldCup Watcher</string>
+    <string name="package_name">app.stagehopper.worldcup</string>
+    <string name="custom_url_scheme">app.stagehopper.worldcup</string>
+</resources>

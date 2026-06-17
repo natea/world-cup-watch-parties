@@ -153,6 +153,43 @@ The API base URL is configured in `frontend/.env` (`VITE_API_BASE`,
 defaults to `http://localhost:8000/api`). Run the backend on `:8000` and the
 frontend on `:5173`; CORS is preconfigured for that origin.
 
+## Mobile app (Capacitor)
+
+The same Vite build is wrapped as native **iOS and Android** apps with
+[Capacitor](https://capacitorjs.com/) — no separate codebase. The native app
+loads the bundled web build and talks to the **production API** over HTTPS
+(`frontend/.env.production` → `VITE_API_BASE`); the Capacitor webview origins
+(`capacitor://localhost`, `http(s)://localhost`) are allowed in Django CORS.
+
+Native capabilities are used behind a platform check (`frontend/src/native.ts`),
+with web fallbacks so the web app is unchanged: **geolocation** (`@capacitor/
+geolocation`), **share** (`@capacitor/share`), **external links** in the system
+browser (`@capacitor/browser`), and themed **status bar** / **splash**.
+
+```bash
+cd frontend
+bun run build            # produce dist/ (uses .env.production → prod API)
+bunx cap sync            # copy the web build + plugins into ios/ and android/
+
+# iOS (Xcode 26 + Swift Package Manager; no CocoaPods needed in Capacitor 8):
+bunx cap open ios        # build/run from Xcode, or:
+xcodebuild -project ios/App/App.xcodeproj -scheme App -sdk iphonesimulator \
+  -destination 'platform=iOS Simulator,name=iPhone 17 Pro' build
+
+# Android (requires the Android SDK / ANDROID_HOME):
+bunx cap open android
+```
+
+`appId` is `app.stagehopper.worldcup`. **Still TODO before store submission:**
+app icons + splash artwork (need a 1024px source), a device build with signing,
+and the Android SDK for emulator/device builds. **Push notifications** and
+**social** ("who's going") are deferred to their own changes.
+
+Xcode MCP tooling: this repo ships a `.mcp.json` registering Apple's
+`xcrun mcpbridge` (Xcode 26's built-in MCP server) for native build/run/preview
+workflows. The Apple-platform `axiom-*` skills can be dropped into
+`.claude/skills/` locally (that dir is gitignored).
+
 ## Configuration
 
 Environment variables (optional; sensible dev defaults):

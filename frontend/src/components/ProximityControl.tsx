@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { api } from "../api";
+import { getCurrentPosition } from "../native";
 import type { Anchor } from "../types";
 
 // Map-screen-only control: resolve a ZIP / address / device location into the
@@ -41,29 +42,18 @@ export function ProximityControl({
     }
   }
 
-  function useMyLocation() {
-    if (!("geolocation" in navigator)) {
-      setMsg("Your browser can't share location — enter a ZIP or address.");
-      return;
-    }
+  async function useMyLocation() {
     setBusy(true);
     setMsg(null);
-    navigator.geolocation.getCurrentPosition(
-      (pos) => {
-        onResolve({
-          lat: pos.coords.latitude,
-          lng: pos.coords.longitude,
-          label: "Your location",
-          precision: "device",
-        });
-        setBusy(false);
-      },
-      () => {
-        setMsg("Location permission denied — enter a ZIP or address.");
-        setBusy(false);
-      },
-      { enableHighAccuracy: false, timeout: 8000 },
-    );
+    try {
+      // Native geolocation on device (proper permission flow); browser API on web.
+      const { lat, lng } = await getCurrentPosition();
+      onResolve({ lat, lng, label: "Your location", precision: "device" });
+    } catch {
+      setMsg("Couldn't get your location — enter a ZIP or address.");
+    } finally {
+      setBusy(false);
+    }
   }
 
   return (

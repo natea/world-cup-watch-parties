@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
+import { applyNativeStatusBar } from "./native";
 
 export type Theme = "light" | "dark";
 const KEY = "theme";
@@ -20,6 +21,7 @@ export function useTheme() {
   useEffect(() => {
     applyTheme(theme);
     localStorage.setItem(KEY, theme);
+    applyNativeStatusBar(theme);
   }, [theme]);
 
   const toggle = useCallback(() => setTheme((t) => (t === "dark" ? "light" : "dark")), []);

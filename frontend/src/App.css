@@ -46,9 +46,23 @@ body {
 .app {
   max-width: 1100px;
   margin: 0 auto;
-  padding: 16px;
+  /* Respect device safe areas (notch / home indicator) on native; falls back
+     to 16px on the web where the insets are 0. */
+  padding: calc(16px + env(safe-area-inset-top)) calc(16px + env(safe-area-inset-right))
+    calc(16px + env(safe-area-inset-bottom)) calc(16px + env(safe-area-inset-left));
   color: var(--text);
   font-family: system-ui, -apple-system, sans-serif;
+}
+
+.vd-share {
+  background: var(--panel);
+  color: var(--text);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 5px 10px;
+  font-size: 0.82rem;
+  cursor: pointer;
+  margin-left: auto;
 }
 
 header h1 {
