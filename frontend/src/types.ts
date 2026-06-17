@@ -92,6 +92,18 @@ export interface Meta {
   team_modes: string[];
 }
 
+// A typeahead search suggestion. `target` says how selecting it navigates.
+export type SuggestionTarget =
+  | { kind: "venue"; slug: string }
+  | { kind: "team"; code: string };
+
+export interface Suggestion {
+  type: "venue" | "team";
+  label: string;
+  sublabel: string;
+  target: SuggestionTarget;
+}
+
 // The shared, composable filter set — one object honored by all three views.
 export interface Filters {
   team?: string;
