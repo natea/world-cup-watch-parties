@@ -17,6 +17,12 @@ const TABS = [
 
 export default function App() {
   const { filters, setFilter, clear, view, setView, venue, openVenue, closeVenue } = useFilters();
+
+  // Switching tabs should leave any open venue detail and show the tab's view.
+  const selectTab = (id: string) => {
+    closeVenue();
+    setView(id);
+  };
   const [meta, setMeta] = useState<Meta | null>(null);
   const [teams, setTeams] = useState<Team[]>([]);
 
@@ -37,7 +43,7 @@ export default function App() {
             <button
               key={t.id}
               className={view === t.id ? "tab active" : "tab"}
-              onClick={() => setView(t.id)}
+              onClick={() => selectTab(t.id)}
             >
               {t.label}
             </button>
