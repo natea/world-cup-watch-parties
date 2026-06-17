@@ -141,9 +141,10 @@ app icons + splash artwork (need a 1024px source), a device build with signing,
 and the Android SDK for emulator/device builds. **Push notifications** and
 **social** ("who's going") are deferred to their own changes.
 
-Xcode MCP tooling: this repo includes a `.mcp.json` registering Apple's
-`xcrun mcpbridge` (Xcode 26's built-in MCP server) and the Apple-platform
-`axiom-*` skills under `.claude/skills/` for native build/run/preview workflows.
+Xcode MCP tooling: this repo ships a `.mcp.json` registering Apple's
+`xcrun mcpbridge` (Xcode 26's built-in MCP server) for native build/run/preview
+workflows. The Apple-platform `axiom-*` skills can be dropped into
+`.claude/skills/` locally (that dir is gitignored).
 
 ## Configuration
 
