@@ -1,5 +1,6 @@
 from django.contrib import admin
 from django.utils.html import format_html
+from django.utils.safestring import mark_safe
 
 from . import places
 from .models import (
@@ -68,11 +69,12 @@ class VenueAdmin(admin.ModelAdmin):
         """Data-quality flag, shown so the colors match intuition: amber = needs
         attention, muted = fine. (The raw boolean icon is green-for-True, which
         reads backwards.)"""
+        # mark_safe (not format_html) because these are static strings with no
+        # interpolation — Django 6's format_html requires args/kwargs and raises
+        # TypeError otherwise, which 500'd the venue changelist.
         if obj.needs_review:
-            return format_html(
-                '<span style="color:#b45309;font-weight:600">⚠ needs review</span>'
-            )
-        return format_html('<span style="color:#9ca3af">— ok</span>')
+            return mark_safe('<span style="color:#b45309;font-weight:600">⚠ needs review</span>')
+        return mark_safe('<span style="color:#9ca3af">— ok</span>')
     search_fields = ("name", "city", "slug")
     prepopulated_fields = {"slug": ("name",)}
     readonly_fields = ("candidate_photo_preview",)
