@@ -1,4 +1,14 @@
-import type { Filters, MapVenue, Meta, ScheduleDay, Screening, Team, Venue } from "./types";
+import type {
+  Anchor,
+  Filters,
+  MapVenue,
+  Meta,
+  ScheduleDay,
+  Screening,
+  Suggestion,
+  Team,
+  Venue,
+} from "./types";
 
 const BASE = import.meta.env.VITE_API_BASE ?? "http://localhost:8000/api";
 
@@ -53,6 +63,25 @@ export const api = {
 
   venue: (slug: string) =>
     getJSON<{ venue: Venue; screenings: Screening[] }>(`/venues/${encodeURIComponent(slug)}/`),
+
+  // Typeahead. Accepts an AbortSignal so the caller can cancel stale requests.
+  search: async (q: string, signal?: AbortSignal): Promise<Suggestion[]> => {
+    const res = await fetch(`${BASE}/search/?q=${encodeURIComponent(q)}`, { signal });
+    if (!res.ok) throw new Error(`/search/ -> ${res.status}`);
+    const data = (await res.json()) as { suggestions: Suggestion[] };
+    return data.suggestions;
+  },
+
+  // Resolve a ZIP or address to a map anchor. Returns null when unresolvable.
+  geocode: async (q: { zip?: string; address?: string }): Promise<Anchor | null> => {
+    const p = new URLSearchParams();
+    if (q.address) p.set("address", q.address);
+    else if (q.zip) p.set("zip", q.zip);
+    const res = await fetch(`${BASE}/geocode/?${p.toString()}`);
+    if (!res.ok) throw new Error(`/geocode/ -> ${res.status}`);
+    const data = (await res.json()) as { result: Anchor | null };
+    return data.result;
+  },
 
   teams: () => getJSON<{ teams: Team[] }>("/teams/"),
 

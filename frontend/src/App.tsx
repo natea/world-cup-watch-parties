@@ -7,6 +7,8 @@ import { ScheduleView } from "./components/ScheduleView";
 import { MapView } from "./components/MapView";
 import { TeamView } from "./components/TeamView";
 import { VenueDetail } from "./components/VenueDetail";
+import { SearchBox } from "./components/SearchBox";
+import type { Suggestion } from "./types";
 import "./App.css";
 
 const TABS = [
@@ -16,12 +18,24 @@ const TABS = [
 ];
 
 export default function App() {
-  const { filters, setFilter, clear, view, setView, venue, openVenue, closeVenue } = useFilters();
+  const { filters, setFilter, clear, view, setView, venue, openVenue, closeVenue, anchor, setLocation } =
+    useFilters();
 
   // Switching tabs should leave any open venue detail and show the tab's view.
   const selectTab = (id: string) => {
     closeVenue();
     setView(id);
+  };
+
+  // Route a chosen search suggestion into the existing view/filter state.
+  const onSearchSelect = (s: Suggestion) => {
+    if (s.target.kind === "venue") {
+      openVenue(s.target.slug);
+    } else {
+      closeVenue();
+      setFilter("team", s.target.code);
+      setView("team");
+    }
   };
   const [meta, setMeta] = useState<Meta | null>(null);
   const [teams, setTeams] = useState<Team[]>([]);
@@ -40,17 +54,20 @@ export default function App() {
         <h1>
           ⚽ WorldCup Watcher <span className="brand-sub">· Massachusetts 2026</span>
         </h1>
-        <nav className="tabs">
-          {TABS.map((t) => (
-            <button
-              key={t.id}
-              className={view === t.id ? "tab active" : "tab"}
-              onClick={() => selectTab(t.id)}
-            >
-              {t.label}
-            </button>
-          ))}
-        </nav>
+        <div className="header-row">
+          <nav className="tabs">
+            {TABS.map((t) => (
+              <button
+                key={t.id}
+                className={view === t.id ? "tab active" : "tab"}
+                onClick={() => selectTab(t.id)}
+              >
+                {t.label}
+              </button>
+            ))}
+          </nav>
+          <SearchBox onSelect={onSearchSelect} />
+        </div>
       </header>
 
       {!venue && (
@@ -63,7 +80,14 @@ export default function App() {
         ) : (
           <>
             {view === "schedule" && <ScheduleView filters={filters} onOpenVenue={openVenue} />}
-            {view === "map" && <MapView filters={filters} onOpenVenue={openVenue} />}
+            {view === "map" && (
+              <MapView
+                filters={filters}
+                onOpenVenue={openVenue}
+                anchor={anchor}
+                setLocation={setLocation}
+              />
+            )}
             {view === "team" && (
               <TeamView
                 filters={filters}

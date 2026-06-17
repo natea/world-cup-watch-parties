@@ -18,6 +18,8 @@ from rest_framework.views import APIView
 
 from . import places
 from .filters import apply_screening_filters, base_screening_queryset
+from .geocoding import resolve as resolve_location
+from .search import DEFAULT_LIMIT, build_suggestions
 from .serializers import fallback_image_url
 from .models import (
     CostType,
@@ -164,6 +166,37 @@ class VenuePhotoView(APIView):
         # the redirect, not the bytes — compliant with Places terms.
         resp["Cache-Control"] = f"public, max-age={settings.VENUE_PHOTO_CACHE_SECONDS}"
         return resp
+
+
+class SearchView(APIView):
+    """Typeahead search across venues and teams: GET /api/search/?q=<query>.
+
+    Returns ranked, typed suggestions; each carries a `target` telling the
+    client how to navigate (open a venue's detail, or focus a team)."""
+
+    def get(self, request):
+        q = request.query_params.get("q", "")
+        try:
+            limit = int(request.query_params.get("limit", DEFAULT_LIMIT))
+        except (TypeError, ValueError):
+            limit = DEFAULT_LIMIT
+        return Response({"suggestions": build_suggestions(q, limit=limit)})
+
+
+class GeocodeView(APIView):
+    """Resolve a ZIP or address to coordinates for the map's distance anchor:
+    GET /api/geocode/?zip=02139  or  ?address=<street address>.
+
+    Returns {lat, lng, label, precision} on success, or {result: null} when the
+    location can't be resolved (so the client falls back to a ZIP or no anchor).
+    The user's coordinates are used only to answer this request — never stored."""
+
+    def get(self, request):
+        result = resolve_location(
+            zip_code=request.query_params.get("zip"),
+            address=request.query_params.get("address"),
+        )
+        return Response({"result": result})
 
 
 class TeamListView(APIView):

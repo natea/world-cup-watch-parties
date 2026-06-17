@@ -78,8 +78,17 @@ Endpoints (all honor the same query-param filter set):
 | `GET /api/schedule/` | Schedule  | day-grouped, kickoff-ordered                |
 | `GET /api/map/`      | Map       | `lat`,`lng` → distance sort                 |
 | `GET /api/screenings/` | By team | `team=FRA`, `team_mode=playing\|hub`        |
+| `GET /api/search/`   | Typeahead | `q=<query>`, `limit` — ranked venue/team suggestions |
 | `GET /api/teams/`    | —         | team list for the UI                        |
 | `GET /api/meta/`     | —         | filter vocabularies for the UI              |
+
+The header **search box** autocompletes across venue names, team/country names
+and FIFA codes (e.g. `CRO`), supporter-hub clubs/teams (e.g. `Liverpool`), and
+keywords in venue descriptions (e.g. `Tartan`). Selecting a venue opens its
+detail page; selecting a team focuses the by-team view. Matching/ranking run in
+Python over the small venue/team sets, so results are identical on SQLite and
+PostgreSQL; a PostgreSQL trigram / full-text index is the documented upgrade
+path if the dataset grows.
 
 Shared filter params: `cost=free\|paid`, `environment=indoor\|outdoor`,
 `venue_type` (csv), `region`, `exclude_bars=true`, `family_friendly=true`,
