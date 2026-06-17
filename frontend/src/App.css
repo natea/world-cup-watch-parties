@@ -669,6 +669,9 @@ button.pop-venue-link {
   height: 520px;
   border-radius: 10px;
   border: 1px solid var(--line);
+  /* Contain Leaflet's internal z-index soup (panes/controls go up to 1000) so
+     it can't escape to the root and paint over the fixed bottom tab bar. */
+  isolation: isolate;
 }
 
 .maphint {
