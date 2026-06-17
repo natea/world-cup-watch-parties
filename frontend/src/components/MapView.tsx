@@ -104,7 +104,7 @@ export function MapView({
                 position={[Number(mv.venue.latitude), Number(mv.venue.longitude)]}
                 icon={icon}
               >
-                <Popup>
+                <Popup maxWidth={340} minWidth={260}>
                   <button
                     type="button"
                     className="pop-venue-link"

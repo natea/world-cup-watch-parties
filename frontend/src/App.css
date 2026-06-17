@@ -277,13 +277,15 @@ header h1 {
 
 .screening-head {
   display: flex;
-  gap: 10px;
+  gap: 4px 10px;
   align-items: baseline;
+  flex-wrap: wrap;
 }
 
 .kickoff {
   font-weight: 700;
   color: var(--accent);
+  white-space: nowrap;
 }
 
 .match-label {
