@@ -61,10 +61,11 @@ services:
       # to the API service, so this is its real public URL.
       - key: VITE_API_BASE
         value: https://worldcup-api-y9t7.onrender.com/api
-      # Umami (cloud) visitor analytics. Enter your website ID in the Render
-      # dashboard; the build inlines it. Left unset → no analytics loaded.
+      # Umami (cloud) visitor analytics. The website ID is a public client-side
+      # identifier (it ships in the page), so it's fine to commit. Inlined into
+      # the bundle at build time; left unset → no analytics loaded.
       - key: VITE_UMAMI_WEBSITE_ID
-        sync: false
+        value: 617c3de3-2795-4dbf-8ac4-c03389244601
     routes:
       # SPA fallback so client-side routes resolve to index.html.
       - type: rewrite
