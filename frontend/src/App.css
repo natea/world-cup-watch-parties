@@ -158,12 +158,26 @@ header h1 {
 }
 
 .tab {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
   background: var(--panel);
   color: var(--text);
   border: 1px solid var(--line);
   border-radius: 8px;
   padding: 8px 16px;
   cursor: pointer;
+}
+
+.tab-icon {
+  display: inline-flex;
+  /* The active accent fill is blue; nudge inactive icons toward the accent for
+     a stronger visual cue without losing the themed text color. */
+}
+
+.tab:not(.active) .tab-icon {
+  color: var(--accent);
 }
 
 .theme-toggle {
