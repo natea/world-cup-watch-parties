@@ -240,11 +240,18 @@ class Venue(models.Model):
     )
     image_source = models.CharField(
         max_length=32, blank=True,
-        help_text='How the image is sourced, e.g. "google_places". Blank = fallback.',
+        help_text='How the image is sourced: "google_places", "wikimedia", or blank = fallback.',
+    )
+    image_url = models.URLField(
+        max_length=500, blank=True,
+        help_text=(
+            "Stable external image URL for the Wikimedia tier. Google photos stay "
+            "proxy-resolved and do NOT use this field."
+        ),
     )
     image_attribution = models.CharField(
         max_length=255, blank=True,
-        help_text="Required attribution text captured from Places photo metadata.",
+        help_text="Required attribution text captured from the image source metadata.",
     )
 
     # provenance / data-quality

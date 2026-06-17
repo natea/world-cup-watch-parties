@@ -86,16 +86,21 @@ class VenueSerializer(serializers.ModelSerializer):
         ]
 
     def get_image(self, obj: Venue) -> dict:
-        """Uniform image object: a licensed place photo (served via the
-        attributed proxy) when the venue has a *confirmed* place match, else the
-        honest category fallback.
+        """Uniform image object, resolved over a three-tier chain:
 
-        Confirmation is `image_source == "google_places"`, which the backfill
-        sets only for high-confidence matches. Ambiguous matches keep a
-        candidate `place_id` (for a reviewer) but leave `image_source` blank, so
-        they fall back here rather than show an unverified photo of the wrong
-        place. The proxy still decides at request time whether a real photo is
-        resolvable and otherwise redirects to this same fallback.
+          1. **Confirmed Google photo** (`image_source == "google_places"` with
+             a `place_id`) — served via the attributed proxy. The backfill sets
+             this only for high-confidence matches; ambiguous matches keep a
+             candidate `place_id` but leave `image_source` blank so they fall
+             through rather than show an unverified photo of the wrong place.
+          2. **Wikimedia Commons photo** (`image_source == "wikimedia"` with an
+             `image_url`) — a CC-licensed image of a public place, with its
+             required attribution.
+          3. **Honest SVG category illustration** keyed by `venue_type` — never
+             implies it's a photo of the specific venue.
+
+        (Unsplash/stock imagery was considered and rejected: it would
+        misrepresent the specific venue.)
         """
         if obj.place_id and obj.image_source == "google_places":
             request = self.context.get("request")
@@ -104,6 +109,12 @@ class VenueSerializer(serializers.ModelSerializer):
                 "url": url,
                 "attribution": obj.image_attribution or None,
                 "source": "google_places",
+            }
+        if obj.image_source == "wikimedia" and obj.image_url:
+            return {
+                "url": obj.image_url,
+                "attribution": obj.image_attribution or None,
+                "source": "wikimedia",
             }
         return {
             "url": fallback_image_url(obj.venue_type),

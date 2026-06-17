@@ -47,8 +47,36 @@ class Command(BaseCommand):
             action="store_true",
             help="Report what would change without writing.",
         )
+        parser.add_argument(
+            "--confirm",
+            nargs="+",
+            metavar="SLUG",
+            help=(
+                "Promote flagged candidate(s) by slug: set "
+                'image_source="google_places", resolve+store attribution, '
+                "clear needs_review."
+            ),
+        )
+        parser.add_argument(
+            "--reject",
+            nargs="+",
+            metavar="SLUG",
+            help=(
+                "Reject flagged candidate(s) by slug: clear the candidate "
+                "place_id and needs_review so the venue drops to the next tier."
+            ),
+        )
 
     def handle(self, *args, **options):
+        # Review actions operate on existing candidates and run independently of
+        # the resolve pass (and, for --confirm, no-op cleanly without a key).
+        if options.get("confirm"):
+            self._confirm(options["confirm"], options["dry_run"])
+            return
+        if options.get("reject"):
+            self._reject(options["reject"], options["dry_run"])
+            return
+
         if not places.is_enabled():
             self.stdout.write(
                 "GOOGLE_PLACES_API_KEY not configured — nothing to resolve "
@@ -113,6 +141,61 @@ class Command(BaseCommand):
                 f"{verb} {resolved}, flagged {flagged} for review, skipped {skipped}."
             )
         )
+
+    # --- review actions ----------------------------------------------------
+    def _confirm(self, slugs, dry_run):
+        """Promote a reviewed candidate to a confirmed Google photo source."""
+        confirmed = 0
+        for venue in Venue.objects.filter(slug__in=slugs).order_by("name"):
+            if not venue.place_id:
+                self.stdout.write(f"  ! {venue.slug}: no candidate place_id to confirm")
+                continue
+            self.stdout.write(f"  ✓ confirm {venue.slug} → {venue.place_id}")
+            confirmed += 1
+            if dry_run:
+                continue
+            # Resolve the photo once to capture attribution (no-ops to "" when
+            # the key is unset; the proxy re-resolves the URL at request time).
+            photo = places.photo_for_place(venue.place_id) if places.is_enabled() else None
+            venue.image_source = "google_places"
+            venue.image_attribution = photo.attribution if photo else ""
+            venue.needs_review = False
+            venue.save(
+                update_fields=["image_source", "image_attribution", "needs_review"]
+            )
+        self._report_missing(slugs)
+        verb = "Would confirm" if dry_run else "Confirmed"
+        self.stdout.write(self.style.SUCCESS(f"{verb} {confirmed}."))
+
+    def _reject(self, slugs, dry_run):
+        """Reject a candidate: clear place_id + needs_review → next tier."""
+        rejected = 0
+        for venue in Venue.objects.filter(slug__in=slugs).order_by("name"):
+            self.stdout.write(f"  ✗ reject {venue.slug}")
+            rejected += 1
+            if dry_run:
+                continue
+            venue.place_id = ""
+            venue.image_source = ""
+            venue.image_attribution = ""
+            venue.needs_review = False
+            venue.save(
+                update_fields=[
+                    "place_id",
+                    "image_source",
+                    "image_attribution",
+                    "needs_review",
+                ]
+            )
+        self._report_missing(slugs)
+        verb = "Would reject" if dry_run else "Rejected"
+        self.stdout.write(self.style.SUCCESS(f"{verb} {rejected}."))
+
+    def _report_missing(self, slugs):
+        found = set(Venue.objects.filter(slug__in=slugs).values_list("slug", flat=True))
+        for slug in slugs:
+            if slug not in found:
+                self.stdout.write(f"  ? unknown venue slug: {slug}")
 
 
 def _venue_address(venue: Venue) -> str:

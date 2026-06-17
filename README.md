@@ -116,23 +116,35 @@ Environment variables (optional; sensible dev defaults):
 
 ### Venue images (rights-safe)
 
-Each venue exposes a single `image` object in the API — `{ url, attribution, source }`:
+Each venue exposes a single `image` object in the API — `{ url, attribution, source }` —
+resolved over a **three-tier chain**:
 
-- **Licensed photo.** When a venue has been resolved to a Google `place_id`, its
-  `image.url` points at the backend **photo proxy** (`GET /api/venues/<slug>/photo`).
-  The proxy keeps `GOOGLE_PLACES_API_KEY` server-side, resolves the current Google
-  Places photo, and **302-redirects** to it (`source: "google_places"`,
-  `attribution` set). We **never store photo bytes** — only the `place_id` (which
-  Google's terms permit long-term) and the attribution text. The proxy sets a
-  long `Cache-Control` (default 24h, `VENUE_PHOTO_CACHE_SECONDS`) on the redirect
-  to bound per-photo cost; it caches the *redirect*, not the bytes. The frontend
-  renders the **attribution caption** whenever it is present.
-- **Category fallback.** When a venue has no `place_id`, the key is unset, or the
-  Places lookup fails, `image` is a clean, rights-free **category illustration**
-  keyed by `venue_type` (`/venue-fallbacks/<type>.png`, `source: "fallback"`,
-  `attribution: null`). It is deliberately non-photographic so it never implies
-  it's a real photo of the venue. Regenerate the assets with
-  `python scripts/make_venue_fallbacks.py` (requires `rsvg-convert`).
+1. **Confirmed Google photo** (`source: "google_places"`). When a venue has been
+   resolved to a Google `place_id` *and confirmed*, its `image.url` points at the
+   backend **photo proxy** (`GET /api/venues/<slug>/photo`). The proxy keeps
+   `GOOGLE_PLACES_API_KEY` server-side, resolves the current Google Places photo,
+   and **302-redirects** to it (`attribution` set). We **never store photo bytes** —
+   only the `place_id` (which Google's terms permit long-term) and the attribution
+   text. The proxy sets a long `Cache-Control` (default 24h,
+   `VENUE_PHOTO_CACHE_SECONDS`) on the redirect to bound per-photo cost; it caches
+   the *redirect*, not the bytes.
+2. **Wikimedia Commons photo** (`source: "wikimedia"`). For public places not
+   confirmed on the Google tier, a **CC-licensed Commons image** is stored as a
+   stable `image_url` + attribution. Commons needs no API key, so this tier is
+   always-on, but it **fails closed** (any error / no free-licensed hit → next tier).
+   All Commons access is isolated in `events/wikimedia.py`.
+3. **Category fallback** (`source: "fallback"`, `attribution: null`). When neither
+   photo source yields an image (or the key is unset / a lookup fails), `image` is a
+   clean, rights-free **category illustration** keyed by `venue_type`
+   (`/venue-fallbacks/<type>.png`). It is deliberately non-photographic so it never
+   implies it's a real photo of the venue. Regenerate with
+   `python scripts/make_venue_fallbacks.py` (requires `rsvg-convert`).
+
+The frontend renders the **attribution caption** whenever it is present (both photo
+sources), and swaps to the category fallback on any image load error.
+
+> **Stock imagery (e.g. Unsplash) was considered and rejected** — a generic stock
+> photo misrepresents the *specific* venue, so the honest illustration is preferred.
 - **Lists/cards/map pins** use the fallback only — there is **no per-row photo
   proxy call**; the full photo loads on the **detail view** only.
 - **No key configured?** The feature degrades cleanly: every venue shows the
@@ -149,10 +161,40 @@ uv run python manage.py resolvevenueplaces --dry-run    # report only, write not
 
 `resolvevenueplaces` matches each venue by name + address/city via Google Places
 Text Search, stores a **confident** match's `place_id` + `image_source`, and
-flags **low-confidence/ambiguous** matches with `needs_review=True` (triage them
-in the admin) rather than trusting a guess. It is **idempotent** — already-resolved
-venues are skipped unless `--refresh` — and **no-ops without the API key**. All
-Google access is isolated in `events/places.py`.
+flags **low-confidence/ambiguous** matches with `needs_review=True` rather than
+trusting a guess. It is **idempotent** — already-resolved venues are skipped unless
+`--refresh` — and **no-ops without the API key**. All Google access is isolated in
+`events/places.py`.
+
+**Confirm/reject flagged candidates.** Ambiguous matches keep a candidate
+`place_id` but leave `image_source` blank, so they stay on the next tier until a
+reviewer decides. Either in the **admin** (multi-select the `needs_review` venues
+and run the "Confirm Google photo match" / "Reject match" actions) or via the CLI:
+
+```bash
+uv run python manage.py resolvevenueplaces --confirm <slug> [<slug> ...]  # promote
+uv run python manage.py resolvevenueplaces --reject  <slug> [<slug> ...]  # discard → next tier
+```
+
+`--confirm` sets `image_source="google_places"`, resolves+stores the attribution
+(no-ops cleanly without the key — attribution stays blank, the proxy re-resolves
+the URL), and clears `needs_review`. `--reject` clears the candidate `place_id` +
+`needs_review`, dropping the venue to the next tier.
+
+**Backfill — Wikimedia Commons (tier 2):**
+
+```bash
+uv run python manage.py resolvevenuewikimedia            # resolve eligible venues
+uv run python manage.py resolvevenuewikimedia --refresh   # re-resolve wikimedia ones
+uv run python manage.py resolvevenuewikimedia --dry-run    # report only, write nothing
+```
+
+For venues **not** confirmed on the Google tier, `resolvevenuewikimedia` queries
+Wikimedia Commons for a **free-licensed** photo and, on a confident hit, stores
+`image_url` + `image_attribution` + `image_source="wikimedia"`. It is **idempotent**
+(skips google/wikimedia venues unless `--refresh`, never overwrites a confirmed
+Google photo), **needs no API key**, and **fails closed** (no hit / any error →
+the venue stays on the category fallback).
 
 ### SQLite vs PostgreSQL — the family-friendly caveat
 

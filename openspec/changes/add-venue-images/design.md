@@ -20,11 +20,20 @@ We persist `place_id` (allowed long-term) and resolve the actual photo on demand
 ### Backfill via a management command
 `resolvevenueplaces` matches each venue by `name` + `address`/`city` using Places Text Search / Find Place, writes `place_id` and `image_source="google_places"`, and sets `needs_review=True` on low-confidence/ambiguous matches (reusing the existing review flag and admin filter). Idempotent: skips venues that already have a `place_id` unless `--refresh`.
 
+### Confirm/reject review of ambiguous matches
+The Google backfill never auto-publishes a low-confidence match. It stores the candidate `place_id` and sets `needs_review=True` with `image_source` blank, so the serializer keeps that venue on the next tier. A reviewer then either **confirms** (CLI `resolvevenueplaces --confirm <slug> …` or admin action "Confirm Google photo match": sets `image_source="google_places"`, resolves+stores `image_attribution` via `places.photo_for_place`, clears `needs_review`) or **rejects** (CLI `--reject` / admin "Reject match": clears the candidate `place_id` + `needs_review`, dropping the venue to the next tier). `--confirm` no-ops cleanly without the API key (attribution stays blank; the proxy re-resolves the URL at request time).
+
+### Tier 2 — Wikimedia Commons (CC-licensed photos)
+For public places that aren't confirmed on the Google tier, a real photo is often available on Wikimedia Commons under a free license. `events/wikimedia.py` mirrors the isolation of `events/places.py`: all HTTP lives behind a private `_get` seam (tests monkeypatch it), and it returns a `WikiImage{url, attribution}` or `None`. It queries the MediaWiki `action=query` API with `generator=search` over the File namespace for `"<name> <city>"`, pulling `imageinfo` (`url|extmetadata`) in one round trip, and **accepts a result only when its license metadata is a recognized free license** (CC / public-domain). Attribution is built as `"Photo: <author>, <license> via Wikimedia Commons"`. Commons needs no key so the client is always-on, but it **fails closed**: any error or no confident hit returns `None`. The `resolvevenuewikimedia` command backfills `image_url` + `image_attribution` + `image_source="wikimedia"` for eligible venues; it's idempotent (skips google/wikimedia venues unless `--refresh`, never overwrites a confirmed Google photo) and supports `--dry-run`. We store a stable file URL (not bytes); Google stays proxy-resolved and does not use `image_url`.
+
+### Rejected: Unsplash / stock imagery
+Unsplash (and stock photos generally) was considered for filling gaps and **rejected**: a generic stock bar/plaza photo misrepresents the *specific* venue a user is deciding whether to visit. The honest SVG category illustration is preferable precisely because it reads as generic and never pretends to be the real place.
+
 ### Honest fallback by `venue_type`
 When a venue has no `place_id` or the photo fetch fails, the serializer returns a fallback image keyed by `venue_type`, rendered as a clean rights-free illustration (generated like the brand assets). It is visually distinct from a photo so users aren't misled into thinking it's the actual place.
 
 ### Serializer shape
-`VenueSerializer` gains an `image` object: `{ "url": <proxy or fallback url>, "attribution": <text|null>, "source": "google_places"|"fallback" }`. The client renders the caption only when `attribution` is present. Keeping it one nested object means the frontend has a single, uniform thing to render.
+`VenueSerializer` gains an `image` object: `{ "url": <proxy / Commons / fallback url>, "attribution": <text|null>, "source": "google_places"|"wikimedia"|"fallback" }`, resolved over the three tiers in order. The client renders the caption whenever `attribution` is present (covering both photo sources). Keeping it one nested object means the frontend has a single, uniform thing to render.
 
 ### Key handling and graceful degradation
 `GOOGLE_PLACES_API_KEY` is a server-only secret (`sync: false` in `render.yaml`). When it's unset (local dev, un-configured deploys), the proxy and backfill no-op and every venue uses the fallback — the feature is additive and never breaks a build or a page.

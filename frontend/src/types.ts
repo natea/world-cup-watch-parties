@@ -34,8 +34,8 @@ export interface Affiliation {
 
 export interface VenueImage {
   url: string;
-  attribution: string | null; // present only for licensed (place) photos
-  source: "google_places" | "fallback" | string;
+  attribution: string | null; // present for licensed photos (google_places, wikimedia)
+  source: "google_places" | "wikimedia" | "fallback" | string;
 }
 
 export interface Venue {
