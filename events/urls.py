@@ -9,6 +9,7 @@ urlpatterns = [
     path("map/", views.MapView.as_view(), name="map"),
     path("screenings/", views.ScreeningsView.as_view(), name="screenings"),
     path("search/", views.SearchView.as_view(), name="search"),
+    path("geocode/", views.GeocodeView.as_view(), name="geocode"),
     path("venues/<slug:slug>/", views.VenueDetailView.as_view(), name="venue-detail"),
     path("teams/", views.TeamListView.as_view(), name="teams"),
     path("meta/", views.MetaView.as_view(), name="meta"),

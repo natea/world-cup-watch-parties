@@ -480,6 +480,66 @@ button.pop-venue-link {
   color: #e74c3c;
 }
 
+/* Proximity control (map screen) */
+.proximity {
+  margin-bottom: 10px;
+}
+
+.prox-form {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.prox-form input {
+  flex: 1;
+  min-width: 220px;
+  background: var(--panel2);
+  color: var(--text);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 8px 12px;
+  font-size: 0.9rem;
+}
+
+.prox-form button {
+  background: var(--panel);
+  color: var(--text);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 8px 14px;
+  cursor: pointer;
+}
+
+.prox-form button[type="submit"] {
+  background: var(--accent);
+  color: #04121f;
+  border-color: var(--accent);
+  font-weight: 600;
+}
+
+.prox-active {
+  margin-top: 6px;
+  font-size: 0.85rem;
+  color: var(--text);
+}
+
+.prox-clear {
+  margin-left: 8px;
+  background: none;
+  border: none;
+  color: var(--accent);
+  cursor: pointer;
+  text-decoration: underline;
+  font-size: 0.8rem;
+}
+
+.prox-msg {
+  margin-top: 6px;
+  font-size: 0.82rem;
+  color: var(--warn);
+}
+
 .mapwrap .leaflet {
   height: 520px;
   border-radius: 10px;

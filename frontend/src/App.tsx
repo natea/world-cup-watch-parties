@@ -18,7 +18,8 @@ const TABS = [
 ];
 
 export default function App() {
-  const { filters, setFilter, clear, view, setView, venue, openVenue, closeVenue } = useFilters();
+  const { filters, setFilter, clear, view, setView, venue, openVenue, closeVenue, anchor, setLocation } =
+    useFilters();
 
   // Switching tabs should leave any open venue detail and show the tab's view.
   const selectTab = (id: string) => {
@@ -79,7 +80,14 @@ export default function App() {
         ) : (
           <>
             {view === "schedule" && <ScheduleView filters={filters} onOpenVenue={openVenue} />}
-            {view === "map" && <MapView filters={filters} onOpenVenue={openVenue} />}
+            {view === "map" && (
+              <MapView
+                filters={filters}
+                onOpenVenue={openVenue}
+                anchor={anchor}
+                setLocation={setLocation}
+              />
+            )}
             {view === "team" && (
               <TeamView
                 filters={filters}

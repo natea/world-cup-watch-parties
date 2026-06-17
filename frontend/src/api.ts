@@ -1,4 +1,5 @@
 import type {
+  Anchor,
   Filters,
   MapVenue,
   Meta,
@@ -59,6 +60,17 @@ export const api = {
     if (!res.ok) throw new Error(`/search/ -> ${res.status}`);
     const data = (await res.json()) as { suggestions: Suggestion[] };
     return data.suggestions;
+  },
+
+  // Resolve a ZIP or address to a map anchor. Returns null when unresolvable.
+  geocode: async (q: { zip?: string; address?: string }): Promise<Anchor | null> => {
+    const p = new URLSearchParams();
+    if (q.address) p.set("address", q.address);
+    else if (q.zip) p.set("zip", q.zip);
+    const res = await fetch(`${BASE}/geocode/?${p.toString()}`);
+    if (!res.ok) throw new Error(`/geocode/ -> ${res.status}`);
+    const data = (await res.json()) as { result: Anchor | null };
+    return data.result;
   },
 
   teams: () => getJSON<{ teams: Team[] }>("/teams/"),
