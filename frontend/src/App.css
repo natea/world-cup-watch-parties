@@ -558,6 +558,26 @@ button.pop-venue-link {
   padding: 6px 0;
 }
 
+.pop-more {
+  background: none;
+  border: none;
+  padding: 4px 0 0;
+  color: #1769aa;
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.pop-more:hover {
+  text-decoration: underline;
+}
+
+.popnone {
+  color: #666;
+  font-size: 0.85rem;
+  padding-top: 4px;
+}
+
 .affil {
   font-size: 0.8rem;
   margin: 2px 0;

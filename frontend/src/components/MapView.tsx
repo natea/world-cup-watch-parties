@@ -24,6 +24,9 @@ const DEFAULT_ANCHOR = { lat: 42.3603, lng: -71.0578, label: "downtown Boston" }
 
 const milesFromKm = (km: number) => Math.round(km * 0.621371 * 10) / 10;
 
+// Cap the popup to the next few upcoming screenings; "more" opens venue detail.
+const POPUP_SCREENINGS = 5;
+
 // Recenter/zoom the map imperatively when the anchor changes.
 function Recenter({ anchor }: { anchor: Anchor | null }) {
   const map = useMap();
@@ -97,20 +100,47 @@ export function MapView({
                       🏴 {a.team ? a.team.name : a.club} hub
                     </div>
                   ))}
-                  <div className="poplist">
-                    {mv.screenings.map((s) => (
-                      <ScreeningCard
-                        key={s.id}
-                        match={s.match}
-                        starts_at={s.starts_at}
-                        cost_type={s.cost_type}
-                        is_family_friendly={s.is_family_friendly}
-                        registration_required={s.registration_required}
-                        entry_guaranteed={s.entry_guaranteed}
-                        showDate
-                      />
-                    ))}
-                  </div>
+                  {(() => {
+                    // Show only the next few upcoming screenings — a venue that
+                    // shows every match would otherwise render a giant popup
+                    // (which also makes Leaflet auto-pan off into the ocean).
+                    const now = Date.now();
+                    const upcoming = mv.screenings.filter(
+                      (s) => new Date(s.starts_at).getTime() >= now,
+                    );
+                    const shown = upcoming.slice(0, POPUP_SCREENINGS);
+                    const more = upcoming.length - shown.length;
+                    if (shown.length === 0) {
+                      return <div className="popnone">No upcoming screenings</div>;
+                    }
+                    return (
+                      <>
+                        <div className="poplist">
+                          {shown.map((s) => (
+                            <ScreeningCard
+                              key={s.id}
+                              match={s.match}
+                              starts_at={s.starts_at}
+                              cost_type={s.cost_type}
+                              is_family_friendly={s.is_family_friendly}
+                              registration_required={s.registration_required}
+                              entry_guaranteed={s.entry_guaranteed}
+                              showDate
+                            />
+                          ))}
+                        </div>
+                        {more > 0 && (
+                          <button
+                            type="button"
+                            className="pop-more"
+                            onClick={() => onOpenVenue(mv.venue.slug)}
+                          >
+                            + {more} more screening{more === 1 ? "" : "s"} →
+                          </button>
+                        )}
+                      </>
+                    );
+                  })()}
                 </Popup>
               </Marker>
             ))}
