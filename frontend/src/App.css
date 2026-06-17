@@ -277,13 +277,15 @@ header h1 {
 
 .screening-head {
   display: flex;
-  gap: 10px;
+  gap: 4px 10px;
   align-items: baseline;
+  flex-wrap: wrap;
 }
 
 .kickoff {
   font-weight: 700;
   color: var(--accent);
+  white-space: nowrap;
 }
 
 .match-label {
@@ -480,6 +482,78 @@ button.pop-venue-link {
   color: #e74c3c;
 }
 
+/* Proximity control (map screen) */
+.proximity {
+  margin-bottom: 10px;
+}
+
+.prox-form {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.prox-form input {
+  flex: 1;
+  min-width: 220px;
+  background: var(--panel2);
+  color: var(--text);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 8px 12px;
+  font-size: 0.9rem;
+}
+
+.prox-form button {
+  background: var(--panel);
+  color: var(--text);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 8px 14px;
+  cursor: pointer;
+}
+
+.prox-form button[type="submit"] {
+  background: var(--accent);
+  color: #04121f;
+  border-color: var(--accent);
+  font-weight: 600;
+}
+
+.prox-active {
+  margin-top: 6px;
+  font-size: 0.85rem;
+  color: var(--text);
+}
+
+.prox-clear {
+  margin-left: 8px;
+  background: none;
+  border: none;
+  color: var(--accent);
+  cursor: pointer;
+  text-decoration: underline;
+  font-size: 0.8rem;
+}
+
+.prox-msg {
+  margin-top: 6px;
+  font-size: 0.82rem;
+  color: var(--warn);
+}
+
+/* "You are here" anchor marker — a red dot with a soft pulse, distinct from
+   the blue venue pins. */
+.anchor-dot {
+  display: block;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: #ff3b30;
+  border: 2px solid #fff;
+  box-shadow: 0 0 0 4px rgba(255, 59, 48, 0.3);
+}
+
 .mapwrap .leaflet {
   height: 520px;
   border-radius: 10px;
@@ -496,6 +570,26 @@ button.pop-venue-link {
   color: #111;
   border: none;
   padding: 6px 0;
+}
+
+.pop-more {
+  background: none;
+  border: none;
+  padding: 4px 0 0;
+  color: #1769aa;
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.pop-more:hover {
+  text-decoration: underline;
+}
+
+.popnone {
+  color: #666;
+  font-size: 0.85rem;
+  padding-top: 4px;
 }
 
 .affil {

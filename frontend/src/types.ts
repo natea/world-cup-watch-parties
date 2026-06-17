@@ -104,6 +104,14 @@ export interface Suggestion {
   target: SuggestionTarget;
 }
 
+// A resolved map anchor: where "near me" distances are measured from.
+export interface Anchor {
+  lat: number;
+  lng: number;
+  label: string;
+  precision: "address" | "zip" | "device";
+}
+
 // The shared, composable filter set — one object honored by all three views.
 export interface Filters {
   team?: string;
