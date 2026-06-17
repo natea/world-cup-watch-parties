@@ -604,8 +604,9 @@ button.pop-venue-link {
 }
 
 .prox-form input {
-  flex: 1;
-  min-width: 220px;
+  /* Shrinkable so the "Go" button never gets pushed off a narrow screen. */
+  flex: 1 1 150px;
+  min-width: 0;
   background: var(--panel2);
   color: var(--text);
   border: 1px solid var(--line);
@@ -757,4 +758,54 @@ footer p {
   .twocol {
     grid-template-columns: 1fr;
   }
+}
+
+/* On narrow screens, drop the decorative subtitle so the brand never wraps
+   awkwardly ("Massachusetts / 2026"). Applies to mobile web and the apps. */
+@media (max-width: 560px) {
+  .brand-sub {
+    display: none;
+  }
+}
+
+/* ---- iOS app only: frosted-glass bottom tab bar (easier thumb reach) -------
+   Gated to the native iOS app via data-platform="ios"; the website keeps its
+   top tabs. NOTE: a webview approximates iOS "Liquid Glass" with a blur +
+   saturate backdrop — it's a visual approximation, not the literal native
+   material (which would require a native nav shell). */
+html[data-platform="ios"] .tabs {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 50;
+  gap: 4px;
+  justify-content: space-around;
+  padding: 8px max(12px, env(safe-area-inset-left)) calc(8px + env(safe-area-inset-bottom))
+    max(12px, env(safe-area-inset-right));
+  background: var(--bg); /* fallback if color-mix is unsupported */
+  background: color-mix(in srgb, var(--bg) 72%, transparent);
+  -webkit-backdrop-filter: blur(22px) saturate(180%);
+  backdrop-filter: blur(22px) saturate(180%);
+  border-top: 1px solid var(--line);
+}
+
+html[data-platform="ios"] .tabs .tab {
+  flex: 1;
+  background: transparent;
+  border: none;
+  border-radius: 10px;
+  color: var(--muted);
+  font-weight: 600;
+  padding: 8px 6px;
+}
+
+html[data-platform="ios"] .tabs .tab.active {
+  background: transparent;
+  color: var(--accent);
+}
+
+/* Keep content clear of the fixed bottom bar. */
+html[data-platform="ios"] main {
+  padding-bottom: calc(64px + env(safe-area-inset-bottom));
 }
