@@ -25,6 +25,8 @@ export function filtersToParams(filters: Filters): URLSearchParams {
   if (filters.region) p.set("region", filters.region);
   if (filters.exclude_bars) p.set("exclude_bars", "true");
   if (filters.family_friendly) p.set("family_friendly", "true");
+  // Hide games that already kicked off by default; "show past" opts back in.
+  if (!filters.show_past) p.set("upcoming", "true");
   return p;
 }
 

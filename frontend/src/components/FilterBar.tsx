@@ -113,6 +113,15 @@ export function FilterBar({ filters, setFilter, clear, meta, teams }: Props) {
         Exclude bars
       </label>
 
+      <label className="check">
+        <input
+          type="checkbox"
+          checked={!!filters.show_past}
+          onChange={(e) => setFilter("show_past", e.target.checked)}
+        />
+        Show past games
+      </label>
+
       <button className="clear" onClick={clear}>
         Clear
       </button>

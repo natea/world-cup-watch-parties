@@ -129,4 +129,6 @@ export interface Filters {
   region?: string;
   exclude_bars?: boolean;
   family_friendly?: boolean;
+  // Past games are hidden by default; this opts them back in.
+  show_past?: boolean;
 }

@@ -123,17 +123,15 @@ export function MapView({
                     </div>
                   ))}
                   {(() => {
-                    // Show only the next few upcoming screenings — a venue that
-                    // shows every match would otherwise render a giant popup
-                    // (which also makes Leaflet auto-pan off into the ocean).
-                    const now = Date.now();
-                    const upcoming = mv.screenings.filter(
-                      (s) => new Date(s.starts_at).getTime() >= now,
-                    );
-                    const shown = upcoming.slice(0, POPUP_SCREENINGS);
-                    const more = upcoming.length - shown.length;
+                    // Cap the popup to a few screenings — a venue that shows every
+                    // match would otherwise render a giant popup (which also makes
+                    // Leaflet auto-pan off into the ocean). Past games are already
+                    // filtered server-side by default (and revealed via "show
+                    // past"), so we just take the first few here.
+                    const shown = mv.screenings.slice(0, POPUP_SCREENINGS);
+                    const more = mv.screenings.length - shown.length;
                     if (shown.length === 0) {
-                      return <div className="popnone">No upcoming screenings</div>;
+                      return <div className="popnone">No screenings</div>;
                     }
                     return (
                       <>
