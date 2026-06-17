@@ -289,7 +289,7 @@ class VenueAffiliation(models.Model):
         constraints = [
             models.CheckConstraint(
                 name="affiliation_target_matches_type",
-                check=(
+                condition=(
                     (Q(affiliation_type="national_hub") & Q(team__isnull=False))
                     | (Q(affiliation_type="club_home") & ~Q(club=""))
                 ),

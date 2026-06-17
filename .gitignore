@@ -1,0 +1,22 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+db.sqlite3
+.env
+staticfiles/
+.pytest_cache/
+
+# Node / frontend
+frontend/node_modules/
+frontend/dist/
+.playwright-mcp/
+
+# Local agent tooling / private working files
+.claude/
+.codex/
+diagram/
+
+# OS / editor
+.DS_Store
+*.log

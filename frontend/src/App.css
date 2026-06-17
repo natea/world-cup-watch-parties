@@ -1,0 +1,461 @@
+:root {
+  --bg: #0f1115;
+  --panel: #181b22;
+  --panel2: #20242e;
+  --line: #2c313c;
+  --text: #e8eaf0;
+  --muted: #9aa3b2;
+  --accent: #3da9fc;
+  --green: #2ecc71;
+  --warn: #e67e22;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+}
+
+.app {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 16px;
+  color: var(--text);
+  font-family: system-ui, -apple-system, sans-serif;
+}
+
+header h1 {
+  font-size: 1.4rem;
+  margin: 0 0 12px;
+}
+
+.tabs {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.tab {
+  background: var(--panel);
+  color: var(--text);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 8px 16px;
+  cursor: pointer;
+}
+
+.tab.active {
+  background: var(--accent);
+  color: #04121f;
+  border-color: var(--accent);
+  font-weight: 600;
+}
+
+.filterbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: end;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 12px;
+  margin-bottom: 16px;
+}
+
+.filterbar label {
+  display: flex;
+  flex-direction: column;
+  font-size: 0.72rem;
+  color: var(--muted);
+  gap: 4px;
+}
+
+.filterbar label.check {
+  flex-direction: row;
+  align-items: center;
+  font-size: 0.85rem;
+  color: var(--text);
+  gap: 6px;
+}
+
+.filterbar select {
+  background: var(--panel2);
+  color: var(--text);
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  padding: 6px 8px;
+  min-width: 130px;
+}
+
+.clear {
+  background: transparent;
+  color: var(--muted);
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  padding: 7px 12px;
+  cursor: pointer;
+}
+
+.day h2 {
+  font-size: 1.05rem;
+  border-bottom: 1px solid var(--line);
+  padding-bottom: 6px;
+  margin: 20px 0 12px;
+}
+
+.cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 10px;
+}
+
+/* Game-grouped listing (schedule + team "playing") */
+.match-group {
+  margin-bottom: 18px;
+}
+
+.mg-head {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 10px;
+  padding-bottom: 6px;
+  border-bottom: 1px solid var(--line);
+  margin-bottom: 8px;
+}
+
+.mg-time {
+  font-weight: 700;
+  color: var(--accent);
+}
+
+.mg-label {
+  font-weight: 600;
+  font-size: 1.02rem;
+}
+
+.mg-label.tbd {
+  color: var(--muted);
+  font-style: italic;
+}
+
+.mg-stage {
+  color: var(--muted);
+  font-size: 0.78rem;
+}
+
+.venue-rows {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.venue-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 8px 12px;
+}
+
+.vr-left {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+}
+
+.vr-city {
+  color: var(--muted);
+  font-size: 0.78rem;
+}
+
+.vr-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.screening {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 12px;
+}
+
+.screening-head {
+  display: flex;
+  gap: 10px;
+  align-items: baseline;
+}
+
+.kickoff {
+  font-weight: 700;
+  color: var(--accent);
+}
+
+.match-label {
+  font-weight: 600;
+}
+
+.match-label.tbd {
+  color: var(--muted);
+  font-style: italic;
+}
+
+.venue-name {
+  margin-top: 4px;
+  color: var(--text);
+  display: inline-block;
+}
+
+.venue-link {
+  color: var(--accent);
+  text-decoration: none;
+  background: none;
+  border: none;
+  padding: 0;
+  font: inherit;
+  cursor: pointer;
+  text-align: left;
+}
+
+.venue-link:hover {
+  text-decoration: underline;
+}
+
+button.pop-venue-link {
+  background: none;
+  border: none;
+  padding: 0;
+  font: inherit;
+  cursor: pointer;
+}
+
+/* Venue detail page */
+.venue-detail {
+  max-width: 760px;
+}
+
+.back {
+  background: var(--panel);
+  color: var(--text);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 6px 12px;
+  cursor: pointer;
+  margin-bottom: 12px;
+}
+
+.vd-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.vd-head h2 {
+  margin: 0;
+}
+
+.vd-sub {
+  color: var(--muted);
+  margin: 4px 0 12px;
+}
+
+.vd-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 14px;
+}
+
+.vd-meta a {
+  color: var(--accent);
+}
+
+.vd-flags {
+  display: flex;
+  gap: 6px;
+  margin-top: 2px;
+}
+
+.vd-affils {
+  margin: 8px 0 14px;
+}
+
+.vd-affils h3 {
+  font-size: 0.85rem;
+  color: var(--muted);
+  margin: 0 0 6px;
+}
+
+.affil-badge {
+  margin-right: 6px;
+  color: var(--text);
+}
+
+.vd-notes {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 10px 12px;
+  color: var(--muted);
+}
+
+.vd-provenance {
+  margin-top: 18px;
+  font-size: 0.74rem;
+  color: var(--muted);
+}
+
+.vd-provenance a {
+  color: var(--accent);
+}
+
+.muted {
+  color: var(--muted);
+  font-weight: 400;
+}
+
+.kickoff-date {
+  color: var(--muted);
+  font-weight: 600;
+}
+
+.pop-venue-link {
+  color: #1769aa;
+  text-decoration: none;
+}
+
+.pop-venue-link:hover {
+  text-decoration: underline;
+}
+
+.badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 8px;
+}
+
+.badge {
+  font-size: 0.7rem;
+  background: var(--panel2);
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  padding: 2px 8px;
+  color: var(--muted);
+}
+
+.badge.ff {
+  color: var(--green);
+  border-color: var(--green);
+}
+
+.badge.warn {
+  color: var(--warn);
+  border-color: var(--warn);
+}
+
+.badge.tbd-badge {
+  color: var(--muted);
+  font-style: italic;
+}
+
+.provenance {
+  margin-top: 8px;
+  font-size: 0.68rem;
+  color: var(--muted);
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.provenance a {
+  color: var(--accent);
+}
+
+.review {
+  color: var(--warn);
+}
+
+.status {
+  color: var(--muted);
+  padding: 24px 0;
+}
+
+.status.error {
+  color: #e74c3c;
+}
+
+.mapwrap .leaflet {
+  height: 520px;
+  border-radius: 10px;
+  border: 1px solid var(--line);
+}
+
+.maphint {
+  color: var(--muted);
+  font-size: 0.8rem;
+}
+
+.poplist .screening {
+  background: #fff;
+  color: #111;
+  border: none;
+  padding: 6px 0;
+}
+
+.affil {
+  font-size: 0.8rem;
+  margin: 2px 0;
+}
+
+.twocol {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 18px;
+}
+
+.twocol h3 {
+  font-size: 0.95rem;
+}
+
+.teamchips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.teamchips button {
+  background: var(--panel);
+  color: var(--text);
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  padding: 8px 14px;
+  cursor: pointer;
+}
+
+footer {
+  margin-top: 28px;
+  padding-top: 12px;
+  border-top: 1px solid var(--line);
+  color: var(--muted);
+  font-size: 0.78rem;
+}
+
+@media (max-width: 720px) {
+  .twocol {
+    grid-template-columns: 1fr;
+  }
+}

@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+# Render build step for the Django API. Run from the repo root.
+set -o errexit
+
+# Install locked deps + the PostgreSQL driver (Render provides DATABASE_URL).
+uv sync --frozen --extra postgres
+
+# Collect static assets (Django admin + DRF browsable API) for WhiteNoise.
+uv run python manage.py collectstatic --no-input
+
+# Apply migrations, then seed reference data + watch parties.
+# Both loaders are idempotent (upsert by natural key), so re-running on every
+# deploy is safe and keeps the database populated.
+uv run python manage.py migrate
+uv run python manage.py loadreferencedata
+uv run python manage.py importwatchparties data/watch_parties.json

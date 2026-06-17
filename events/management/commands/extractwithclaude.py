@@ -1,25 +1,25 @@
 """
-Turn the prose research into a validated ImportBundle using the Anthropic API.
+Turn prose research into a validated ImportBundle using the Anthropic API.
 
 The Pydantic schema's JSON schema becomes a forced tool call, so the model must
 return exactly the shapes the importer expects. Output is validated before it
 touches disk; anything that fails validation surfaces immediately.
 
-    pip install anthropic pydantic
+    uv sync --extra extract
     export ANTHROPIC_API_KEY=...
-    python extract_with_claude.py research.md venues.json
+    python manage.py extractwithclaude research.md venues.json
 
 IMPORTANT: only extract the venue/screening/affiliation layer this way. Load
-teams + the 104-match FIFA fixture list from an authoritative structured source
-(don't ask a model to reproduce a schedule from memory). Merge them after.
+teams + the FIFA fixture list from an authoritative structured source via
+`loadreferencedata` (don't ask a model to reproduce a schedule from memory).
+Merge them after. This command is deferred-use in v1 — the app seeds from
+sample_data.json — but is wired in so the full corpus run is a single command.
 """
 from __future__ import annotations
 
-import json
-import sys
+from django.core.management.base import BaseCommand, CommandError
 
-import anthropic
-from extraction_schema import ImportBundle
+from events.import_contract import ImportBundle
 
 EXTRACTION_GUIDE = """\
 You are extracting structured data from a prose guide about World Cup watch
@@ -49,7 +49,9 @@ Rules:
 """
 
 
-def extract(text: str) -> ImportBundle:
+def extract(text: str, model: str = "claude-sonnet-4-6") -> ImportBundle:
+    import anthropic  # imported lazily; only needed for the extract pipeline
+
     client = anthropic.Anthropic()
     tool = {
         "name": "emit_import_bundle",
@@ -57,7 +59,7 @@ def extract(text: str) -> ImportBundle:
         "input_schema": ImportBundle.model_json_schema(),
     }
     resp = client.messages.create(
-        model="claude-sonnet-4-6",
+        model=model,
         max_tokens=16000,
         system=EXTRACTION_GUIDE,
         tools=[tool],
@@ -68,16 +70,35 @@ def extract(text: str) -> ImportBundle:
     return ImportBundle.model_validate(payload)  # raises on bad output
 
 
-def main():
-    if len(sys.argv) != 3:
-        sys.exit("usage: python extract_with_claude.py <research.md> <out.json>")
-    text = open(sys.argv[1], encoding="utf-8").read()
-    bundle = extract(text)
-    flagged = sum(v.needs_review for v in bundle.venues) + sum(s.needs_review for s in bundle.screenings)
-    open(sys.argv[2], "w", encoding="utf-8").write(bundle.model_dump_json(indent=2))
-    print(f"Wrote {len(bundle.venues)} venues, {len(bundle.screenings)} screenings "
-          f"({flagged} flagged for review) -> {sys.argv[2]}")
+class Command(BaseCommand):
+    help = "Extract a validated ImportBundle from prose research using the Anthropic API."
 
+    def add_arguments(self, parser):
+        parser.add_argument("research_path", help="Prose research input (.md/.txt).")
+        parser.add_argument("out_path", help="Where to write the validated JSON bundle.")
+        parser.add_argument("--model", default="claude-sonnet-4-6")
 
-if __name__ == "__main__":
-    main()
+    def handle(self, *args, **opts):
+        try:
+            text = open(opts["research_path"], encoding="utf-8").read()
+        except OSError as exc:
+            raise CommandError(f"Could not read research input: {exc}")
+
+        try:
+            bundle = extract(text, model=opts["model"])
+        except ImportError:
+            raise CommandError(
+                "The anthropic package is not installed. Run: uv sync --extra extract"
+            )
+
+        flagged = sum(v.needs_review for v in bundle.venues) + sum(
+            s.needs_review for s in bundle.screenings
+        )
+        with open(opts["out_path"], "w", encoding="utf-8") as fh:
+            fh.write(bundle.model_dump_json(indent=2))
+        self.stdout.write(
+            self.style.SUCCESS(
+                f"Wrote {len(bundle.venues)} venues, {len(bundle.screenings)} screenings "
+                f"({flagged} flagged for review) -> {opts['out_path']}"
+            )
+        )
