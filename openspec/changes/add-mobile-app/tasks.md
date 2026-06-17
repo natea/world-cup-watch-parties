@@ -27,6 +27,15 @@
 - [x] 5.2 iOS Simulator smoke test: app builds (`** BUILD SUCCEEDED **`), launches, and renders the SPA with safe areas + theme. Data load is blocked only by prod CORS (fixed here; effective on deploy). Android emulator + device-signed build pending the SDK.
 - [x] 5.3 README "Mobile app (Capacitor)" section: `appId`, prod API URL, plugins, and the Xcode-MCP/axiom tooling note
 
+## 7. iOS UI refinements (from simulator review)
+
+- [x] 7.1 iOS-only bottom tab bar (frosted-glass) for thumb reach, gated to `data-platform="ios"`; the website keeps its top tabs
+- [x] 7.2 Single safe-area inset: webview `contentInset: "never"` + CSS `env(safe-area-inset-*)` (fixed the top gap and the cut-off bottom bar caused by double-insetting)
+- [x] 7.3 Tab buttons styled with background/border + filled-accent active state, plus monochrome icons (calendar / map-pin / people) on the iOS bar and web tabs
+- [x] 7.4 Prevent iOS focus-zoom: tappable form controls (search/inputs/selects) kept at 16px on phones so focusing a field doesn't zoom/shift the layout
+- [x] 7.5 Isolate the Leaflet map's stacking context (`isolation: isolate`) so its panes/controls can't paint over the bottom tab bar
+- [x] 7.6 Responsive fixes surfaced on device: proximity "Go" button no longer overflows narrow screens; the "Massachusetts 2026" subtitle is hidden under 560px so the brand never wraps
+
 ## 6. Follow-ons (out of scope here — noted for sequencing)
 
 - [ ] 6.1 (separate change) Push notifications: device-token storage, APNs/FCM, match-reminder sends
