@@ -3,7 +3,10 @@ import { createRoot } from 'react-dom/client'
 import './index.css'
 import App from './App.tsx'
 import { initAnalytics } from './analytics.ts'
+import { applyTheme, initialTheme } from './useTheme.ts'
 
+// Set the theme before first paint to avoid a flash of the wrong palette.
+applyTheme(initialTheme())
 initAnalytics()
 
 createRoot(document.getElementById('root')!).render(
