@@ -32,6 +32,12 @@ header h1 {
   margin: 0 0 12px;
 }
 
+.brand-sub {
+  color: var(--muted);
+  font-weight: 400;
+  font-size: 0.95rem;
+}
+
 .tabs {
   display: flex;
   gap: 8px;

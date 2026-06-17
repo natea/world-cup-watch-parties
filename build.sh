@@ -9,8 +9,9 @@ uv sync --frozen --extra postgres
 uv run python manage.py collectstatic --no-input
 
 # Apply migrations, then seed reference data + watch parties.
-# Both loaders are idempotent (upsert by natural key), so re-running on every
-# deploy is safe and keeps the database populated.
+# loadreferencedata defaults to the committed authoritative FIFA fixture
+# snapshot (data/fifa_reference.json — all 104 matches / 48 teams). Both loaders
+# are idempotent (upsert by natural key), so re-running on every deploy is safe.
 uv run python manage.py migrate
-uv run python manage.py loadreferencedata
+uv run python manage.py loadreferencedata --path data/fifa_reference.json
 uv run python manage.py importwatchparties data/watch_parties.json

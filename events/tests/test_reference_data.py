@@ -7,18 +7,18 @@ from events.models import Match, Team
 
 @pytest.mark.django_db
 def test_load_is_idempotent():
-    call_command("loadreferencedata")
+    call_command("loadreferencedata", builtin=True)
     teams_after_first = Team.objects.count()
     matches_after_first = Match.objects.count()
 
-    call_command("loadreferencedata")  # re-run
+    call_command("loadreferencedata", builtin=True)  # re-run
     assert Team.objects.count() == teams_after_first
     assert Match.objects.count() == matches_after_first
 
 
 @pytest.mark.django_db
 def test_unresolved_knockout_fixture():
-    call_command("loadreferencedata")
+    call_command("loadreferencedata", builtin=True)
     r32 = Match.objects.get(fifa_match_number=88)
     assert r32.home_team is None and r32.away_team is None
     assert r32.home_placeholder == "Winner Group C"
@@ -29,6 +29,6 @@ def test_unresolved_knockout_fixture():
 
 @pytest.mark.django_db
 def test_kickoffs_are_timezone_aware():
-    call_command("loadreferencedata")
+    call_command("loadreferencedata", builtin=True)
     for m in Match.objects.all():
         assert m.kickoff.tzinfo is not None

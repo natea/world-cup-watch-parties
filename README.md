@@ -1,4 +1,4 @@
-# Massachusetts World Cup 2026 — Watch-Party Finder
+# WorldCup Watcher — Massachusetts 2026
 
 Find where to watch the 2026 FIFA Men's World Cup across Massachusetts, three
 ways over one dataset: a **schedule**, a **map**, and a **by-team** view, with
@@ -40,22 +40,30 @@ uv sync --extra postgres      # + psycopg, for PostgreSQL
 
 ```bash
 uv run python manage.py migrate
-uv run python manage.py loadreferencedata             # teams + 7 Gillette fixtures (no LLM)
+uv run python manage.py loadreferencedata --path data/fifa_reference.json   # 104 matches, 48 teams
 uv run python manage.py importwatchparties data/watch_parties.json
 ```
 
-`data/watch_parties.json` is the richer seed — ~49 venues across Massachusetts
-(soccer bars by national-team/club affiliation, the Fan Festival, brewery and
-waterfront screenings, hotels, and free municipal watch parties), extracted from
+`data/fifa_reference.json` is the **authoritative FIFA 2026 fixture list** (all
+104 matches, 48 teams) — `loadreferencedata` loads it by default. It is a
+committed snapshot produced by `manage.py fetchfixtures`, which fetches FIFA's
+v3 calendar API (`api.fifa.com/api/v3/calendar/matches`, `idSeason=285023` — an
+undocumented endpoint discovered by reverse-engineering the fixtures page's
+network traffic). Refresh it any time with `manage.py fetchfixtures` (e.g. as
+the knockout bracket resolves), then re-run the loaders. Pass `--builtin` to
+`loadreferencedata` for the minimal in-code demo seed (7 provisional Gillette
+fixtures) used by the test suite.
+
+`data/watch_parties.json` is the richer venue seed — ~49 venues across
+Massachusetts (soccer bars by national-team/club affiliation, the Fan Festival,
+brewery and waterfront screenings, hotels, and free municipal watch parties),
+extracted from
 [`data/world-cup-watch-parties.md`](./data/world-cup-watch-parties.md). The
 smaller `sample_data.json` (4 venues) is kept as a minimal fixture for the test
-suite. Either can be imported; they merge idempotently by slug.
-
-`importwatchparties` validates the payload against the Pydantic contract, upserts
-every record by its natural key (idempotent — safe to re-run), and finishes by
+suite. `importwatchparties` validates the payload against the Pydantic contract,
+upserts every record by its natural key (idempotent), and finishes by
 **materializing screening policies** (e.g. a bar's "shows every match" rule fans
-out into concrete screenings). To load the full ~104-match fixture list later,
-pass an authoritative file: `loadreferencedata --path fixtures.json`.
+out into concrete screenings across the full fixture list).
 
 ### Run the API
 
