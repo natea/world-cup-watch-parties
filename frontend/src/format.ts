@@ -32,6 +32,11 @@ export function matchDisplayLabel(match: Match): string {
   return `${teamPlaceholder(match.home_placeholder)} vs ${teamPlaceholder(match.away_placeholder)}`;
 }
 
+// Local (MA) calendar day key, YYYY-MM-DD, for grouping screenings by day.
+export function localDayKey(iso: string): string {
+  return new Date(iso).toLocaleDateString("en-CA", { timeZone: TZ });
+}
+
 export function localTime(iso: string): string {
   return new Date(iso).toLocaleTimeString("en-US", {
     timeZone: TZ,

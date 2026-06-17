@@ -101,8 +101,17 @@ export default function App() {
       </main>
 
       <footer>
-        Data is a seed sample · times shown in Massachusetts local time · a finder, not a ticketing
-        site.
+        <p>
+          Data is a seed sample · times shown in Massachusetts local time · a finder, not a
+          ticketing site.
+        </p>
+        <p className="footer-credit">
+          WorldCup Watcher is a production of{" "}
+          <a href="https://stagehopper.app" target="_blank" rel="noreferrer">
+            StageHopper, Events That Bring People Together
+          </a>
+          .
+        </p>
       </footer>
     </div>
   );

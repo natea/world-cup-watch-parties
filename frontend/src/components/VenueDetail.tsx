@@ -1,8 +1,20 @@
 import { useEffect, useState } from "react";
 import { api, fallbackImageUrl } from "../api";
 import type { Screening, Venue } from "../types";
-import { googleMapsUrl } from "../format";
+import { googleMapsUrl, localDateLong, localDayKey } from "../format";
 import { ScreeningCard, screeningCardProps } from "./ScreeningCard";
+
+// Group screenings by local (MA) calendar day, preserving order.
+function groupByDay(screenings: Screening[]): { day: string; items: Screening[] }[] {
+  const groups: { day: string; items: Screening[] }[] = [];
+  for (const s of screenings) {
+    const day = localDayKey(s.starts_at);
+    const last = groups[groups.length - 1];
+    if (last && last.day === day) last.items.push(s);
+    else groups.push({ day, items: [s] });
+  }
+  return groups;
+}
 
 const VENUE_TYPE_LABELS: Record<string, string> = {
   bar: "Bar / pub",
@@ -134,11 +146,16 @@ export function VenueDetail({ slug, onBack }: { slug: string; onBack: () => void
             </span>
           </h3>
           {screenings.length ? (
-            <div className="cards">
-              {screenings.map((s) => (
-                <ScreeningCard key={s.id} showDate {...screeningCardProps(s)} />
-              ))}
-            </div>
+            groupByDay(screenings).map(({ day, items }) => (
+              <section key={day} className="vd-day">
+                <h4 className="vd-day-head">{localDateLong(day)}</h4>
+                <div className="cards">
+                  {items.map((s) => (
+                    <ScreeningCard key={s.id} {...screeningCardProps(s)} />
+                  ))}
+                </div>
+              </section>
+            ))
           ) : (
             <p className="status">
               No screenings yet (this venue may show matches not in the loaded fixture list).
@@ -146,19 +163,6 @@ export function VenueDetail({ slug, onBack }: { slug: string; onBack: () => void
           )}
 
           <p className="vd-provenance">
-            {venue.source && (
-              <>
-                Source:{" "}
-                {venue.source_url ? (
-                  <a href={venue.source_url} target="_blank" rel="noreferrer">
-                    {venue.source}
-                  </a>
-                ) : (
-                  venue.source
-                )}{" "}
-                ·{" "}
-              </>
-            )}
             Last updated {new Date(venue.updated_at).toLocaleDateString("en-US")}
           </p>
         </>
