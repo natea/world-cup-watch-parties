@@ -227,6 +227,16 @@ header h1 {
   padding-top: 8px;
 }
 
+/* By-team "playing" column: the game header carries the date inline, so it
+   pins to the top of the viewport directly (single level). */
+.teamview .mg-head {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  background: var(--bg);
+  padding-top: 8px;
+}
+
 .mg-time {
   font-weight: 700;
   color: var(--accent);
