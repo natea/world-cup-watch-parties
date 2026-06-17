@@ -100,22 +100,32 @@ class Command(BaseCommand):
     def add_arguments(self, parser):
         parser.add_argument(
             "--path",
-            help="Optional JSON file with {teams: [...], matches: [...]}. "
-            "Omit to load the built-in v1 seed.",
+            default="data/fifa_reference.json",
+            help="JSON file with {teams: [...], matches: [...]}. Defaults to the "
+            "committed authoritative FIFA fixture snapshot.",
+        )
+        parser.add_argument(
+            "--builtin",
+            action="store_true",
+            help="Use the in-code minimal demo/test seed (7 provisional Gillette "
+            "fixtures) instead of --path. For tests and offline demos.",
         )
 
     def handle(self, *args, **opts):
-        if opts.get("path"):
+        if opts.get("builtin"):
+            teams_raw = SEED_TEAMS
+            matches_raw = SEED_MATCHES
+        else:
             try:
                 with open(opts["path"], encoding="utf-8") as fh:
                     data = json.load(fh)
             except (OSError, json.JSONDecodeError) as exc:
-                raise CommandError(f"Could not read reference data: {exc}")
+                raise CommandError(
+                    f"Could not read reference data ({opts['path']}): {exc}. "
+                    "Run `manage.py fetchfixtures` first, or pass --builtin for the demo seed."
+                )
             teams_raw = data.get("teams", [])
             matches_raw = data.get("matches", [])
-        else:
-            teams_raw = SEED_TEAMS
-            matches_raw = SEED_MATCHES
 
         # Validate against the contract (no LLM involved — pure structured load).
         teams = [TeamIn.model_validate(t) for t in teams_raw]

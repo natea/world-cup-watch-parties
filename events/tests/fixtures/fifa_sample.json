@@ -1,0 +1,32 @@
+{
+  "Results": [
+    {
+      "MatchNumber": 5,
+      "Date": "2026-06-14T01:00:00Z",
+      "StageName": [{"Locale": "en-GB", "Description": "First Stage"}],
+      "GroupName": [{"Locale": "en-GB", "Description": "Group C"}],
+      "Stadium": {
+        "Name": [{"Locale": "en-GB", "Description": "Boston Stadium"}],
+        "CityName": [{"Locale": "en-GB", "Description": "Foxborough"}]
+      },
+      "Home": {"IdCountry": "HAI", "TeamName": [{"Locale": "en-GB", "Description": "Haiti"}]},
+      "Away": {"IdCountry": "SCO", "TeamName": [{"Locale": "en-GB", "Description": "Scotland"}]},
+      "PlaceHolderA": null,
+      "PlaceHolderB": null
+    },
+    {
+      "MatchNumber": 73,
+      "Date": "2026-06-28T20:00:00Z",
+      "StageName": [{"Locale": "en-GB", "Description": "Round of 32"}],
+      "GroupName": [],
+      "Stadium": {
+        "Name": [{"Locale": "en-GB", "Description": "Los Angeles Stadium"}],
+        "CityName": [{"Locale": "en-GB", "Description": "Inglewood"}]
+      },
+      "Home": null,
+      "Away": null,
+      "PlaceHolderA": "2A",
+      "PlaceHolderB": "2B"
+    }
+  ]
+}

@@ -37,7 +37,9 @@ export default function App() {
   return (
     <div className="app">
       <header>
-        <h1>⚽ MA World Cup 2026 — Watch-Party Finder</h1>
+        <h1>
+          ⚽ WorldCup Watcher <span className="brand-sub">· Massachusetts 2026</span>
+        </h1>
         <nav className="tabs">
           {TABS.map((t) => (
             <button

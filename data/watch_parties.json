@@ -3,11 +3,17 @@
     {
       "name": "FIFA Fan Festival - City Hall Plaza",
       "slug": "fifa-fan-festival-city-hall-plaza",
-      "venue_type": "plaza", "environment": "outdoor",
-      "address": "1 City Hall Square", "city": "Boston", "region": "greater_boston",
-      "latitude": 42.3603, "longitude": -71.0578,
-      "serves_alcohol": true, "default_min_age": null,
-      "capacity": 5000, "source": "research-2026-06",
+      "venue_type": "plaza",
+      "environment": "outdoor",
+      "address": "1 City Hall Square",
+      "city": "Boston",
+      "region": "greater_boston",
+      "latitude": 42.3603,
+      "longitude": -71.0578,
+      "serves_alcohol": true,
+      "default_min_age": null,
+      "capacity": 5000,
+      "source": "research-2026-06",
       "source_url": "https://www.wbur.org/",
       "notes": "Official FIFA Fan Festival, June 12-27 (group stage only). Free but advance registration + lottery; entry not guaranteed (5,000/session cap, ~150k registrations).",
       "affiliations": [],
@@ -16,595 +22,1070 @@
     {
       "name": "The Haven",
       "slug": "the-haven",
-      "venue_type": "bar", "environment": "indoor",
-      "address": "284 Amory St", "city": "Jamaica Plain", "region": "greater_boston",
-      "latitude": 42.3187, "longitude": -71.1043,
-      "serves_alcohol": true, "default_min_age": 21,
-      "source": "research-2026-06", "needs_review": false,
+      "venue_type": "bar",
+      "environment": "indoor",
+      "address": "284 Amory St",
+      "city": "Jamaica Plain",
+      "region": "greater_boston",
+      "latitude": 42.3187,
+      "longitude": -71.1043,
+      "serves_alcohol": true,
+      "default_min_age": 21,
+      "source": "research-2026-06",
+      "needs_review": false,
       "notes": "Boston's only Scottish pub; official Tartan Army HQ. 'Home Ground' festival June 12-14.",
       "affiliations": [
-        {"affiliation_type": "national_hub", "team_code": "SCO", "note": "Tartan Army HQ"}
+        {
+          "affiliation_type": "national_hub",
+          "team_code": "SCO",
+          "note": "Tartan Army HQ"
+        }
       ],
       "policies": [
-        {"policy_type": "by_team", "team_codes": ["SCO"], "default_cost_type": "free_open"}
+        {
+          "policy_type": "by_team",
+          "team_codes": [
+            "SCO"
+          ],
+          "default_cost_type": "free_open"
+        }
       ]
     },
     {
       "name": "Lucky Strike Somerville",
       "slug": "lucky-strike-somerville",
-      "venue_type": "entertainment", "environment": "mixed",
-      "address": "55 Middlesex Ave", "city": "Somerville", "region": "cambridge_somerville",
-      "latitude": 42.3925, "longitude": -71.0775,
-      "serves_alcohol": true, "default_min_age": null,
-      "evening_min_age": 21, "evening_cutoff": "20:00:00",
-      "source": "research-2026-06", "needs_review": true,
+      "venue_type": "entertainment",
+      "environment": "mixed",
+      "address": "55 Middlesex Ave",
+      "city": "Somerville",
+      "region": "cambridge_somerville",
+      "latitude": 42.3925,
+      "longitude": -71.0775,
+      "serves_alcohol": true,
+      "default_min_age": null,
+      "evening_min_age": 21,
+      "evening_cutoff": "20:00:00",
+      "source": "research-2026-06",
+      "needs_review": true,
       "notes": "Casamigos x World Cup watch parties (free; lane reservations recommended). All ages by day, 21+ after 8pm. Coordinates approximate (Assembly Row) - verify.",
       "affiliations": [],
       "policies": [
-        {"policy_type": "specific", "match_numbers": [63, 71], "default_cost_type": "free_open"}
+        {
+          "policy_type": "specific",
+          "match_numbers": [
+            45,
+            61
+          ],
+          "default_cost_type": "free_open"
+        }
       ]
     },
     {
       "name": "The Banshee",
       "slug": "the-banshee",
-      "venue_type": "bar", "environment": "indoor",
-      "address": "934 Dorchester Ave", "city": "Dorchester", "region": "greater_boston",
-      "latitude": 42.3138, "longitude": -71.0573,
-      "serves_alcohol": true, "default_min_age": 21,
+      "venue_type": "bar",
+      "environment": "indoor",
+      "address": "934 Dorchester Ave",
+      "city": "Dorchester",
+      "region": "greater_boston",
+      "latitude": 42.3138,
+      "longitude": -71.0573,
+      "serves_alcohol": true,
+      "default_min_age": 21,
       "source": "research-2026-06",
       "notes": "Home of the Boston American Outlaws (USMNT) plus a dozen+ supporters clubs; every match across 16 screens. Also a New England Revolution supporters spot.",
       "affiliations": [
-        {"affiliation_type": "national_hub", "team_code": "USA", "note": "Boston American Outlaws HQ"}
+        {
+          "affiliation_type": "national_hub",
+          "team_code": "USA",
+          "note": "Boston American Outlaws HQ"
+        }
       ],
       "policies": [
-        {"policy_type": "all_matches", "default_cost_type": "free_open"}
+        {
+          "policy_type": "all_matches",
+          "default_cost_type": "free_open"
+        }
       ]
     },
     {
       "name": "The Greatest Bar",
       "slug": "the-greatest-bar",
-      "venue_type": "bar", "environment": "indoor",
-      "address": "262 Friend St", "city": "Boston", "region": "greater_boston",
-      "latitude": 42.3656, "longitude": -71.0610,
-      "serves_alcohol": true, "default_min_age": 21,
+      "venue_type": "bar",
+      "environment": "indoor",
+      "address": "262 Friend St",
+      "city": "Boston",
+      "region": "greater_boston",
+      "latitude": 42.3656,
+      "longitude": -71.061,
+      "serves_alcohol": true,
+      "default_min_age": 21,
       "source": "research-2026-06",
       "notes": "Official Tartan Army HQ; four floors, LED screens, open until 2am. Also a Liverpool FC of Boston home bar (dual-use).",
       "affiliations": [
-        {"affiliation_type": "national_hub", "team_code": "SCO", "note": "Tartan Army HQ"},
-        {"affiliation_type": "club_home", "club": "Liverpool FC", "note": "Liverpool FC of Boston"}
+        {
+          "affiliation_type": "national_hub",
+          "team_code": "SCO",
+          "note": "Tartan Army HQ"
+        },
+        {
+          "affiliation_type": "club_home",
+          "club": "Liverpool FC",
+          "note": "Liverpool FC of Boston"
+        }
       ],
       "policies": [
-        {"policy_type": "all_matches", "default_cost_type": "free_open"}
+        {
+          "policy_type": "all_matches",
+          "default_cost_type": "free_open"
+        }
       ]
     },
     {
       "name": "The Anchor",
       "slug": "the-anchor",
-      "venue_type": "waterfront", "environment": "outdoor",
-      "address": "1 Shipyard Park", "city": "Charlestown", "region": "greater_boston",
-      "latitude": 42.3725, "longitude": -71.0530,
-      "serves_alcohol": true, "default_min_age": 21,
-      "source": "research-2026-06", "needs_review": true,
+      "venue_type": "waterfront",
+      "environment": "outdoor",
+      "address": "1 Shipyard Park",
+      "city": "Charlestown",
+      "region": "greater_boston",
+      "latitude": 42.3725,
+      "longitude": -71.053,
+      "serves_alcohol": true,
+      "default_min_age": 21,
+      "source": "research-2026-06",
+      "needs_review": true,
       "notes": "'Scotland House: Boston' - two-tiered outdoor venue, Scottish food/drink. Party days June 12 & 18 (limited dates - verify match-day programming).",
       "affiliations": [
-        {"affiliation_type": "national_hub", "team_code": "SCO", "note": "Scotland House Boston"}
+        {
+          "affiliation_type": "national_hub",
+          "team_code": "SCO",
+          "note": "Scotland House Boston"
+        }
       ],
       "policies": []
     },
     {
       "name": "The Dubliner",
       "slug": "the-dubliner",
-      "venue_type": "bar", "environment": "mixed",
-      "address": "2 Center Plaza", "city": "Boston", "region": "greater_boston",
-      "latitude": 42.3601, "longitude": -71.0596,
-      "serves_alcohol": true, "default_min_age": 21,
+      "venue_type": "bar",
+      "environment": "mixed",
+      "address": "2 Center Plaza",
+      "city": "Boston",
+      "region": "greater_boston",
+      "latitude": 42.3601,
+      "longitude": -71.0596,
+      "serves_alcohol": true,
+      "default_min_age": 21,
       "source": "research-2026-06",
       "notes": "Normally the Manchester United meetup; converting to a full Scottish pub for the tournament. Directly across from the Fan Fest; pop-up outdoor watch patio.",
       "affiliations": [
-        {"affiliation_type": "national_hub", "team_code": "SCO", "note": "Converted for the tournament", "valid_from": "2026-06-11", "valid_to": "2026-07-19"},
-        {"affiliation_type": "club_home", "club": "Manchester United", "note": "Regular season home bar"}
+        {
+          "affiliation_type": "national_hub",
+          "team_code": "SCO",
+          "note": "Converted for the tournament",
+          "valid_from": "2026-06-11",
+          "valid_to": "2026-07-19"
+        },
+        {
+          "affiliation_type": "club_home",
+          "club": "Manchester United",
+          "note": "Regular season home bar"
+        }
       ],
       "policies": [
-        {"policy_type": "all_matches", "default_cost_type": "free_open"}
+        {
+          "policy_type": "all_matches",
+          "default_cost_type": "free_open"
+        }
       ]
     },
     {
       "name": "Phoenix Landing",
       "slug": "phoenix-landing",
-      "venue_type": "bar", "environment": "indoor",
-      "address": "512 Massachusetts Ave", "city": "Cambridge", "region": "cambridge_somerville",
-      "latitude": 42.3649, "longitude": -71.1030,
-      "serves_alcohol": true, "default_min_age": 21,
+      "venue_type": "bar",
+      "environment": "indoor",
+      "address": "512 Massachusetts Ave",
+      "city": "Cambridge",
+      "region": "cambridge_somerville",
+      "latitude": 42.3649,
+      "longitude": -71.103,
+      "serves_alcohol": true,
+      "default_min_age": 21,
       "source": "research-2026-06",
       "notes": "Nationally respected soccer bar in Central Square; home of Liverpool FC of Boston (~750 members). Expected to draw big England crowds.",
       "affiliations": [
-        {"affiliation_type": "national_hub", "team_code": "ENG", "note": "England crowd"},
-        {"affiliation_type": "club_home", "club": "Liverpool FC", "note": "Liverpool FC of Boston (~750 members)"}
+        {
+          "affiliation_type": "national_hub",
+          "team_code": "ENG",
+          "note": "England crowd"
+        },
+        {
+          "affiliation_type": "club_home",
+          "club": "Liverpool FC",
+          "note": "Liverpool FC of Boston (~750 members)"
+        }
       ],
       "policies": [
-        {"policy_type": "all_matches", "default_cost_type": "free_open"}
+        {
+          "policy_type": "all_matches",
+          "default_cost_type": "free_open"
+        }
       ]
     },
     {
       "name": "Dillon's",
       "slug": "dillons",
-      "venue_type": "bar", "environment": "indoor",
-      "address": "955 Boylston St", "city": "Boston", "region": "greater_boston",
-      "latitude": 42.3479, "longitude": -71.0853,
-      "serves_alcohol": true, "default_min_age": 21,
+      "venue_type": "bar",
+      "environment": "indoor",
+      "address": "955 Boylston St",
+      "city": "Boston",
+      "region": "greater_boston",
+      "latitude": 42.3479,
+      "longitude": -71.0853,
+      "serves_alcohol": true,
+      "default_min_age": 21,
       "source": "research-2026-06",
       "notes": "Official Arsenal bar (Boston Gooners); first-come seating.",
       "affiliations": [
-        {"affiliation_type": "club_home", "club": "Arsenal FC", "note": "Boston Gooners"}
+        {
+          "affiliation_type": "club_home",
+          "club": "Arsenal FC",
+          "note": "Boston Gooners"
+        }
       ],
       "policies": [
-        {"policy_type": "all_matches", "default_cost_type": "free_open"}
+        {
+          "policy_type": "all_matches",
+          "default_cost_type": "free_open"
+        }
       ]
     },
     {
       "name": "Elephant & Castle",
       "slug": "elephant-and-castle",
-      "venue_type": "bar", "environment": "indoor",
-      "address": "161 Devonshire St", "city": "Boston", "region": "greater_boston",
-      "latitude": 42.3565, "longitude": -71.0560,
-      "serves_alcohol": true, "default_min_age": 21,
+      "venue_type": "bar",
+      "environment": "indoor",
+      "address": "161 Devonshire St",
+      "city": "Boston",
+      "region": "greater_boston",
+      "latitude": 42.3565,
+      "longitude": -71.056,
+      "serves_alcohol": true,
+      "default_min_age": 21,
       "source": "research-2026-06",
       "notes": "British-inspired pub, home of Boston's Real Madrid Supporters Club; every match.",
       "affiliations": [
-        {"affiliation_type": "club_home", "club": "Real Madrid CF", "note": "Boston Real Madrid Supporters Club"}
+        {
+          "affiliation_type": "club_home",
+          "club": "Real Madrid CF",
+          "note": "Boston Real Madrid Supporters Club"
+        }
       ],
       "policies": [
-        {"policy_type": "all_matches", "default_cost_type": "free_open"}
+        {
+          "policy_type": "all_matches",
+          "default_cost_type": "free_open"
+        }
       ]
     },
     {
       "name": "LongCross Bar + Kitchen",
       "slug": "longcross-bar-kitchen",
-      "venue_type": "bar", "environment": "indoor",
-      "address": "501 Fellsway", "city": "Medford", "region": "cambridge_somerville",
-      "latitude": 42.4180, "longitude": -71.0960,
-      "serves_alcohol": true, "default_min_age": 21,
-      "source": "research-2026-06", "needs_review": true,
+      "venue_type": "bar",
+      "environment": "indoor",
+      "address": "501 Fellsway",
+      "city": "Medford",
+      "region": "cambridge_somerville",
+      "latitude": 42.418,
+      "longitude": -71.096,
+      "serves_alcohol": true,
+      "default_min_age": 21,
+      "source": "research-2026-06",
+      "needs_review": true,
       "notes": "Official Tottenham bar (Boston Spurs SC). World Cup-themed menu. Coordinates approximate - verify.",
       "affiliations": [
-        {"affiliation_type": "club_home", "club": "Tottenham Hotspur", "note": "Boston Spurs SC"}
+        {
+          "affiliation_type": "club_home",
+          "club": "Tottenham Hotspur",
+          "note": "Boston Spurs SC"
+        }
       ],
       "policies": [
-        {"policy_type": "all_matches", "default_cost_type": "free_open"}
+        {
+          "policy_type": "all_matches",
+          "default_cost_type": "free_open"
+        }
       ]
     },
     {
       "name": "McGonagle's Pub",
       "slug": "mcgonagles-pub",
-      "venue_type": "bar", "environment": "indoor",
-      "address": "367 Neponset Ave", "city": "Dorchester", "region": "greater_boston",
-      "latitude": 42.2960, "longitude": -71.0520,
-      "serves_alcohol": true, "default_min_age": 21,
-      "source": "research-2026-06", "needs_review": true,
+      "venue_type": "bar",
+      "environment": "indoor",
+      "address": "367 Neponset Ave",
+      "city": "Dorchester",
+      "region": "greater_boston",
+      "latitude": 42.296,
+      "longitude": -71.052,
+      "serves_alcohol": true,
+      "default_min_age": 21,
+      "source": "research-2026-06",
+      "needs_review": true,
       "notes": "Wrexham AFC supporters; sister pub to The Dubliner. Coordinates approximate - verify.",
       "affiliations": [
-        {"affiliation_type": "club_home", "club": "Wrexham AFC", "note": "Wrexham supporters"}
+        {
+          "affiliation_type": "club_home",
+          "club": "Wrexham AFC",
+          "note": "Wrexham supporters"
+        }
       ],
       "policies": []
     },
     {
       "name": "Warehouse Kitchen + Sports Bar",
       "slug": "warehouse-kitchen-sports-bar",
-      "venue_type": "bar", "environment": "indoor",
-      "address": "40 Broad St", "city": "Boston", "region": "greater_boston",
-      "latitude": 42.3580, "longitude": -71.0540,
-      "serves_alcohol": true, "default_min_age": 21,
+      "venue_type": "bar",
+      "environment": "indoor",
+      "address": "40 Broad St",
+      "city": "Boston",
+      "region": "greater_boston",
+      "latitude": 42.358,
+      "longitude": -71.054,
+      "serves_alcohol": true,
+      "default_min_age": 21,
       "source": "research-2026-06",
       "notes": "Official home bar for France fans; 20 TVs; walking distance to the Fan Fest.",
       "affiliations": [
-        {"affiliation_type": "national_hub", "team_code": "FRA", "note": "Les Bleus home bar"}
+        {
+          "affiliation_type": "national_hub",
+          "team_code": "FRA",
+          "note": "Les Bleus home bar"
+        }
       ],
       "policies": [
-        {"policy_type": "all_matches", "default_cost_type": "free_open"}
+        {
+          "policy_type": "all_matches",
+          "default_cost_type": "free_open"
+        }
       ]
     },
     {
       "name": "Rochambeau",
       "slug": "rochambeau",
-      "venue_type": "restaurant", "environment": "indoor",
-      "address": "900 Boylston St", "city": "Boston", "region": "greater_boston",
-      "latitude": 42.3479, "longitude": -71.0840,
-      "serves_alcohol": true, "default_min_age": null,
-      "source": "research-2026-06", "needs_review": true,
+      "venue_type": "restaurant",
+      "environment": "indoor",
+      "address": "900 Boylston St",
+      "city": "Boston",
+      "region": "greater_boston",
+      "latitude": 42.3479,
+      "longitude": -71.084,
+      "serves_alcohol": true,
+      "default_min_age": null,
+      "source": "research-2026-06",
+      "needs_review": true,
       "notes": "'Le Match' France match-day fetes. Back Bay address approximate - verify.",
       "affiliations": [
-        {"affiliation_type": "national_hub", "team_code": "FRA", "note": "Le Match fetes"}
+        {
+          "affiliation_type": "national_hub",
+          "team_code": "FRA",
+          "note": "Le Match fetes"
+        }
       ],
       "policies": [
-        {"policy_type": "by_team", "team_codes": ["FRA"], "default_cost_type": "free_open"}
+        {
+          "policy_type": "by_team",
+          "team_codes": [
+            "FRA"
+          ],
+          "default_cost_type": "free_open"
+        }
       ]
     },
     {
       "name": "Petit Robert Bistro",
       "slug": "petit-robert-bistro",
-      "venue_type": "restaurant", "environment": "indoor",
-      "address": "480 Columbus Ave", "city": "Boston", "region": "greater_boston",
-      "latitude": 42.3430, "longitude": -71.0810,
-      "serves_alcohol": true, "default_min_age": null,
+      "venue_type": "restaurant",
+      "environment": "indoor",
+      "address": "480 Columbus Ave",
+      "city": "Boston",
+      "region": "greater_boston",
+      "latitude": 42.343,
+      "longitude": -71.081,
+      "serves_alcohol": true,
+      "default_min_age": null,
       "source": "research-2026-06",
       "notes": "Parisian bistro in the South End ('Allez les Bleus!').",
       "affiliations": [
-        {"affiliation_type": "national_hub", "team_code": "FRA", "note": "France bistro"}
+        {
+          "affiliation_type": "national_hub",
+          "team_code": "FRA",
+          "note": "France bistro"
+        }
       ],
       "policies": [
-        {"policy_type": "by_team", "team_codes": ["FRA"], "default_cost_type": "free_minimum"}
+        {
+          "policy_type": "by_team",
+          "team_codes": [
+            "FRA"
+          ],
+          "default_cost_type": "free_minimum"
+        }
       ]
     },
     {
       "name": "Batifol",
       "slug": "batifol",
-      "venue_type": "restaurant", "environment": "indoor",
-      "city": "Cambridge", "region": "cambridge_somerville",
-      "latitude": 42.3870, "longitude": -71.1190,
-      "serves_alcohol": true, "default_min_age": null,
-      "source": "research-2026-06", "needs_review": true,
+      "venue_type": "restaurant",
+      "environment": "indoor",
+      "city": "Cambridge",
+      "region": "cambridge_somerville",
+      "latitude": 42.387,
+      "longitude": -71.119,
+      "serves_alcohol": true,
+      "default_min_age": null,
+      "source": "research-2026-06",
+      "needs_review": true,
       "notes": "French brasserie showing all 104 matches; $1 oysters. Exact address not given - verify.",
       "affiliations": [
-        {"affiliation_type": "national_hub", "team_code": "FRA", "note": "French brasserie"}
+        {
+          "affiliation_type": "national_hub",
+          "team_code": "FRA",
+          "note": "French brasserie"
+        }
       ],
       "policies": [
-        {"policy_type": "all_matches", "default_cost_type": "free_minimum"}
+        {
+          "policy_type": "all_matches",
+          "default_cost_type": "free_minimum"
+        }
       ]
     },
     {
       "name": "Fogo de Chão",
       "slug": "fogo-de-chao",
-      "venue_type": "restaurant", "environment": "indoor",
-      "address": "200 Dartmouth St", "city": "Boston", "region": "greater_boston",
-      "latitude": 42.3475, "longitude": -71.0760,
-      "serves_alcohol": true, "default_min_age": null,
+      "venue_type": "restaurant",
+      "environment": "indoor",
+      "address": "200 Dartmouth St",
+      "city": "Boston",
+      "region": "greater_boston",
+      "latitude": 42.3475,
+      "longitude": -71.076,
+      "serves_alcohol": true,
+      "default_min_age": null,
       "source": "research-2026-06",
       "notes": "Brazilian steakhouse; Brazil-matchday watch parties with Caipirinhas.",
       "affiliations": [
-        {"affiliation_type": "national_hub", "team_code": "BRA", "note": "Brazil watch parties"}
+        {
+          "affiliation_type": "national_hub",
+          "team_code": "BRA",
+          "note": "Brazil watch parties"
+        }
       ],
       "policies": [
-        {"policy_type": "by_team", "team_codes": ["BRA"], "default_cost_type": "free_minimum"}
+        {
+          "policy_type": "by_team",
+          "team_codes": [
+            "BRA"
+          ],
+          "default_cost_type": "free_minimum"
+        }
       ]
     },
     {
       "name": "Caffè dello Sport",
       "slug": "caffe-dello-sport",
-      "venue_type": "restaurant", "environment": "indoor",
-      "address": "308 Hanover St", "city": "Boston", "region": "greater_boston",
-      "latitude": 42.3650, "longitude": -71.0540,
-      "serves_alcohol": true, "default_min_age": null,
+      "venue_type": "restaurant",
+      "environment": "indoor",
+      "address": "308 Hanover St",
+      "city": "Boston",
+      "region": "greater_boston",
+      "latitude": 42.365,
+      "longitude": -71.054,
+      "serves_alcohol": true,
+      "default_min_age": null,
       "source": "research-2026-06",
       "notes": "North End espresso/panini/calcio culture; every match (Italy did not qualify).",
       "affiliations": [],
       "policies": [
-        {"policy_type": "all_matches", "default_cost_type": "free_minimum"}
+        {
+          "policy_type": "all_matches",
+          "default_cost_type": "free_minimum"
+        }
       ]
     },
     {
       "name": "Blackmoor Bar + Kitchen",
       "slug": "blackmoor-bar-kitchen",
-      "venue_type": "bar", "environment": "indoor",
-      "address": "1 Chelsea St", "city": "Charlestown", "region": "greater_boston",
-      "latitude": 42.3740, "longitude": -71.0560,
-      "serves_alcohol": true, "default_min_age": 21,
+      "venue_type": "bar",
+      "environment": "indoor",
+      "address": "1 Chelsea St",
+      "city": "Charlestown",
+      "region": "greater_boston",
+      "latitude": 42.374,
+      "longitude": -71.056,
+      "serves_alcohol": true,
+      "default_min_age": 21,
       "source": "research-2026-06",
       "notes": "Gathering spot for the New England Friends of Croatia; 'World Soccer 2026' menu.",
       "affiliations": [
-        {"affiliation_type": "national_hub", "team_code": "CRO", "note": "NE Friends of Croatia"}
+        {
+          "affiliation_type": "national_hub",
+          "team_code": "CRO",
+          "note": "NE Friends of Croatia"
+        }
       ],
       "policies": [
-        {"policy_type": "by_team", "team_codes": ["CRO"], "default_cost_type": "free_open"}
+        {
+          "policy_type": "by_team",
+          "team_codes": [
+            "CRO"
+          ],
+          "default_cost_type": "free_open"
+        }
       ]
     },
     {
       "name": "High Street Place",
       "slug": "high-street-place",
-      "venue_type": "market", "environment": "indoor",
-      "address": "100 High St", "city": "Boston", "region": "greater_boston",
-      "latitude": 42.3560, "longitude": -71.0530,
-      "serves_alcohol": true, "default_min_age": null,
+      "venue_type": "market",
+      "environment": "indoor",
+      "address": "100 High St",
+      "city": "Boston",
+      "region": "greater_boston",
+      "latitude": 42.356,
+      "longitude": -71.053,
+      "serves_alcohol": true,
+      "default_min_age": null,
       "source": "research-2026-06",
       "notes": "'Boston's House of Soccer' food hall; every match on a 28-foot LED wall, 20+ vendors.",
       "affiliations": [],
       "policies": [
-        {"policy_type": "all_matches", "default_cost_type": "free_open"}
+        {
+          "policy_type": "all_matches",
+          "default_cost_type": "free_open"
+        }
       ]
     },
     {
       "name": "Banners Kitchen & Tap",
       "slug": "banners-kitchen-tap",
-      "venue_type": "bar", "environment": "indoor",
-      "address": "80 Causeway St", "city": "Boston", "region": "greater_boston",
-      "latitude": 42.3660, "longitude": -71.0620,
-      "serves_alcohol": true, "default_min_age": 21,
+      "venue_type": "bar",
+      "environment": "indoor",
+      "address": "80 Causeway St",
+      "city": "Boston",
+      "region": "greater_boston",
+      "latitude": 42.366,
+      "longitude": -71.062,
+      "serves_alcohol": true,
+      "default_min_age": 21,
       "source": "research-2026-06",
       "notes": "60+ TVs incl. New England's largest (40 feet), near TD Garden.",
       "affiliations": [],
       "policies": [
-        {"policy_type": "all_matches", "default_cost_type": "free_open"}
+        {
+          "policy_type": "all_matches",
+          "default_cost_type": "free_open"
+        }
       ]
     },
     {
       "name": "The Black Rose",
       "slug": "the-black-rose",
-      "venue_type": "bar", "environment": "indoor",
-      "address": "160 State St", "city": "Boston", "region": "greater_boston",
-      "latitude": 42.3597, "longitude": -71.0540,
-      "serves_alcohol": true, "default_min_age": 21,
+      "venue_type": "bar",
+      "environment": "indoor",
+      "address": "160 State St",
+      "city": "Boston",
+      "region": "greater_boston",
+      "latitude": 42.3597,
+      "longitude": -71.054,
+      "serves_alcohol": true,
+      "default_min_age": 21,
       "source": "research-2026-06",
       "notes": "Faneuil Hall pub; 'every nation welcome' neutral soccer hub.",
       "affiliations": [],
       "policies": [
-        {"policy_type": "all_matches", "default_cost_type": "free_open"}
+        {
+          "policy_type": "all_matches",
+          "default_cost_type": "free_open"
+        }
       ]
     },
     {
       "name": "Time Out Market Boston",
       "slug": "time-out-market-boston",
-      "venue_type": "market", "environment": "indoor",
-      "address": "401 Park Dr", "city": "Boston", "region": "greater_boston",
-      "latitude": 42.3430, "longitude": -71.0990,
-      "serves_alcohol": true, "default_min_age": null,
+      "venue_type": "market",
+      "environment": "indoor",
+      "address": "401 Park Dr",
+      "city": "Boston",
+      "region": "greater_boston",
+      "latitude": 42.343,
+      "longitude": -71.099,
+      "serves_alcohol": true,
+      "default_min_age": null,
       "source": "research-2026-06",
       "notes": "Fenway food hall; Boston's Official Team USA Watch Parties as part of 'Fenway FC'.",
       "affiliations": [
-        {"affiliation_type": "national_hub", "team_code": "USA", "note": "Official Team USA Watch Parties"}
+        {
+          "affiliation_type": "national_hub",
+          "team_code": "USA",
+          "note": "Official Team USA Watch Parties"
+        }
       ],
       "policies": [
-        {"policy_type": "all_matches", "default_cost_type": "free_open"}
+        {
+          "policy_type": "all_matches",
+          "default_cost_type": "free_open"
+        }
       ]
     },
     {
       "name": "Boston Fan Zone at The Lawn on D",
       "slug": "lawn-on-d-fan-zone",
-      "venue_type": "park", "environment": "outdoor",
-      "address": "420 D St", "city": "Boston", "region": "greater_boston",
-      "latitude": 42.3450, "longitude": -71.0480,
-      "serves_alcohol": true, "default_min_age": null,
+      "venue_type": "park",
+      "environment": "outdoor",
+      "address": "420 D St",
+      "city": "Boston",
+      "region": "greater_boston",
+      "latitude": 42.345,
+      "longitude": -71.048,
+      "serves_alcohol": true,
+      "default_min_age": null,
       "source": "research-2026-06",
       "notes": "Free outdoor fan zone in the Seaport, June 13-July 9; big screen, live music, food, on Boston match days plus knockouts.",
       "affiliations": [],
       "policies": [
-        {"policy_type": "specific", "match_numbers": [22, 40, 54, 63, 71, 88, 99], "default_cost_type": "free_open"}
+        {
+          "policy_type": "specific",
+          "match_numbers": [
+            5,
+            18,
+            30,
+            45,
+            61,
+            74,
+            97
+          ],
+          "default_cost_type": "free_open"
+        }
       ]
     },
     {
       "name": "The Tall Ship",
       "slug": "the-tall-ship",
-      "venue_type": "waterfront", "environment": "mixed",
-      "address": "1 Pier One", "city": "East Boston", "region": "greater_boston",
-      "latitude": 42.3690, "longitude": -71.0380,
-      "serves_alcohol": true, "default_min_age": 21,
-      "source": "research-2026-06", "needs_review": true,
+      "venue_type": "waterfront",
+      "environment": "mixed",
+      "address": "1 Pier One",
+      "city": "East Boston",
+      "region": "greater_boston",
+      "latitude": 42.369,
+      "longitude": -71.038,
+      "serves_alcohol": true,
+      "default_min_age": 21,
+      "source": "research-2026-06",
+      "needs_review": true,
       "notes": "245-foot vessel / floating oyster bar; every game June 11-July 19; $7 boat shuttles. Coordinates approximate.",
       "affiliations": [],
       "policies": [
-        {"policy_type": "all_matches", "default_cost_type": "free_open"}
+        {
+          "policy_type": "all_matches",
+          "default_cost_type": "free_open"
+        }
       ]
     },
     {
       "name": "Cisco Brewers Seaport",
       "slug": "cisco-brewers-seaport",
-      "venue_type": "brewery", "environment": "outdoor",
-      "city": "Boston", "region": "greater_boston",
-      "latitude": 42.3520, "longitude": -71.0440,
-      "serves_alcohol": true, "default_min_age": 21,
+      "venue_type": "brewery",
+      "environment": "outdoor",
+      "city": "Boston",
+      "region": "greater_boston",
+      "latitude": 42.352,
+      "longitude": -71.044,
+      "serves_alcohol": true,
+      "default_min_age": 21,
       "source": "research-2026-06",
       "notes": "Waterfront big screens; rentable 'beach shACKs', June 11-24. Showed the Mexico vs South Africa opener.",
       "affiliations": [],
       "policies": [
-        {"policy_type": "all_matches", "default_cost_type": "free_open"}
+        {
+          "policy_type": "all_matches",
+          "default_cost_type": "free_open"
+        }
       ]
     },
     {
       "name": "Aeronaut Brewing",
       "slug": "aeronaut-brewing",
-      "venue_type": "brewery", "environment": "indoor",
-      "address": "14 Tyler St", "city": "Somerville", "region": "cambridge_somerville",
-      "latitude": 42.3790, "longitude": -71.0980,
-      "serves_alcohol": true, "default_min_age": 21,
-      "source": "research-2026-06", "needs_review": true,
+      "venue_type": "brewery",
+      "environment": "indoor",
+      "address": "14 Tyler St",
+      "city": "Somerville",
+      "region": "cambridge_somerville",
+      "latitude": 42.379,
+      "longitude": -71.098,
+      "serves_alcohol": true,
+      "default_min_age": 21,
+      "source": "research-2026-06",
+      "needs_review": true,
       "notes": "Taproom screenings; 21+ unless accompanied by a guardian (age policy nuance - review).",
       "affiliations": [],
       "policies": [
-        {"policy_type": "all_matches", "default_cost_type": "free_open"}
+        {
+          "policy_type": "all_matches",
+          "default_cost_type": "free_open"
+        }
       ]
     },
     {
       "name": "CanalSide Food + Drink at CambridgeSide",
       "slug": "canalside-cambridgeside",
-      "venue_type": "market", "environment": "mixed",
-      "address": "100 CambridgeSide Pl", "city": "Cambridge", "region": "cambridge_somerville",
-      "latitude": 42.3680, "longitude": -71.0760,
-      "serves_alcohol": true, "default_min_age": null,
+      "venue_type": "market",
+      "environment": "mixed",
+      "address": "100 CambridgeSide Pl",
+      "city": "Cambridge",
+      "region": "cambridge_somerville",
+      "latitude": 42.368,
+      "longitude": -71.076,
+      "serves_alcohol": true,
+      "default_min_age": null,
       "source": "research-2026-06",
       "notes": "13 eateries, waterfront bar, big screen; family-friendly.",
       "affiliations": [],
       "policies": [
-        {"policy_type": "all_matches", "default_cost_type": "free_open"}
+        {
+          "policy_type": "all_matches",
+          "default_cost_type": "free_open"
+        }
       ]
     },
     {
       "name": "Bow Market",
       "slug": "bow-market",
-      "venue_type": "market", "environment": "mixed",
-      "address": "1 Bow Market Way", "city": "Somerville", "region": "cambridge_somerville",
-      "latitude": 42.3805, "longitude": -71.0925,
-      "serves_alcohol": true, "default_min_age": null,
+      "venue_type": "market",
+      "environment": "mixed",
+      "address": "1 Bow Market Way",
+      "city": "Somerville",
+      "region": "cambridge_somerville",
+      "latitude": 42.3805,
+      "longitude": -71.0925,
+      "serves_alcohol": true,
+      "default_min_age": null,
       "source": "research-2026-06",
       "notes": "'Match Day Watch Parties' July 9-19 (knockouts), seven screenings.",
       "affiliations": [],
       "policies": [
-        {"policy_type": "specific", "match_numbers": [99], "default_cost_type": "free_open"}
+        {
+          "policy_type": "specific",
+          "match_numbers": [
+            97
+          ],
+          "default_cost_type": "free_open"
+        }
       ]
     },
     {
       "name": "Scorpion Bar - Patriot Place",
       "slug": "scorpion-bar-patriot-place",
-      "venue_type": "bar", "environment": "mixed",
-      "address": "1 Patriot Place", "city": "Foxborough", "region": "foxborough",
-      "latitude": 42.0910, "longitude": -71.2640,
-      "serves_alcohol": true, "default_min_age": 21,
-      "capacity": 420, "source": "research-2026-06",
+      "venue_type": "bar",
+      "environment": "mixed",
+      "address": "1 Patriot Place",
+      "city": "Foxborough",
+      "region": "foxborough",
+      "latitude": 42.091,
+      "longitude": -71.264,
+      "serves_alcohol": true,
+      "default_min_age": 21,
+      "capacity": 420,
+      "source": "research-2026-06",
       "notes": "Patriot Place 'Summer of Soccer'; big screen, no cover, extended match-day hours.",
       "affiliations": [],
       "policies": [
-        {"policy_type": "all_matches", "default_cost_type": "free_open"}
+        {
+          "policy_type": "all_matches",
+          "default_cost_type": "free_open"
+        }
       ]
     },
     {
       "name": "The Harp - Patriot Place",
       "slug": "the-harp-patriot-place",
-      "venue_type": "bar", "environment": "mixed",
-      "address": "1 Patriot Place", "city": "Foxborough", "region": "foxborough",
-      "latitude": 42.0915, "longitude": -71.2650,
-      "serves_alcohol": true, "default_min_age": 21,
+      "venue_type": "bar",
+      "environment": "mixed",
+      "address": "1 Patriot Place",
+      "city": "Foxborough",
+      "region": "foxborough",
+      "latitude": 42.0915,
+      "longitude": -71.265,
+      "serves_alcohol": true,
+      "default_min_age": 21,
       "source": "research-2026-06",
       "notes": "Comfort food, 35-foot big screen, best stadium views; no reservations on match days.",
       "affiliations": [],
       "policies": [
-        {"policy_type": "all_matches", "default_cost_type": "free_open"}
+        {
+          "policy_type": "all_matches",
+          "default_cost_type": "free_open"
+        }
       ]
     },
     {
       "name": "Bar Louie - Patriot Place",
       "slug": "bar-louie-patriot-place",
-      "venue_type": "bar", "environment": "mixed",
-      "address": "1 Patriot Place", "city": "Foxborough", "region": "foxborough",
-      "latitude": 42.0908, "longitude": -71.2635,
-      "serves_alcohol": true, "default_min_age": 21,
+      "venue_type": "bar",
+      "environment": "mixed",
+      "address": "1 Patriot Place",
+      "city": "Foxborough",
+      "region": "foxborough",
+      "latitude": 42.0908,
+      "longitude": -71.2635,
+      "serves_alcohol": true,
+      "default_min_age": 21,
       "source": "research-2026-06",
       "notes": "22 TVs incl. rooftop bar; first-come, first-served; daily 11am-1am.",
       "affiliations": [],
       "policies": [
-        {"policy_type": "all_matches", "default_cost_type": "free_open"}
+        {
+          "policy_type": "all_matches",
+          "default_cost_type": "free_open"
+        }
       ]
     },
     {
       "name": "Davio's - Patriot Place (Macallan Lounge)",
       "slug": "davios-patriot-place",
-      "venue_type": "restaurant", "environment": "indoor",
-      "address": "1 Patriot Place", "city": "Foxborough", "region": "foxborough",
-      "latitude": 42.0912, "longitude": -71.2648,
-      "serves_alcohol": true, "default_min_age": 21,
+      "venue_type": "restaurant",
+      "environment": "indoor",
+      "address": "1 Patriot Place",
+      "city": "Foxborough",
+      "region": "foxborough",
+      "latitude": 42.0912,
+      "longitude": -71.2648,
+      "serves_alcohol": true,
+      "default_min_age": 21,
       "source": "research-2026-06",
       "notes": "'Macallan Lounge' elevated ticketed experience, June 13-29.",
       "affiliations": [],
       "policies": [
-        {"policy_type": "specific", "match_numbers": [22, 40, 54, 63, 71, 88], "default_cost_type": "ticketed"}
+        {
+          "policy_type": "specific",
+          "match_numbers": [
+            5,
+            18,
+            30,
+            45,
+            61,
+            74
+          ],
+          "default_cost_type": "ticketed"
+        }
       ]
     },
     {
       "name": "Cambridge United - Central Square",
       "slug": "cambridge-united-central-square",
-      "venue_type": "community", "environment": "outdoor",
-      "address": "Central Square", "city": "Cambridge", "region": "cambridge_somerville",
-      "latitude": 42.3650, "longitude": -71.1040,
-      "serves_alcohol": false, "default_min_age": null, "has_food": true,
+      "venue_type": "community",
+      "environment": "outdoor",
+      "address": "Central Square",
+      "city": "Cambridge",
+      "region": "cambridge_somerville",
+      "latitude": 42.365,
+      "longitude": -71.104,
+      "serves_alcohol": false,
+      "default_min_age": null,
+      "has_food": true,
       "source": "research-2026-06",
       "notes": "Free family-friendly outdoor watch party; Norway vs France, leads into the Citywide Dance Party. Cultural entertainment, face painting, soccer activities, local food vendors.",
       "affiliations": [],
       "policies": [
-        {"policy_type": "specific", "match_numbers": [71], "default_cost_type": "free_open"}
+        {
+          "policy_type": "specific",
+          "match_numbers": [
+            61
+          ],
+          "default_cost_type": "free_open"
+        }
       ]
     },
     {
       "name": "Cambridge United - University Park Commons",
       "slug": "cambridge-united-university-park",
-      "venue_type": "community", "environment": "outdoor",
-      "address": "65 Sidney St", "city": "Cambridge", "region": "cambridge_somerville",
-      "latitude": 42.3620, "longitude": -71.1010,
-      "serves_alcohol": false, "default_min_age": null, "has_food": true,
+      "venue_type": "community",
+      "environment": "outdoor",
+      "address": "65 Sidney St",
+      "city": "Cambridge",
+      "region": "cambridge_somerville",
+      "latitude": 42.362,
+      "longitude": -71.101,
+      "serves_alcohol": false,
+      "default_min_age": null,
+      "has_food": true,
       "source": "research-2026-06",
       "notes": "Free family-friendly watch party; Haiti vs Scotland with Afro-Caribbean Night Market and live music.",
       "affiliations": [],
       "policies": [
-        {"policy_type": "specific", "match_numbers": [22], "default_cost_type": "free_open"}
+        {
+          "policy_type": "specific",
+          "match_numbers": [
+            5
+          ],
+          "default_cost_type": "free_open"
+        }
       ]
     },
     {
       "name": "Cambridge United - Harvard Square",
       "slug": "cambridge-united-harvard-square",
-      "venue_type": "community", "environment": "outdoor",
-      "address": "Church & Brattle St", "city": "Cambridge", "region": "cambridge_somerville",
-      "latitude": 42.3730, "longitude": -71.1210,
-      "serves_alcohol": false, "default_min_age": null, "has_food": true,
+      "venue_type": "community",
+      "environment": "outdoor",
+      "address": "Church & Brattle St",
+      "city": "Cambridge",
+      "region": "cambridge_somerville",
+      "latitude": 42.373,
+      "longitude": -71.121,
+      "serves_alcohol": false,
+      "default_min_age": null,
+      "has_food": true,
       "source": "research-2026-06",
       "notes": "Free family-friendly outdoor watch party; Iraq vs Norway.",
       "affiliations": [],
       "policies": [
-        {"policy_type": "specific", "match_numbers": [40], "default_cost_type": "free_open"}
+        {
+          "policy_type": "specific",
+          "match_numbers": [
+            18
+          ],
+          "default_cost_type": "free_open"
+        }
       ]
     },
     {
       "name": "Cambridge United - Kendall/MIT Open Space",
       "slug": "cambridge-united-kendall-mit",
-      "venue_type": "university", "environment": "outdoor",
-      "address": "Kendall/MIT Open Space", "city": "Cambridge", "region": "cambridge_somerville",
-      "latitude": 42.3625, "longitude": -71.0900,
-      "serves_alcohol": false, "default_min_age": null, "has_food": true,
+      "venue_type": "university",
+      "environment": "outdoor",
+      "address": "Kendall/MIT Open Space",
+      "city": "Cambridge",
+      "region": "cambridge_somerville",
+      "latitude": 42.3625,
+      "longitude": -71.09,
+      "serves_alcohol": false,
+      "default_min_age": null,
+      "has_food": true,
       "source": "research-2026-06",
       "notes": "Free family-friendly watch party; England vs Ghana, in partnership with MIT Open Space.",
       "affiliations": [],
       "policies": [
-        {"policy_type": "specific", "match_numbers": [63], "default_cost_type": "free_open"}
+        {
+          "policy_type": "specific",
+          "match_numbers": [
+            45
+          ],
+          "default_cost_type": "free_open"
+        }
       ]
     },
     {
       "name": "Chelsea - Fiesta de Fútbol",
       "slug": "chelsea-fiesta-de-futbol",
-      "venue_type": "community", "environment": "outdoor",
-      "address": "Chelsea Square", "city": "Chelsea", "region": "north_shore",
-      "latitude": 42.3918, "longitude": -71.0328,
-      "serves_alcohol": false, "default_min_age": null, "has_food": true,
+      "venue_type": "community",
+      "environment": "outdoor",
+      "address": "Chelsea Square",
+      "city": "Chelsea",
+      "region": "north_shore",
+      "latitude": 42.3918,
+      "longitude": -71.0328,
+      "serves_alcohol": false,
+      "default_min_age": null,
+      "has_food": true,
       "source": "research-2026-06",
       "notes": "June 11-July 19; the state's only Spanish-only (Telemundo) public broadcast; food vendors, live music, community programming.",
       "affiliations": [],
       "policies": [
-        {"policy_type": "all_matches", "default_cost_type": "free_open"}
+        {
+          "policy_type": "all_matches",
+          "default_cost_type": "free_open"
+        }
       ]
     },
     {
       "name": "Revere - Field of Play (Waterfront Square)",
       "slug": "revere-field-of-play",
-      "venue_type": "community", "environment": "outdoor",
-      "address": "Waterfront Square, Revere Beach", "city": "Revere", "region": "north_shore",
-      "latitude": 42.4084, "longitude": -70.9920,
-      "serves_alcohol": false, "default_min_age": null, "has_food": true,
-      "source": "research-2026-06", "needs_review": true,
+      "venue_type": "community",
+      "environment": "outdoor",
+      "address": "Waterfront Square, Revere Beach",
+      "city": "Revere",
+      "region": "north_shore",
+      "latitude": 42.4084,
+      "longitude": -70.992,
+      "serves_alcohol": false,
+      "default_min_age": null,
+      "has_food": true,
+      "source": "research-2026-06",
+      "needs_review": true,
       "notes": "Free, June 12-July 19, rotating among several Revere sites; tailored to Moroccan and Colombian communities. Quarterfinal Festival July 9-11. Location rotates - confirm per date.",
       "affiliations": [
-        {"affiliation_type": "national_hub", "team_code": "MAR", "note": "Moroccan community"}
+        {
+          "affiliation_type": "national_hub",
+          "team_code": "MAR",
+          "note": "Moroccan community"
+        }
       ],
       "policies": [
-        {"policy_type": "all_matches", "default_cost_type": "free_open"}
+        {
+          "policy_type": "all_matches",
+          "default_cost_type": "free_open"
+        }
       ]
     },
     {
       "name": "Worcester Common Watch Party",
       "slug": "worcester-common-watch-party",
-      "venue_type": "community", "environment": "outdoor",
-      "address": "Worcester Common", "city": "Worcester", "region": "worcester",
-      "latitude": 42.2625, "longitude": -71.8000,
-      "serves_alcohol": false, "default_min_age": null, "has_food": true,
+      "venue_type": "community",
+      "environment": "outdoor",
+      "address": "Worcester Common",
+      "city": "Worcester",
+      "region": "worcester",
+      "latitude": 42.2625,
+      "longitude": -71.8,
+      "serves_alcohol": false,
+      "default_min_age": null,
+      "has_food": true,
       "source": "research-2026-06",
       "notes": "Free (pre-register). Declared a 'host city' for Ghana fans. June 13, June 23 (England vs Ghana), Semifinal July 14, Final July 19.",
       "affiliations": [
-        {"affiliation_type": "national_hub", "team_code": "GHA", "note": "Host city for Ghana fans"}
+        {
+          "affiliation_type": "national_hub",
+          "team_code": "GHA",
+          "note": "Host city for Ghana fans"
+        }
       ],
       "policies": [
-        {"policy_type": "specific", "match_numbers": [22, 63], "default_cost_type": "free_registration"}
+        {
+          "policy_type": "specific",
+          "match_numbers": [
+            5,
+            45
+          ],
+          "default_cost_type": "free_registration"
+        }
       ]
     },
     {
       "name": "Quincy - Kilroy Square",
       "slug": "quincy-kilroy-square",
-      "venue_type": "community", "environment": "outdoor",
-      "address": "Kilroy Square", "city": "Quincy", "region": "south_shore",
-      "latitude": 42.2510, "longitude": -71.0030,
-      "serves_alcohol": false, "default_min_age": null, "has_food": true,
-      "source": "research-2026-06", "needs_review": true,
+      "venue_type": "community",
+      "environment": "outdoor",
+      "address": "Kilroy Square",
+      "city": "Quincy",
+      "region": "south_shore",
+      "latitude": 42.251,
+      "longitude": -71.003,
+      "serves_alcohol": false,
+      "default_min_age": null,
+      "has_food": true,
+      "source": "research-2026-06",
+      "needs_review": true,
       "notes": "June 19-20 watch parties; food from local vendors. Match list references non-Gillette fixtures - matches not yet keyed.",
       "affiliations": [],
       "policies": []
@@ -612,39 +1093,74 @@
     {
       "name": "Brockton - Campanelli Stadium",
       "slug": "brockton-campanelli-stadium",
-      "venue_type": "stadium", "environment": "outdoor",
-      "address": "1 Feinberg Way", "city": "Brockton", "region": "south_shore",
-      "latitude": 42.0670, "longitude": -71.0180,
-      "serves_alcohol": false, "default_min_age": null, "has_food": true,
-      "source": "research-2026-06", "needs_review": true,
+      "venue_type": "stadium",
+      "environment": "outdoor",
+      "address": "1 Feinberg Way",
+      "city": "Brockton",
+      "region": "south_shore",
+      "latitude": 42.067,
+      "longitude": -71.018,
+      "serves_alcohol": false,
+      "default_min_age": null,
+      "has_food": true,
+      "source": "research-2026-06",
+      "needs_review": true,
       "notes": "Free but ticketed (registration). Large Cape Verdean population. June 24 & 26 - references non-Gillette fixtures plus Norway vs France.",
       "affiliations": [],
       "policies": [
-        {"policy_type": "specific", "match_numbers": [71], "default_cost_type": "free_registration"}
+        {
+          "policy_type": "specific",
+          "match_numbers": [
+            61
+          ],
+          "default_cost_type": "free_registration"
+        }
       ]
     },
     {
       "name": "Lexington - Visitors Center Lawn",
       "slug": "lexington-visitors-center-lawn",
-      "venue_type": "community", "environment": "outdoor",
-      "address": "1875 Massachusetts Ave", "city": "Lexington", "region": "metrowest",
-      "latitude": 42.4490, "longitude": -71.2290,
-      "serves_alcohol": false, "default_min_age": null, "has_food": true,
+      "venue_type": "community",
+      "environment": "outdoor",
+      "address": "1875 Massachusetts Ave",
+      "city": "Lexington",
+      "region": "metrowest",
+      "latitude": 42.449,
+      "longitude": -71.229,
+      "serves_alcohol": false,
+      "default_min_age": null,
+      "has_food": true,
       "source": "research-2026-06",
       "notes": "Daily June 16-26, 3-9pm; expecting 800-1,000+/day; interactive soccer programming via Lexington United SC.",
       "affiliations": [],
       "policies": [
-        {"policy_type": "specific", "match_numbers": [40, 54, 63, 71], "default_cost_type": "free_open"}
+        {
+          "policy_type": "specific",
+          "match_numbers": [
+            18,
+            30,
+            45,
+            61
+          ],
+          "default_cost_type": "free_open"
+        }
       ]
     },
     {
       "name": "Everett - Rivergreen Park",
       "slug": "everett-rivergreen-park",
-      "venue_type": "park", "environment": "outdoor",
-      "address": "Rivergreen Park", "city": "Everett", "region": "north_shore",
-      "latitude": 42.4070, "longitude": -71.0540,
-      "serves_alcohol": false, "default_min_age": null, "has_food": true,
-      "source": "research-2026-06", "needs_review": true,
+      "venue_type": "park",
+      "environment": "outdoor",
+      "address": "Rivergreen Park",
+      "city": "Everett",
+      "region": "north_shore",
+      "latitude": 42.407,
+      "longitude": -71.054,
+      "serves_alcohol": false,
+      "default_min_age": null,
+      "has_food": true,
+      "source": "research-2026-06",
+      "needs_review": true,
       "notes": "June 13, 4-8pm - Brazil vs Morocco on a 20-foot screen, live music. Match not a Gillette fixture - not keyed.",
       "affiliations": [],
       "policies": []
@@ -652,72 +1168,133 @@
     {
       "name": "Lowell Fanfest 2026 - Tsongas Center",
       "slug": "lowell-fanfest-tsongas-center",
-      "venue_type": "community", "environment": "indoor",
-      "address": "300 Martin Luther King Jr Way", "city": "Lowell", "region": "north_shore",
-      "latitude": 42.6550, "longitude": -71.3110,
-      "serves_alcohol": false, "default_min_age": null, "has_food": true,
+      "venue_type": "community",
+      "environment": "indoor",
+      "address": "300 Martin Luther King Jr Way",
+      "city": "Lowell",
+      "region": "north_shore",
+      "latitude": 42.655,
+      "longitude": -71.311,
+      "serves_alcohol": false,
+      "default_min_age": null,
+      "has_food": true,
       "source": "research-2026-06",
       "notes": "~12 indoor watch parties; themed cultural nights ('Lusophone & Colombian Double Night', 'Ghana Night') from the Foxborough opener to the Final.",
       "affiliations": [],
       "policies": [
-        {"policy_type": "all_matches", "default_cost_type": "free_open"}
+        {
+          "policy_type": "all_matches",
+          "default_cost_type": "free_open"
+        }
       ]
     },
     {
       "name": "Pride House Boston - The Revolution Hotel",
       "slug": "pride-house-boston-revolution-hotel",
-      "venue_type": "hotel", "environment": "mixed",
-      "address": "40 Berkeley St", "city": "Boston", "region": "greater_boston",
-      "latitude": 42.3450, "longitude": -71.0710,
-      "serves_alcohol": true, "default_min_age": 21,
+      "venue_type": "hotel",
+      "environment": "mixed",
+      "address": "40 Berkeley St",
+      "city": "Boston",
+      "region": "greater_boston",
+      "latitude": 42.345,
+      "longitude": -71.071,
+      "serves_alcohol": true,
+      "default_min_age": 21,
       "source": "research-2026-06",
       "notes": "Spy Bar & Cosmica; LGBTQ+-inclusive watch parties on all 7 Boston match days with DJs, dancing, a patio.",
       "affiliations": [],
       "policies": [
-        {"policy_type": "specific", "match_numbers": [22, 40, 54, 63, 71, 88, 99], "default_cost_type": "free_open"}
+        {
+          "policy_type": "specific",
+          "match_numbers": [
+            5,
+            18,
+            30,
+            45,
+            61,
+            74,
+            97
+          ],
+          "default_cost_type": "free_open"
+        }
       ]
     },
     {
       "name": "The Charles Hotel",
       "slug": "the-charles-hotel",
-      "venue_type": "hotel", "environment": "indoor",
-      "address": "1 Bennett St", "city": "Cambridge", "region": "cambridge_somerville",
-      "latitude": 42.3720, "longitude": -71.1230,
-      "serves_alcohol": true, "default_min_age": null,
+      "venue_type": "hotel",
+      "environment": "indoor",
+      "address": "1 Bennett St",
+      "city": "Cambridge",
+      "region": "cambridge_somerville",
+      "latitude": 42.372,
+      "longitude": -71.123,
+      "serves_alcohol": true,
+      "default_min_age": null,
       "source": "research-2026-06",
       "notes": "'Foosball Nights & World Cup Lights' in Harvard Square; full-size goal installation, foosball, all matches. Family-friendly.",
       "affiliations": [],
       "policies": [
-        {"policy_type": "all_matches", "default_cost_type": "free_open"}
+        {
+          "policy_type": "all_matches",
+          "default_cost_type": "free_open"
+        }
       ]
     },
     {
       "name": "The Liberty Hotel",
       "slug": "the-liberty-hotel",
-      "venue_type": "hotel", "environment": "indoor",
-      "address": "215 Charles St", "city": "Boston", "region": "greater_boston",
-      "latitude": 42.3615, "longitude": -71.0700,
-      "serves_alcohol": true, "default_min_age": 21,
+      "venue_type": "hotel",
+      "environment": "indoor",
+      "address": "215 Charles St",
+      "city": "Boston",
+      "region": "greater_boston",
+      "latitude": 42.3615,
+      "longitude": -71.07,
+      "serves_alcohol": true,
+      "default_min_age": 21,
       "source": "research-2026-06",
       "notes": "'The Soccer Edit' in Beacon Hill; country-themed cocktails on Boston match days.",
       "affiliations": [],
       "policies": [
-        {"policy_type": "specific", "match_numbers": [22, 40, 54, 63, 71, 88, 99], "default_cost_type": "free_open"}
+        {
+          "policy_type": "specific",
+          "match_numbers": [
+            5,
+            18,
+            30,
+            45,
+            61,
+            74,
+            97
+          ],
+          "default_cost_type": "free_open"
+        }
       ]
     },
     {
       "name": "F1 Arcade Boston",
       "slug": "f1-arcade-boston",
-      "venue_type": "entertainment", "environment": "indoor",
-      "address": "300 Pier 4 Blvd", "city": "Boston", "region": "greater_boston",
-      "latitude": 42.3520, "longitude": -71.0430,
-      "serves_alcohol": true, "default_min_age": null,
-      "evening_min_age": 21, "evening_cutoff": "21:00:00",
-      "source": "research-2026-06", "needs_review": true,
+      "venue_type": "entertainment",
+      "environment": "indoor",
+      "address": "300 Pier 4 Blvd",
+      "city": "Boston",
+      "region": "greater_boston",
+      "latitude": 42.352,
+      "longitude": -71.043,
+      "serves_alcohol": true,
+      "default_min_age": null,
+      "evening_min_age": 21,
+      "evening_cutoff": "21:00:00",
+      "source": "research-2026-06",
+      "needs_review": true,
       "notes": "Seaport racing-sim + bar showing matches. Evening age cutoff assumed (typical for this venue type) - verify.",
       "affiliations": [],
       "policies": [
-        {"policy_type": "all_matches", "default_cost_type": "free_open"}
+        {
+          "policy_type": "all_matches",
+          "default_cost_type": "free_open"
+        }
       ]
     }
   ],

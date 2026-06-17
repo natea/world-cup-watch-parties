@@ -194,6 +194,12 @@ class Command(BaseCommand):
         for v in bundle.venues:
             venue = venues[v.slug]
             venue.policies.all().delete()  # clean-replace
+            # Drop this venue's generated screenings so re-materialization is a
+            # clean rebuild, not an accumulation. Without this, re-importing after
+            # a policy/fixture change (e.g. remapped match numbers) leaves stale
+            # generated rows behind on a non-flushed database (i.e. production).
+            # Authored screenings (is_generated=False) are preserved.
+            venue.screenings.filter(is_generated=True).delete()
             for p in v.policies:
                 policy = ScreeningPolicy.objects.create(
                     venue=venue,
