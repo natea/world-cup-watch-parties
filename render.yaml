@@ -49,17 +49,18 @@ services:
     name: worldcup-web
     runtime: static
     rootDir: frontend
-    buildCommand: 'npm install && VITE_API_BASE="https://$API_HOST/api" npm run build'
+    buildCommand: "npm install && npm run build"
     staticPublishPath: ./dist
     domains:
       - worldcup.stagehopper.app
     envVars:
-      # Build-time only: the API service's hostname → VITE_API_BASE.
-      - key: API_HOST
-        fromService:
-          type: web
-          name: worldcup-api
-          property: host
+      # Public API URL, inlined into the bundle at build time by Vite.
+      # NOTE: do NOT use `fromService property: host` here — for a web service
+      # that returns the *internal* private-network name (no .onrender.com),
+      # which the browser can't resolve. Render also appended a random suffix
+      # to the API service, so this is its real public URL.
+      - key: VITE_API_BASE
+        value: https://worldcup-api-y9t7.onrender.com/api
     routes:
       # SPA fallback so client-side routes resolve to index.html.
       - type: rewrite
