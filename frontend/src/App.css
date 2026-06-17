@@ -812,3 +812,14 @@ html[data-platform="ios"] .tabs .tab.active {
 html[data-platform="ios"] main {
   padding-bottom: calc(64px + env(safe-area-inset-bottom));
 }
+
+/* iOS WKWebView auto-zooms the viewport when a focused field's font-size is
+   < 16px. Keep tappable form controls at 16px on phones so tapping the search
+   box / inputs / selects doesn't zoom and shove the layout off-screen. */
+@media (max-width: 720px) {
+  .searchbox input,
+  .prox-form input,
+  .filterbar select {
+    font-size: 16px;
+  }
+}
