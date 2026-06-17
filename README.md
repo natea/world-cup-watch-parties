@@ -111,6 +111,48 @@ Environment variables (optional; sensible dev defaults):
 | `DJANGO_DEBUG`         | `true`                                        |                                     |
 | `DJANGO_ALLOWED_HOSTS` | `localhost,127.0.0.1,testserver`              |                                     |
 | `CORS_ALLOWED_ORIGINS` | `http://localhost:5173,http://127.0.0.1:5173` |                                     |
+| `GOOGLE_MAPS_API_KEY`  | _(unset → venue images use the fallback)_     | server-only; see "Venue images"     |
+| `VENUE_PHOTO_CACHE_SECONDS` | `86400`                                  | client/CDN cache TTL for the photo proxy redirect |
+
+### Venue images (rights-safe)
+
+Each venue exposes a single `image` object in the API — `{ url, attribution, source }`:
+
+- **Licensed photo.** When a venue has been resolved to a Google `place_id`, its
+  `image.url` points at the backend **photo proxy** (`GET /api/venues/<slug>/photo`).
+  The proxy keeps `GOOGLE_MAPS_API_KEY` server-side, resolves the current Google
+  Places photo, and **302-redirects** to it (`source: "google_places"`,
+  `attribution` set). We **never store photo bytes** — only the `place_id` (which
+  Google's terms permit long-term) and the attribution text. The proxy sets a
+  long `Cache-Control` (default 24h, `VENUE_PHOTO_CACHE_SECONDS`) on the redirect
+  to bound per-photo cost; it caches the *redirect*, not the bytes. The frontend
+  renders the **attribution caption** whenever it is present.
+- **Category fallback.** When a venue has no `place_id`, the key is unset, or the
+  Places lookup fails, `image` is a clean, rights-free **category illustration**
+  keyed by `venue_type` (`/venue-fallbacks/<type>.png`, `source: "fallback"`,
+  `attribution: null`). It is deliberately non-photographic so it never implies
+  it's a real photo of the venue. Regenerate the assets with
+  `python scripts/make_venue_fallbacks.py` (requires `rsvg-convert`).
+- **Lists/cards/map pins** use the fallback only — there is **no per-row photo
+  proxy call**; the full photo loads on the **detail view** only.
+- **No key configured?** The feature degrades cleanly: every venue shows the
+  fallback, the proxy redirects to the fallback, and nothing errors.
+
+**Backfill — resolve venues to `place_id`s:**
+
+```bash
+# set GOOGLE_MAPS_API_KEY first (a Places API (New) enabled key)
+uv run python manage.py resolvevenueplaces            # resolve unresolved venues
+uv run python manage.py resolvevenueplaces --refresh   # re-resolve resolved ones
+uv run python manage.py resolvevenueplaces --dry-run    # report only, write nothing
+```
+
+`resolvevenueplaces` matches each venue by name + address/city via Google Places
+Text Search, stores a **confident** match's `place_id` + `image_source`, and
+flags **low-confidence/ambiguous** matches with `needs_review=True` (triage them
+in the admin) rather than trusting a guess. It is **idempotent** — already-resolved
+venues are skipped unless `--refresh` — and **no-ops without the API key**. All
+Google access is isolated in `events/places.py`.
 
 ### SQLite vs PostgreSQL — the family-friendly caveat
 
@@ -151,7 +193,10 @@ DB-level family-friendly filter is active (see caveat below).
 
 Production env vars are declared in the Blueprint: `DJANGO_SECRET_KEY`
 (auto-generated), `DJANGO_DEBUG=false`, `DATABASE_URL` (from the DB),
-`CORS_ALLOWED_ORIGINS`, and `CSRF_TRUSTED_ORIGINS`. `ALLOWED_HOSTS` /
+`CORS_ALLOWED_ORIGINS`, `CSRF_TRUSTED_ORIGINS`, and `GOOGLE_MAPS_API_KEY`
+(declared as a `sync: false` secret on `worldcup-api` — set it in the Render
+dashboard; leave it unset to ship venue images as the category fallback).
+`ALLOWED_HOSTS` /
 `CSRF_TRUSTED_ORIGINS` automatically include the Render hostname via
 `RENDER_EXTERNAL_HOSTNAME`. When `DEBUG=false`, settings also enable HTTPS
 redirect, secure cookies, HSTS, and the proxy SSL header — all skipped in dev so

@@ -7,6 +7,7 @@ client.
 from __future__ import annotations
 
 from rest_framework import serializers
+from rest_framework.reverse import reverse
 
 from .models import Match, Screening, Team, Venue, VenueAffiliation
 
@@ -50,8 +51,14 @@ class AffiliationSerializer(serializers.ModelSerializer):
         fields = ["affiliation_type", "team", "club", "valid_from", "valid_to", "note"]
 
 
+def fallback_image_url(venue_type: str) -> str:
+    """URL (relative to the static front end) of the category illustration."""
+    return f"/venue-fallbacks/{venue_type}.png"
+
+
 class VenueSerializer(serializers.ModelSerializer):
     affiliations = AffiliationSerializer(many=True, read_only=True)
+    image = serializers.SerializerMethodField()
 
     class Meta:
         model = Venue
@@ -70,12 +77,36 @@ class VenueSerializer(serializers.ModelSerializer):
             "has_food",
             "website",
             "affiliations",
+            "image",
             "source",
             "source_url",
             "needs_review",
             "notes",
             "updated_at",
         ]
+
+    def get_image(self, obj: Venue) -> dict:
+        """Uniform image object: a licensed place photo (served via the
+        attributed proxy) when the venue has a place_id, else the honest
+        category fallback.
+
+        The proxy itself decides at request time whether a real photo is
+        available (key configured, photo resolvable) and otherwise redirects to
+        this same fallback — so the client always has a usable URL.
+        """
+        if obj.place_id:
+            request = self.context.get("request")
+            url = reverse("events:venue-photo", kwargs={"slug": obj.slug}, request=request)
+            return {
+                "url": url,
+                "attribution": obj.image_attribution or None,
+                "source": obj.image_source or "google_places",
+            }
+        return {
+            "url": fallback_image_url(obj.venue_type),
+            "attribution": None,
+            "source": "fallback",
+        }
 
 
 class ScreeningSerializer(serializers.ModelSerializer):

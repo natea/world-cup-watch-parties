@@ -32,6 +32,12 @@ export interface Affiliation {
   note: string;
 }
 
+export interface VenueImage {
+  url: string;
+  attribution: string | null; // present only for licensed (place) photos
+  source: "google_places" | "fallback" | string;
+}
+
 export interface Venue {
   name: string;
   slug: string;
@@ -47,6 +53,7 @@ export interface Venue {
   has_food: boolean;
   website: string;
   affiliations: Affiliation[];
+  image: VenueImage;
   source: string;
   source_url: string;
   needs_review: boolean;

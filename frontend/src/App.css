@@ -263,6 +263,26 @@ button.pop-venue-link {
   margin-bottom: 12px;
 }
 
+.vd-image {
+  margin: 0 0 16px;
+}
+
+.vd-image img {
+  display: block;
+  width: 100%;
+  aspect-ratio: 3 / 2;
+  object-fit: cover;
+  border-radius: 12px;
+  border: 1px solid var(--line);
+  background: var(--panel);
+}
+
+.vd-image-credit {
+  margin: 6px 2px 0;
+  font-size: 12px;
+  color: var(--muted, #8aa0bd);
+}
+
 .vd-head {
   display: flex;
   align-items: center;

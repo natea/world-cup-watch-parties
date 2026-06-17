@@ -46,6 +46,11 @@ services:
       # Lets the admin / browsable API accept the custom front-end origin too.
       - key: CSRF_TRUSTED_ORIGINS
         value: "https://worldcup.stagehopper.app"
+      # Server-only Google Places key for venue photos (photo proxy + the
+      # resolvevenueplaces backfill). Secret: set it in the dashboard, never
+      # committed. Unset → every venue uses the category-illustration fallback.
+      - key: GOOGLE_MAPS_API_KEY
+        sync: false
 
   # ---- React / Vite static site --------------------------------------------
   - type: web

@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="800" viewBox="0 0 1200 800" role="img" aria-label="University (illustration)">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#1e2a3b"/>
+      <stop offset="1" stop-color="#0a131f"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="800" fill="url(#bg)"/>
+  <svg x="420" y="190" width="360" height="360" viewBox="0 0 100 100">
+    <g fill="none" stroke="#60a5fa" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round" color="#60a5fa">
+      <path d="M28 44 L50 34 L72 44 L50 54 Z"/><path d="M38 49 V62 q12 8 24 0 V49"/>
+    </g>
+  </svg>
+  <text x="600" y="650" text-anchor="middle" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="46" font-weight="700" fill="#f8fafc">University</text>
+  <text x="600" y="696" text-anchor="middle" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="26" font-weight="400" fill="#8aa0bd">Illustration · not a photo of this venue</text>
+</svg>

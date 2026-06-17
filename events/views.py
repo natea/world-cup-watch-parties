@@ -10,11 +10,15 @@ from __future__ import annotations
 from collections import OrderedDict
 from zoneinfo import ZoneInfo
 
+from django.conf import settings
 from django.shortcuts import get_object_or_404
+from django.shortcuts import redirect
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+from . import places
 from .filters import apply_screening_filters, base_screening_queryset
+from .serializers import fallback_image_url
 from .models import (
     CostType,
     Region,
@@ -79,7 +83,7 @@ class MapView(APIView):
         for entry in by_venue.values():
             v = entry["venue"]
             item = {
-                "venue": VenueSerializer(v).data,
+                "venue": VenueSerializer(v, context={"request": request}).data,
                 "screenings": MapScreeningSerializer(entry["screenings"], many=True).data,
             }
             if anchor is not None and v.latitude is not None and v.longitude is not None:
@@ -127,10 +131,39 @@ class VenueDetailView(APIView):
         )
         return Response(
             {
-                "venue": VenueSerializer(venue).data,
+                "venue": VenueSerializer(venue, context={"request": request}).data,
                 "screenings": ScreeningSerializer(screenings, many=True).data,
             }
         )
+
+
+class VenuePhotoView(APIView):
+    """Attributed photo proxy: `GET /api/venues/<slug>/photo`.
+
+    Keeps `GOOGLE_MAPS_API_KEY` server-side. On success it 302-redirects to the
+    current Places photo URL (we never rehost the bytes). When the key is unset,
+    the venue has no place_id, or the lookup fails, it redirects to the venue's
+    category fallback illustration — so the client always lands on a usable
+    image and no error is surfaced. Attribution is carried in the serializer's
+    `image` object (captured at backfill time).
+    """
+
+    def get(self, request, slug):
+        venue = get_object_or_404(Venue, slug=slug)
+        fallback = fallback_image_url(venue.venue_type)
+
+        if not venue.place_id or not places.is_enabled():
+            return redirect(fallback)
+
+        photo = places.photo_for_place(venue.place_id)
+        if photo is None or not photo.url:
+            return redirect(fallback)
+
+        resp = redirect(photo.url)
+        # Let browsers/CDN cache the redirect to bound per-photo cost. We cache
+        # the redirect, not the bytes — compliant with Places terms.
+        resp["Cache-Control"] = f"public, max-age={settings.VENUE_PHOTO_CACHE_SECONDS}"
+        return resp
 
 
 class TeamListView(APIView):

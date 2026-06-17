@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { api } from "../api";
+import { api, fallbackImageUrl } from "../api";
 import type { Screening, Venue } from "../types";
 import { googleMapsUrl } from "../format";
 import { ScreeningCard, screeningCardProps } from "./ScreeningCard";
@@ -55,6 +55,30 @@ export function VenueDetail({ slug, onBack }: { slug: string; onBack: () => void
 
       {venue && (
         <>
+          <figure className="vd-image">
+            <img
+              src={venue.image.url}
+              alt={
+                venue.image.source === "fallback"
+                  ? `${venue.name} (category illustration)`
+                  : venue.name
+              }
+              loading="lazy"
+              onError={(e) => {
+                // On any photo-proxy/load error, swap to the category fallback
+                // so the detail view always shows something honest.
+                const img = e.currentTarget;
+                const fb = fallbackImageUrl(venue.venue_type);
+                if (img.src !== window.location.origin + fb && !img.src.endsWith(fb)) {
+                  img.src = fb;
+                }
+              }}
+            />
+            {venue.image.attribution && (
+              <figcaption className="vd-image-credit">{venue.image.attribution}</figcaption>
+            )}
+          </figure>
+
           <div className="vd-head">
             <h2>{venue.name}</h2>
             {venue.needs_review && <span className="badge warn">needs review</span>}
