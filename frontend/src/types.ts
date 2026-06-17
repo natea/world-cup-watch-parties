@@ -97,6 +97,7 @@ export interface Meta {
   cost_types: { value: string; label: string }[];
   environments: string[];
   team_modes: string[];
+  fixtures_refreshed_at: string | null; // ISO timestamp of last successful refresh, or null
 }
 
 // A typeahead search suggestion. `target` says how selecting it navigates.

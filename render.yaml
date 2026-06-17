@@ -52,6 +52,26 @@ services:
       - key: GOOGLE_PLACES_API_KEY
         sync: false
 
+  # ---- Fixture refresh cron -------------------------------------------------
+  # Keeps the live DB current as FIFA resolves the bracket. Runs every 6 hours,
+  # sharing worldcup-api's runtime + the same DATABASE_URL. refreshfixtures is
+  # fail-safe: a FIFA outage or implausible payload leaves data untouched.
+  - type: cron
+    name: worldcup-refresh
+    runtime: python
+    plan: starter
+    repo: https://github.com/natea/world-cup-watch-parties
+    schedule: "0 */6 * * *"
+    buildCommand: "./build.sh"
+    startCommand: "uv run python manage.py refreshfixtures"
+    envVars:
+      - key: PYTHON_VERSION
+        value: "3.12"
+      - key: DATABASE_URL
+        fromDatabase:
+          name: worldcup-db
+          property: connectionString
+
   # ---- React / Vite static site --------------------------------------------
   - type: web
     name: worldcup-web

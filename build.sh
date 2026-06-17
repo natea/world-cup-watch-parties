@@ -15,3 +15,8 @@ uv run python manage.py collectstatic --no-input
 uv run python manage.py migrate
 uv run python manage.py loadreferencedata --path data/fifa_reference.json
 uv run python manage.py importwatchparties data/watch_parties.json
+
+# Fail-safe live refresh AFTER the snapshot seed: when FIFA is reachable the
+# deploy ends fully fresh; when it isn't, the no-downgrade guard + `|| true`
+# mean a FIFA outage can never fail or regress a deploy (the snapshot stands).
+uv run python manage.py refreshfixtures || true

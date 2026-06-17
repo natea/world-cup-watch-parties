@@ -85,6 +85,102 @@ def _first_desc(value) -> str:
     return ""
 
 
+# ---------------------------------------------------------------------------
+# Reusable fetch + map seam. Both this command and `refreshfixtures` go through
+# these, so tests can monkeypatch `fetch_raw` with no live network.
+# ---------------------------------------------------------------------------
+def fetch_raw(season: str = DEFAULT_SEASON) -> dict:
+    """Fetch the raw FIFA calendar payload (a dict with a `Results` array).
+
+    Raises an exception (urllib/HTTP/JSON error) on any failure; callers decide
+    how to handle it. This is the single network seam — monkeypatch it in tests.
+    """
+    url = FIFA_URL.format(season=season)
+    req = urllib.request.Request(
+        url, headers={"User-Agent": "Mozilla/5.0", "Accept": "application/json"}
+    )
+    with urllib.request.urlopen(req, timeout=30) as resp:
+        return json.loads(resp.read().decode("utf-8"))
+
+
+def _map_match(m: dict) -> dict:
+    stage_name = _first_desc(m.get("StageName"))
+    stage = STAGE_MAP.get(stage_name)
+    if stage is None:
+        raise CommandError(f"Unknown FIFA stage name: {stage_name!r}")
+
+    group_desc = _first_desc(m.get("GroupName"))  # e.g. "Group A" or ""
+    group = group_desc.replace("Group", "").strip() if group_desc else ""
+
+    stadium = m.get("Stadium") or {}
+    home, away = m.get("Home"), m.get("Away")
+    number = int(m["MatchNumber"])
+
+    return {
+        "fifa_match_number": number,
+        "stage": stage,
+        "group": group,
+        "kickoff": m["Date"],  # already UTC ISO8601
+        "host_city": _first_desc(stadium.get("CityName")),
+        "host_stadium": _first_desc(stadium.get("Name")),
+        "home_team_code": (home or {}).get("IdCountry") if home else None,
+        "away_team_code": (away or {}).get("IdCountry") if away else None,
+        "home_placeholder": "" if home else (m.get("PlaceHolderA") or ""),
+        "away_placeholder": "" if away else (m.get("PlaceHolderB") or ""),
+        # Stable knockout slot so a later re-fetch re-resolves the same fixture.
+        "bracket_slot": "" if stage == "group" else f"{stage}-{number}",
+    }
+
+
+def _collect_teams(results: list, matches: list) -> list:
+    names: dict[str, str] = {}
+    for m in results:
+        for side in ("Home", "Away"):
+            t = m.get(side)
+            if t and t.get("IdCountry"):
+                names[t["IdCountry"]] = _first_desc(t.get("TeamName")) or t["IdCountry"]
+
+    # Each team's group letter, from its group-stage fixture.
+    group_of: dict[str, str] = {}
+    for mm in matches:
+        if mm["stage"] == "group" and mm["group"]:
+            for code in (mm["home_team_code"], mm["away_team_code"]):
+                if code:
+                    group_of.setdefault(code, mm["group"])
+
+    teams = []
+    for code in sorted(names):
+        iso2, confed = TEAM_META.get(code, ("", ""))
+        teams.append(
+            {
+                "name": names[code],
+                "fifa_code": code,
+                "flag_emoji": _flag(iso2),
+                "group": group_of.get(code, ""),
+                "confederation": confed,
+            }
+        )
+    return teams
+
+
+def build_bundle(raw: dict) -> dict:
+    """Map a raw FIFA payload to a contract-validated `{teams, matches}` bundle.
+
+    Validates every record against the Pydantic import contract, so nothing
+    malformed reaches the DB. Raises CommandError / ValidationError on bad data.
+    """
+    results = raw.get("Results") or raw.get("results") or []
+    if not results:
+        raise CommandError("No matches found in the FIFA payload.")
+
+    matches = [_map_match(m) for m in results]
+    teams = _collect_teams(results, matches)
+    return {
+        "teams": [TeamIn.model_validate(t).model_dump(mode="json") for t in teams],
+        "matches": [MatchIn.model_validate(m).model_dump(mode="json") for m in matches],
+    }
+
+
 class Command(BaseCommand):
     help = "Fetch the FIFA 2026 fixtures and write a {teams, matches} reference bundle."
 
@@ -98,18 +194,7 @@ class Command(BaseCommand):
 
     def handle(self, *args, **opts):
         raw = self._load_raw(opts)
-        results = raw.get("Results") or raw.get("results") or []
-        if not results:
-            raise CommandError("No matches found in the FIFA payload.")
-
-        matches = [self._map_match(m) for m in results]
-        teams = self._collect_teams(results, matches)
-
-        # Validate against the import contract before writing (no LLM involved).
-        bundle = {
-            "teams": [TeamIn.model_validate(t).model_dump(mode="json") for t in teams],
-            "matches": [MatchIn.model_validate(m).model_dump(mode="json") for m in matches],
-        }
+        bundle = build_bundle(raw)
 
         with open(opts["out"], "w", encoding="utf-8") as fh:
             json.dump(bundle, fh, indent=2, ensure_ascii=False)
@@ -130,69 +215,8 @@ class Command(BaseCommand):
                     return json.load(fh)
             except (OSError, json.JSONDecodeError) as exc:
                 raise CommandError(f"Could not read --source: {exc}")
-        url = FIFA_URL.format(season=opts["season"])
-        req = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0", "Accept": "application/json"})
         try:
-            with urllib.request.urlopen(req, timeout=30) as resp:
-                return json.loads(resp.read().decode("utf-8"))
+            return fetch_raw(opts["season"])
         except Exception as exc:  # network/HTTP/JSON — surface as a command error
+            url = FIFA_URL.format(season=opts["season"])
             raise CommandError(f"FIFA fetch failed ({url}): {exc}")
-
-    # --- mapping ---
-    def _map_match(self, m: dict) -> dict:
-        stage_name = _first_desc(m.get("StageName"))
-        stage = STAGE_MAP.get(stage_name)
-        if stage is None:
-            raise CommandError(f"Unknown FIFA stage name: {stage_name!r}")
-
-        group_desc = _first_desc(m.get("GroupName"))  # e.g. "Group A" or ""
-        group = group_desc.replace("Group", "").strip() if group_desc else ""
-
-        stadium = m.get("Stadium") or {}
-        home, away = m.get("Home"), m.get("Away")
-        number = int(m["MatchNumber"])
-
-        return {
-            "fifa_match_number": number,
-            "stage": stage,
-            "group": group,
-            "kickoff": m["Date"],  # already UTC ISO8601
-            "host_city": _first_desc(stadium.get("CityName")),
-            "host_stadium": _first_desc(stadium.get("Name")),
-            "home_team_code": (home or {}).get("IdCountry") if home else None,
-            "away_team_code": (away or {}).get("IdCountry") if away else None,
-            "home_placeholder": "" if home else (m.get("PlaceHolderA") or ""),
-            "away_placeholder": "" if away else (m.get("PlaceHolderB") or ""),
-            # Stable knockout slot so a later re-fetch re-resolves the same fixture.
-            "bracket_slot": "" if stage == "group" else f"{stage}-{number}",
-        }
-
-    def _collect_teams(self, results: list, matches: list) -> list:
-        names: dict[str, str] = {}
-        for m in results:
-            for side in ("Home", "Away"):
-                t = m.get(side)
-                if t and t.get("IdCountry"):
-                    names[t["IdCountry"]] = _first_desc(t.get("TeamName")) or t["IdCountry"]
-
-        # Each team's group letter, from its group-stage fixture.
-        group_of: dict[str, str] = {}
-        for mm in matches:
-            if mm["stage"] == "group" and mm["group"]:
-                for code in (mm["home_team_code"], mm["away_team_code"]):
-                    if code:
-                        group_of.setdefault(code, mm["group"])
-
-        teams = []
-        for code in sorted(names):
-            iso2, confed = TEAM_META.get(code, ("", ""))
-            teams.append(
-                {
-                    "name": names[code],
-                    "fifa_code": code,
-                    "flag_emoji": _flag(iso2),
-                    "group": group_of.get(code, ""),
-                    "confederation": confed,
-                }
-            )
-        return teams
