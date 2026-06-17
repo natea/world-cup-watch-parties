@@ -7,7 +7,10 @@ const config: CapacitorConfig = {
   // Capacitor serves the bundled web build from a localhost scheme; the app
   // talks to the production API (set via VITE_API_BASE at build time).
   ios: {
-    contentInset: "always",
+    // The webview fills the screen; CSS env(safe-area-inset-*) handles the notch
+    // and home-indicator insets (a single source of truth — "always" would
+    // double-inset on top of the CSS padding).
+    contentInset: "never",
   },
   plugins: {
     SplashScreen: {

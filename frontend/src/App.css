@@ -158,12 +158,26 @@ header h1 {
 }
 
 .tab {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
   background: var(--panel);
   color: var(--text);
   border: 1px solid var(--line);
   border-radius: 8px;
   padding: 8px 16px;
   cursor: pointer;
+}
+
+.tab-icon {
+  display: inline-flex;
+  /* The active accent fill is blue; nudge inactive icons toward the accent for
+     a stronger visual cue without losing the themed text color. */
+}
+
+.tab:not(.active) .tab-icon {
+  color: var(--accent);
 }
 
 .theme-toggle {
@@ -604,8 +618,9 @@ button.pop-venue-link {
 }
 
 .prox-form input {
-  flex: 1;
-  min-width: 220px;
+  /* Shrinkable so the "Go" button never gets pushed off a narrow screen. */
+  flex: 1 1 150px;
+  min-width: 0;
   background: var(--panel2);
   color: var(--text);
   border: 1px solid var(--line);
@@ -668,6 +683,9 @@ button.pop-venue-link {
   height: 520px;
   border-radius: 10px;
   border: 1px solid var(--line);
+  /* Contain Leaflet's internal z-index soup (panes/controls go up to 1000) so
+     it can't escape to the root and paint over the fixed bottom tab bar. */
+  isolation: isolate;
 }
 
 .maphint {
@@ -756,5 +774,68 @@ footer p {
 @media (max-width: 720px) {
   .twocol {
     grid-template-columns: 1fr;
+  }
+}
+
+/* On narrow screens, drop the decorative subtitle so the brand never wraps
+   awkwardly ("Massachusetts / 2026"). Applies to mobile web and the apps. */
+@media (max-width: 560px) {
+  .brand-sub {
+    display: none;
+  }
+}
+
+/* ---- iOS app only: frosted-glass bottom tab bar (easier thumb reach) -------
+   Gated to the native iOS app via data-platform="ios"; the website keeps its
+   top tabs. NOTE: a webview approximates iOS "Liquid Glass" with a blur +
+   saturate backdrop — it's a visual approximation, not the literal native
+   material (which would require a native nav shell). */
+html[data-platform="ios"] .tabs {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 50;
+  gap: 4px;
+  justify-content: space-around;
+  padding: 8px max(12px, env(safe-area-inset-left)) calc(8px + env(safe-area-inset-bottom))
+    max(12px, env(safe-area-inset-right));
+  background: var(--bg); /* fallback if color-mix is unsupported */
+  background: color-mix(in srgb, var(--bg) 72%, transparent);
+  -webkit-backdrop-filter: blur(22px) saturate(180%);
+  backdrop-filter: blur(22px) saturate(180%);
+  border-top: 1px solid var(--line);
+}
+
+html[data-platform="ios"] .tabs .tab {
+  flex: 1;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  color: var(--text);
+  font-weight: 600;
+  font-size: 0.95rem;
+  padding: 11px 6px;
+}
+
+html[data-platform="ios"] .tabs .tab.active {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--on-accent);
+}
+
+/* Keep content clear of the fixed bottom bar. */
+html[data-platform="ios"] main {
+  padding-bottom: calc(64px + env(safe-area-inset-bottom));
+}
+
+/* iOS WKWebView auto-zooms the viewport when a focused field's font-size is
+   < 16px. Keep tappable form controls at 16px on phones so tapping the search
+   box / inputs / selects doesn't zoom and shove the layout off-screen. */
+@media (max-width: 720px) {
+  .searchbox input,
+  .prox-form input,
+  .filterbar select {
+    font-size: 16px;
   }
 }

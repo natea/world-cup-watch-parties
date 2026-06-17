@@ -7,6 +7,12 @@ import { Capacitor } from "@capacitor/core";
 
 export const isNative = (): boolean => Capacitor.isNativePlatform();
 
+/** Tag <html> with the platform ("ios" | "android" | "web") so CSS can target
+ *  native-only chrome (e.g. the iOS bottom tab bar) without touching the web. */
+export function markPlatform(): void {
+  document.documentElement.setAttribute("data-platform", Capacitor.getPlatform());
+}
+
 /** Geolocation: native plugin (proper permission flow) or browser API. */
 export async function getCurrentPosition(): Promise<{ lat: number; lng: number }> {
   if (isNative()) {

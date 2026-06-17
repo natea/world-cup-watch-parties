@@ -8,14 +8,15 @@ import { MapView } from "./components/MapView";
 import { TeamView } from "./components/TeamView";
 import { VenueDetail } from "./components/VenueDetail";
 import { SearchBox } from "./components/SearchBox";
+import { MapIcon, ScheduleIcon, TeamIcon } from "./components/TabIcons";
 import { useTheme } from "./useTheme";
 import type { Suggestion } from "./types";
 import "./App.css";
 
 const TABS = [
-  { id: "schedule", label: "Schedule" },
-  { id: "map", label: "Map" },
-  { id: "team", label: "By team" },
+  { id: "schedule", label: "Schedule", icon: <ScheduleIcon /> },
+  { id: "map", label: "Map", icon: <MapIcon /> },
+  { id: "team", label: "By team", icon: <TeamIcon /> },
 ];
 
 // Short, friendly "fixtures updated <when>" label. Returns null for missing/bad input.
@@ -80,6 +81,7 @@ export default function App() {
                 className={view === t.id ? "tab active" : "tab"}
                 onClick={() => selectTab(t.id)}
               >
+                <span className="tab-icon">{t.icon}</span>
                 {t.label}
               </button>
             ))}
