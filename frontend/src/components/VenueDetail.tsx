@@ -2,7 +2,12 @@ import { useEffect, useState } from "react";
 import { api, fallbackImageUrl } from "../api";
 import type { Screening, Venue } from "../types";
 import { googleMapsUrl, localDateLong, localDayKey } from "../format";
+import { canShare, shareLink } from "../native";
 import { ScreeningCard, screeningCardProps } from "./ScreeningCard";
+
+// Public web origin used for shareable links (the native app runs on a
+// localhost scheme, which isn't shareable).
+const PUBLIC_WEB_URL = "https://worldcup.stagehopper.app";
 
 // Group screenings by local (MA) calendar day, preserving order.
 function groupByDay(screenings: Screening[]): { day: string; items: Screening[] }[] {
@@ -94,6 +99,22 @@ export function VenueDetail({ slug, onBack }: { slug: string; onBack: () => void
           <div className="vd-head">
             <h2>{venue.name}</h2>
             {venue.needs_review && <span className="badge warn">needs review</span>}
+            {canShare() && (
+              <button
+                type="button"
+                className="vd-share"
+                onClick={() =>
+                  shareLink({
+                    title: venue.name,
+                    text: `Watch the World Cup at ${venue.name} — ${venue.city}`,
+                    url: `${PUBLIC_WEB_URL}/?venue=${venue.slug}`,
+                  })
+                }
+                aria-label={`Share ${venue.name}`}
+              >
+                ↗ Share
+              </button>
+            )}
           </div>
 
           <p className="vd-sub">

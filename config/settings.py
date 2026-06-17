@@ -174,3 +174,9 @@ CORS_ALLOWED_ORIGINS = os.environ.get(
     "CORS_ALLOWED_ORIGINS",
     "http://localhost:5173,http://127.0.0.1:5173",
 ).split(",")
+
+# Native app (Capacitor) webview origins — constant across environments, so
+# append them unconditionally (production CORS_ALLOWED_ORIGINS comes from an env
+# var, which would otherwise omit these). iOS serves from capacitor://localhost,
+# Android from http(s)://localhost.
+CORS_ALLOWED_ORIGINS += ["capacitor://localhost", "http://localhost", "https://localhost"]

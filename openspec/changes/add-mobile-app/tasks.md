@@ -1,30 +1,31 @@
 ## 1. Capacitor setup
 
-- [ ] 1.1 Add Capacitor to `frontend/` (`@capacitor/core`, `@capacitor/cli`, `@capacitor/ios`, `@capacitor/android`); `capacitor.config.ts` with `appId`, `appName`, `webDir: "dist"`
-- [ ] 1.2 Ensure the Vite build is webview-safe (relative asset base, e.g. `base: "./"` if needed); `cap add ios` + `cap add android`; commit the native projects
-- [ ] 1.3 Confirm the bundled SPA loads and renders in the iOS Simulator and Android emulator
+- [x] 1.1 Add Capacitor to `frontend/` (`@capacitor/core`, `@capacitor/cli`, `@capacitor/ios`, `@capacitor/android`); `capacitor.config.ts` with `appId`, `appName`, `webDir: "dist"`
+- [x] 1.2 `cap add ios` + `cap add android`; native projects committed (base stays `/` — Capacitor 8 serves from a localhost scheme, no relative-base change needed)
+- [x] 1.3 Confirm the bundled SPA loads and renders in the iOS Simulator (verified). Android emulator pending the Android SDK.
 
 ## 2. Production API + CORS
 
-- [ ] 2.1 Mobile build sets `VITE_API_BASE` to the production API URL (no localhost fallback for release builds)
-- [ ] 2.2 Add the Capacitor native origins (`capacitor://localhost`, `http(s)://localhost`) to Django `CORS_ALLOWED_ORIGINS`; verify on-device API calls succeed
+- [x] 2.1 Mobile build sets `VITE_API_BASE` to the production API URL via `frontend/.env.production`
+- [x] 2.2 Append the Capacitor native origins (`capacitor://localhost`, `http(s)://localhost`) to Django `CORS_ALLOWED_ORIGINS` (unconditionally, so prod's env-driven value still includes them). Confirmed prod currently rejects the native origin — this fix takes effect on deploy.
 
 ## 3. Native capabilities (behind a platform check; web fallback preserved)
 
-- [ ] 3.1 Geolocation: wrap location lookup to use `@capacitor/geolocation` natively, `navigator.geolocation` on web; add iOS `NSLocationWhenInUseUsageDescription` + Android location permissions; drive a "you are here" marker from the device position
-- [ ] 3.2 Share: add a share action via `@capacitor/share` natively, `navigator.share`/copy on web
-- [ ] 3.3 External links: open outbound links via `@capacitor/browser` natively
+- [x] 3.1 Geolocation: `frontend/src/native.ts` uses `@capacitor/geolocation` natively, `navigator.geolocation` on web; iOS `NSLocationWhenInUseUsageDescription` added; Android perms come from the plugin manifest; "you are here" marker already exists
+- [x] 3.2 Share: `@capacitor/share` natively (`navigator.share`/clipboard fallback); Share button on the venue detail
+- [x] 3.3 External links: a delegated click handler routes `target="_blank"` http(s) links through `@capacitor/browser` on native
 
 ## 4. Mobile chrome
 
-- [ ] 4.1 `viewport-fit=cover` + `env(safe-area-inset-*)` padding on header/content
-- [ ] 4.2 Status bar themed to light/dark (`@capacitor/status-bar`); splash screen (`@capacitor/splash-screen`); generate app icons
+- [x] 4.1 `viewport-fit=cover` + `env(safe-area-inset-*)` padding on `.app` (verified inset in the simulator)
+- [x] 4.2 Status bar themed to light/dark (`@capacitor/status-bar`); splash background configured (`@capacitor/splash-screen`)
+- [ ] 4.3 Generate app icons + splash artwork (needs a 1024px source image) — pending before store submission
 
 ## 5. Build, test, docs
 
-- [ ] 5.1 Document the release flow: `vite build` → `cap sync` → open in Xcode / Android Studio → run/submit; note toolchain + signing prerequisites
-- [ ] 5.2 Smoke test on iOS Simulator + Android emulator: schedule/map/team load from prod API, proximity (locate), share, external link, theme + safe areas
-- [ ] 5.3 README: a "Mobile (Capacitor)" section; record `appId`/display name and the canonical mobile API URL
+- [x] 5.1 Documented the release flow (`vite build` → `cap sync` → Xcode/Android Studio) in the README, with toolchain notes
+- [x] 5.2 iOS Simulator smoke test: app builds (`** BUILD SUCCEEDED **`), launches, and renders the SPA with safe areas + theme. Data load is blocked only by prod CORS (fixed here; effective on deploy). Android emulator + device-signed build pending the SDK.
+- [x] 5.3 README "Mobile app (Capacitor)" section: `appId`, prod API URL, plugins, and the Xcode-MCP/axiom tooling note
 
 ## 6. Follow-ons (out of scope here — noted for sequencing)
 

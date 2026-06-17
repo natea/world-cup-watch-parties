@@ -1,0 +1,76 @@
+/**
+ * Native-vs-web seam for Capacitor. Each helper uses the native plugin when the
+ * app runs inside Capacitor (iOS/Android) and falls back to the web API
+ * otherwise, so the same SPA behaves identically on the web.
+ */
+import { Capacitor } from "@capacitor/core";
+
+export const isNative = (): boolean => Capacitor.isNativePlatform();
+
+/** Geolocation: native plugin (proper permission flow) or browser API. */
+export async function getCurrentPosition(): Promise<{ lat: number; lng: number }> {
+  if (isNative()) {
+    const { Geolocation } = await import("@capacitor/geolocation");
+    const perm = await Geolocation.requestPermissions();
+    if (perm.location === "denied") throw new Error("denied");
+    const pos = await Geolocation.getCurrentPosition({ enableHighAccuracy: false, timeout: 8000 });
+    return { lat: pos.coords.latitude, lng: pos.coords.longitude };
+  }
+  return new Promise((resolve, reject) => {
+    if (!("geolocation" in navigator)) return reject(new Error("unsupported"));
+    navigator.geolocation.getCurrentPosition(
+      (p) => resolve({ lat: p.coords.latitude, lng: p.coords.longitude }),
+      (e) => reject(e),
+      { enableHighAccuracy: false, timeout: 8000 },
+    );
+  });
+}
+
+/** Share a link via the OS share sheet (native) or the Web Share API / clipboard. */
+export async function shareLink(opts: { title: string; text?: string; url: string }): Promise<void> {
+  if (isNative()) {
+    const { Share } = await import("@capacitor/share");
+    await Share.share({ title: opts.title, text: opts.text, url: opts.url });
+    return;
+  }
+  if (navigator.share) {
+    await navigator.share({ title: opts.title, text: opts.text, url: opts.url });
+    return;
+  }
+  await navigator.clipboard?.writeText(opts.url);
+}
+
+export const canShare = (): boolean => isNative() || typeof navigator.share === "function";
+
+/**
+ * On native, route outbound http(s) links (maps, venue sites, partner links)
+ * through the system browser instead of letting them dead-end in the webview.
+ * One delegated click listener covers every <a target="_blank"> in the app.
+ */
+export function installExternalLinkHandler(): void {
+  if (!isNative()) return;
+  document.addEventListener(
+    "click",
+    (e) => {
+      const a = (e.target as HTMLElement)?.closest?.("a[href]") as HTMLAnchorElement | null;
+      if (!a) return;
+      const href = a.getAttribute("href") || "";
+      if (/^https?:\/\//i.test(href) && a.target === "_blank") {
+        e.preventDefault();
+        import("@capacitor/browser").then(({ Browser }) => Browser.open({ url: href }));
+      }
+    },
+    true,
+  );
+}
+
+/** Match the native status bar to the active theme. */
+export async function applyNativeStatusBar(theme: "light" | "dark"): Promise<void> {
+  if (!isNative()) return;
+  const { StatusBar, Style } = await import("@capacitor/status-bar");
+  try {
+    await StatusBar.setStyle({ style: theme === "dark" ? Style.Dark : Style.Light });
+  } catch {
+    /* status bar not available (e.g. Android edge cases) — ignore */
+  }
+}
