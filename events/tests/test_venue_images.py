@@ -53,14 +53,13 @@ def test_serializer_photo_case_has_attribution_and_proxy_url():
 
 
 @pytest.mark.django_db
-def test_serializer_ambiguous_match_falls_back_until_confirmed():
-    # A flagged/ambiguous match keeps a candidate place_id but leaves
-    # image_source blank — it must fall back, not show an unverified photo.
+def test_serializer_candidate_match_falls_back_until_confirmed():
+    # A candidate match keeps a place_id but image_source="candidate" — it must
+    # fall back, not show an unverified photo, until a reviewer confirms it.
     venue = _make_venue(
         venue_type=VenueType.WATERFRONT,
         place_id="ChIJcandidate",
-        image_source="",
-        needs_review=True,
+        image_source="candidate",
     )
     img = VenueSerializer(venue).data["image"]
     assert img["source"] == "fallback"
@@ -218,8 +217,11 @@ def test_backfill_flags_ambiguous_match(monkeypatch):
 
     call_command("resolvevenueplaces")
     venue.refresh_from_db()
-    assert venue.needs_review is True
-    assert venue.image_source == ""  # not trusted as a confident source
+    # Marked as a candidate (photo-review signal), NOT trusted as a photo, and
+    # the data-quality needs_review flag is left untouched.
+    assert venue.image_source == "candidate"
+    assert venue.place_id == "ChIJother"
+    assert venue.needs_review is False
 
 
 @pytest.mark.django_db
@@ -282,8 +284,8 @@ def test_confirm_promotes_flagged_candidate(monkeypatch):
     venue = _make_venue(
         name="The Banshee",
         place_id="ChIJcandidate",
-        image_source="",
-        needs_review=True,
+        image_source="candidate",
+        needs_review=True,  # data-quality flag — confirm must NOT touch it
     )
     monkeypatch.setattr(places, "is_enabled", lambda: True)
     monkeypatch.setattr(
@@ -298,7 +300,7 @@ def test_confirm_promotes_flagged_candidate(monkeypatch):
     venue.refresh_from_db()
     assert venue.image_source == "google_places"
     assert venue.image_attribution == "Photo by The Banshee via Google"
-    assert venue.needs_review is False
+    assert venue.needs_review is True  # data-quality flag left untouched
     assert venue.place_id == "ChIJcandidate"
 
 
@@ -306,7 +308,9 @@ def test_confirm_promotes_flagged_candidate(monkeypatch):
 def test_confirm_noops_cleanly_without_key(monkeypatch):
     from django.core.management import call_command
 
-    venue = _make_venue(place_id="ChIJcandidate", needs_review=True)
+    venue = _make_venue(
+        place_id="ChIJcandidate", image_source="candidate", needs_review=True
+    )
     monkeypatch.setattr(places, "is_enabled", lambda: False)
 
     def _boom(*a, **k):  # pragma: no cover
@@ -318,7 +322,7 @@ def test_confirm_noops_cleanly_without_key(monkeypatch):
     # Promoted to google_places with empty attribution; the proxy re-resolves.
     assert venue.image_source == "google_places"
     assert venue.image_attribution == ""
-    assert venue.needs_review is False
+    assert venue.needs_review is True  # data-quality flag left untouched
 
 
 @pytest.mark.django_db
@@ -328,13 +332,14 @@ def test_reject_clears_candidate_to_fallback():
     venue = _make_venue(
         venue_type=VenueType.WATERFRONT,
         place_id="ChIJcandidate",
-        needs_review=True,
+        image_source="candidate",
+        needs_review=True,  # data-quality flag — reject must NOT touch it
     )
     call_command("resolvevenueplaces", "--reject", venue.slug)
     venue.refresh_from_db()
     assert venue.place_id == ""
     assert venue.image_source == ""
-    assert venue.needs_review is False
+    assert venue.needs_review is True  # data-quality flag left untouched
     # Now serializes to the category fallback.
     img = VenueSerializer(venue).data["image"]
     assert img["source"] == "fallback"

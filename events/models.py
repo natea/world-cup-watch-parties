@@ -240,7 +240,12 @@ class Venue(models.Model):
     )
     image_source = models.CharField(
         max_length=32, blank=True,
-        help_text='How the image is sourced: "google_places", "wikimedia", or blank = fallback.',
+        help_text=(
+            'How the image is sourced: "google_places" or "wikimedia" (confirmed, '
+            'shown), "candidate" (a Google match awaiting review — falls back until '
+            "confirmed), or blank = category fallback. Independent of `needs_review`, "
+            "which is a data-quality flag from the import."
+        ),
     )
     image_url = models.URLField(
         max_length=500, blank=True,

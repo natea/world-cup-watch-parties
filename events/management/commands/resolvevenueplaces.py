@@ -3,7 +3,9 @@ Resolve venues to Google `place_id`s (the venue-image backfill).
 
 Matches each venue by name + address/city via the Places client and writes
 `place_id` + `image_source="google_places"`. Low-confidence/ambiguous matches
-are flagged with `needs_review=True` rather than storing a guessed identifier.
+store the candidate `place_id` with `image_source="candidate"` (the photo-review
+signal) rather than trusting a guess — they fall back until a reviewer confirms.
+This is independent of `needs_review`, which is the import's data-quality flag.
 
     python manage.py resolvevenueplaces            # resolve unresolved venues
     python manage.py resolvevenueplaces --refresh   # re-resolve even resolved ones
@@ -97,9 +99,8 @@ class Command(BaseCommand):
             if match is None or not match.place_id:
                 flagged += 1
                 self.stdout.write(f"  ? no match: {venue.name}")
-                if not dry_run:
-                    venue.needs_review = True
-                    venue.save(update_fields=["needs_review"])
+                # No candidate found → leave on the category fallback. We do NOT
+                # touch `needs_review` (that's the import's data-quality flag).
                 continue
 
             score = _similarity(venue.name, match.display_name)
@@ -128,12 +129,13 @@ class Command(BaseCommand):
                     f"  ? ambiguous: {venue.name} ~ {match.display_name} ({score:.2f})"
                 )
                 if not dry_run:
-                    # Still record the candidate place_id so a reviewer can
-                    # verify it, but mark it for review and do NOT treat it as
-                    # a confident source.
+                    # Record the candidate place_id with a "candidate" source so
+                    # a reviewer can verify it. This is the photo-review signal —
+                    # separate from `needs_review` (the import's data-quality
+                    # flag). The serializer falls back until it's confirmed.
                     venue.place_id = match.place_id
-                    venue.needs_review = True
-                    venue.save(update_fields=["place_id", "needs_review"])
+                    venue.image_source = "candidate"
+                    venue.save(update_fields=["place_id", "image_source"])
 
         verb = "Would resolve" if dry_run else "Resolved"
         self.stdout.write(
@@ -159,16 +161,14 @@ class Command(BaseCommand):
             photo = places.photo_for_place(venue.place_id) if places.is_enabled() else None
             venue.image_source = "google_places"
             venue.image_attribution = photo.attribution if photo else ""
-            venue.needs_review = False
-            venue.save(
-                update_fields=["image_source", "image_attribution", "needs_review"]
-            )
+            venue.save(update_fields=["image_source", "image_attribution"])
         self._report_missing(slugs)
         verb = "Would confirm" if dry_run else "Confirmed"
         self.stdout.write(self.style.SUCCESS(f"{verb} {confirmed}."))
 
     def _reject(self, slugs, dry_run):
-        """Reject a candidate: clear place_id + needs_review → next tier."""
+        """Reject a candidate: clear place_id + image source → next tier.
+        Leaves `needs_review` (data-quality flag) untouched."""
         rejected = 0
         for venue in Venue.objects.filter(slug__in=slugs).order_by("name"):
             self.stdout.write(f"  ✗ reject {venue.slug}")
@@ -178,13 +178,11 @@ class Command(BaseCommand):
             venue.place_id = ""
             venue.image_source = ""
             venue.image_attribution = ""
-            venue.needs_review = False
             venue.save(
                 update_fields=[
                     "place_id",
                     "image_source",
                     "image_attribution",
-                    "needs_review",
                 ]
             )
         self._report_missing(slugs)

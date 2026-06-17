@@ -44,14 +44,35 @@ class VenueAdmin(admin.ModelAdmin):
         "photo_thumb",
         "name",
         "venue_type",
-        "environment",
         "city",
         "region",
-        "image_source",
-        "needs_review",
+        "photo_status",
+        "review_flag",
     )
     list_display_links = ("name",)
-    list_filter = ("needs_review", "image_source", "venue_type", "environment", "region")
+    list_filter = ("image_source", "needs_review", "venue_type", "environment", "region")
+
+    @admin.display(description="Photo status", ordering="image_source")
+    def photo_status(self, obj):
+        """Friendly, intuitive photo-match state (separate from data-quality)."""
+        label, color = {
+            "google_places": ("✓ Google photo", "#16a34a"),
+            "wikimedia": ("✓ Wikimedia", "#16a34a"),
+            "candidate": ("● candidate — confirm", "#b45309"),
+            "": ("illustration (fallback)", "#6b7280"),
+        }.get(obj.image_source, (obj.image_source, "#6b7280"))
+        return format_html('<span style="color:{}">{}</span>', color, label)
+
+    @admin.display(description="Data review", ordering="needs_review")
+    def review_flag(self, obj):
+        """Data-quality flag, shown so the colors match intuition: amber = needs
+        attention, muted = fine. (The raw boolean icon is green-for-True, which
+        reads backwards.)"""
+        if obj.needs_review:
+            return format_html(
+                '<span style="color:#b45309;font-weight:600">⚠ needs review</span>'
+            )
+        return format_html('<span style="color:#9ca3af">— ok</span>')
     search_fields = ("name", "city", "slug")
     prepopulated_fields = {"slug": ("name",)}
     readonly_fields = ("candidate_photo_preview",)
@@ -96,7 +117,10 @@ class VenueAdmin(admin.ModelAdmin):
 
     @admin.action(description="Confirm Google photo match")
     def confirm_google_match(self, request, queryset):
-        """Promote selected candidates to a confirmed google_places source."""
+        """Promote selected candidates to a confirmed google_places source.
+
+        Operates only on the photo `image_source`; leaves `needs_review` (the
+        import's data-quality flag) untouched."""
         confirmed = 0
         for venue in queryset:
             if not venue.place_id:
@@ -106,21 +130,18 @@ class VenueAdmin(admin.ModelAdmin):
             )
             venue.image_source = "google_places"
             venue.image_attribution = photo.attribution if photo else ""
-            venue.needs_review = False
-            venue.save(
-                update_fields=["image_source", "image_attribution", "needs_review"]
-            )
+            venue.save(update_fields=["image_source", "image_attribution"])
             confirmed += 1
         self.message_user(request, f"Confirmed {confirmed} Google photo match(es).")
 
     @admin.action(description="Reject match (drop to next image tier)")
     def reject_match(self, request, queryset):
-        """Clear the candidate place_id + review flag so the venue falls back."""
+        """Clear the candidate place_id/source so the venue falls back.
+        Leaves `needs_review` (data-quality flag) untouched."""
         rejected = queryset.update(
             place_id="",
             image_source="",
             image_attribution="",
-            needs_review=False,
         )
         self.message_user(request, f"Rejected {rejected} match(es).")
 
