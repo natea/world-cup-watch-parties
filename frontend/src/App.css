@@ -185,8 +185,13 @@ header h1 {
 .day h2 {
   font-size: 1.05rem;
   border-bottom: 1px solid var(--line);
-  padding-bottom: 6px;
-  margin: 20px 0 12px;
+  margin: 0 0 12px;
+  padding: 12px 0 6px;
+  /* Pin the day to the top; the next day pushes it up (sticks within .day). */
+  position: sticky;
+  top: 0;
+  z-index: 3;
+  background: var(--bg);
 }
 
 .cards {
@@ -208,6 +213,18 @@ header h1 {
   padding-bottom: 6px;
   border-bottom: 1px solid var(--line);
   margin-bottom: 8px;
+}
+
+/* On the schedule, pin each game header just beneath the sticky day header.
+   It sticks within its own .match-group, so scrolling into the next game hands
+   off cleanly to that game's header. (Scoped to .schedule so the by-team
+   "playing" column, which has no date header above it, is unaffected.) */
+.schedule .mg-head {
+  position: sticky;
+  top: 41px;
+  z-index: 2;
+  background: var(--bg);
+  padding-top: 8px;
 }
 
 .mg-time {
