@@ -15,6 +15,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from .filters import apply_screening_filters, base_screening_queryset
+from .search import DEFAULT_LIMIT, build_suggestions
 from .models import (
     CostType,
     Region,
@@ -131,6 +132,21 @@ class VenueDetailView(APIView):
                 "screenings": ScreeningSerializer(screenings, many=True).data,
             }
         )
+
+
+class SearchView(APIView):
+    """Typeahead search across venues and teams: GET /api/search/?q=<query>.
+
+    Returns ranked, typed suggestions; each carries a `target` telling the
+    client how to navigate (open a venue's detail, or focus a team)."""
+
+    def get(self, request):
+        q = request.query_params.get("q", "")
+        try:
+            limit = int(request.query_params.get("limit", DEFAULT_LIMIT))
+        except (TypeError, ValueError):
+            limit = DEFAULT_LIMIT
+        return Response({"suggestions": build_suggestions(q, limit=limit)})
 
 
 class TeamListView(APIView):
