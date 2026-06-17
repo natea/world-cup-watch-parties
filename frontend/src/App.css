@@ -795,17 +795,19 @@ html[data-platform="ios"] .tabs {
 
 html[data-platform="ios"] .tabs .tab {
   flex: 1;
-  background: transparent;
-  border: none;
+  background: var(--panel);
+  border: 1px solid var(--line);
   border-radius: 10px;
-  color: var(--muted);
+  color: var(--text);
   font-weight: 600;
-  padding: 8px 6px;
+  font-size: 0.95rem;
+  padding: 11px 6px;
 }
 
 html[data-platform="ios"] .tabs .tab.active {
-  background: transparent;
-  color: var(--accent);
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--on-accent);
 }
 
 /* Keep content clear of the fixed bottom bar. */
