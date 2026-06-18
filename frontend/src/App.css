@@ -789,6 +789,15 @@ footer p {
   text-decoration: underline;
 }
 
+.footer-links a {
+  color: var(--accent);
+  text-decoration: none;
+}
+
+.footer-links a:hover {
+  text-decoration: underline;
+}
+
 @media (max-width: 720px) {
   .twocol {
     grid-template-columns: 1fr;
