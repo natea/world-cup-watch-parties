@@ -3,8 +3,8 @@
 How to ship the iOS app, and how to drive App Store Connect programmatically
 from Claude Code via **asc-mcp**.
 
-- **Full pre-flight checklist:** [`docs/plans/app-store-submission.md`](./docs/plans/app-store-submission.md)
-- **Rejection / delay pitfalls:** [`docs/plans/app-store-DO-NOT-DO.md`](./docs/plans/app-store-DO-NOT-DO.md)
+- **Full pre-flight checklist:** [`plans/app-store-submission.md`](./plans/app-store-submission.md)
+- **Rejection / delay pitfalls:** [`plans/app-store-DO-NOT-DO.md`](./plans/app-store-DO-NOT-DO.md)
 - **Build & run the native app:** [`CAPACITOR.md`](./CAPACITOR.md)
 
 ---
