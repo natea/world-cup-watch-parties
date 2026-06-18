@@ -848,6 +848,19 @@ html[data-platform="ios"] .app {
   padding-bottom: calc(72px + env(safe-area-inset-bottom));
 }
 
+/* The webview extends under the status bar (viewport-fit=cover), so a sticky
+   header pinned at top:0 slides beneath the time/wifi/battery. Offset each
+   sticky header's pin point by the top safe-area inset so it clears the status
+   bar. (Web is unaffected: the inset is 0 and these rules are iOS-gated.) */
+html[data-platform="ios"] .day h2,
+html[data-platform="ios"] .teamview .mg-head {
+  top: env(safe-area-inset-top);
+}
+
+html[data-platform="ios"] .schedule .mg-head {
+  top: calc(41px + env(safe-area-inset-top));
+}
+
 /* iOS WKWebView auto-zooms the viewport when a focused field's font-size is
    < 16px. Keep tappable form controls at 16px on phones so tapping the search
    box / inputs / selects doesn't zoom and shove the layout off-screen. */
