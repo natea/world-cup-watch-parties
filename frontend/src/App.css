@@ -363,6 +363,18 @@ header h1 {
   flex: 0 0 auto;
 }
 
+/* A long cost label (e.g. "Free · purchase minimum") alongside a flag badge
+   ("All ages") would eat the row's width and squeeze the venue name. Stack the
+   badges right-aligned with the cost on its own line beneath the flags. */
+.vr-badges.stack-cost {
+  flex-direction: column;
+  align-items: flex-end;
+}
+
+.vr-badges.stack-cost .badge.cost {
+  order: 1;
+}
+
 .screening {
   background: var(--panel);
   border: 1px solid var(--line);

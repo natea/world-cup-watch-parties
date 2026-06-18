@@ -78,7 +78,7 @@ export function MatchGroupList({
                   </button>
                   <span className="vr-city">{s.venue.city}</span>
                 </div>
-                <div className="vr-badges">
+                <div className={`vr-badges${costLabel(s.cost_type).includes("·") ? " stack-cost" : ""}`}>
                   <span className="badge cost">{costLabel(s.cost_type)}</span>
                   {s.is_family_friendly && <span className="badge ff">All ages</span>}
                   {s.registration_required && <span className="badge">Registration</span>}
