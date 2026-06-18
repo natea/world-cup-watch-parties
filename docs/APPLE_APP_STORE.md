@@ -114,10 +114,12 @@ the DO-NOT-DO doc.
 
 ## Quick iOS submission path
 
-1. `npx cap sync` (after any web/config change).
-2. Open `ios/App/App.xcworkspace` in Xcode; set Team, Version, Build.
-3. Confirm `ios/App/App/PrivacyInfo.xcprivacy` is in the App target's *Copy
-   Bundle Resources*.
+1. `bunx cap sync ios` (after any web/config change).
+2. Open `frontend/ios/App/App.xcodeproj` in Xcode; set Team, Version, Build.
+   (Capacitor 8 is SPM-based — there is **no** `.xcworkspace`; open the
+   `.xcodeproj` directly.)
+3. Confirm `frontend/ios/App/App/PrivacyInfo.xcprivacy` is in the App target's
+   *Copy Bundle Resources*.
 4. Product → Archive → Distribute → **TestFlight** first.
 5. Use asc-mcp (above) to create the version, set review details, and submit.
 
