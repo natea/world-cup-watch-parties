@@ -333,7 +333,6 @@ header h1 {
   justify-content: space-between;
   align-items: center;
   gap: 10px;
-  flex-wrap: wrap;
   background: var(--panel);
   border: 1px solid var(--line);
   border-radius: 8px;
@@ -343,7 +342,12 @@ header h1 {
 .vr-left {
   display: flex;
   align-items: baseline;
-  gap: 8px;
+  flex-wrap: wrap;
+  gap: 4px 8px;
+  /* Take the slack and let the name + city wrap to a second line, so the
+     badges stay pinned flush right instead of dropping below. */
+  flex: 1 1 auto;
+  min-width: 0;
 }
 
 .vr-city {
@@ -353,8 +357,10 @@ header h1 {
 
 .vr-badges {
   display: flex;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
   gap: 6px;
+  /* Keep the badges together on the right; never wrap them under the name. */
+  flex: 0 0 auto;
 }
 
 .screening {
