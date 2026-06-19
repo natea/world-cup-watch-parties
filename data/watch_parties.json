@@ -1009,21 +1009,22 @@
       ]
     },
     {
-      "name": "Revere - Field of Play (Waterfront Square)",
-      "slug": "revere-field-of-play",
+      "name": "Revere - Field of Play (Suffolk Downs)",
+      "slug": "revere-field-of-play-suffolk-downs",
       "venue_type": "community",
       "environment": "outdoor",
-      "address": "Waterfront Square, Revere Beach",
+      "address": "Suffolk Downs",
       "city": "Revere",
       "region": "north_shore",
-      "latitude": 42.4084,
-      "longitude": -70.992,
+      "latitude": 42.3915,
+      "longitude": -70.997,
       "serves_alcohol": false,
       "default_min_age": null,
       "has_food": true,
-      "source": "research-2026-06",
+      "source": "community-compilation-2026-06",
+      "source_url": "https://www.revere.org/departments/tourism/field-of-play",
       "needs_review": true,
-      "notes": "Free, June 12-July 19, rotating among several Revere sites; tailored to Moroccan and Colombian communities. Quarterfinal Festival July 9-11. Location rotates - confirm per date.",
+      "notes": "Revere 'Field of Play' watch party at Suffolk Downs — June 13, June 27, and July 9 (Quarterfinal Festival July 9-11). Free; tailored to the Moroccan and Colombian communities. Matches not yet keyed.",
       "affiliations": [
         {
           "affiliation_type": "national_hub",
@@ -1031,6 +1032,56 @@
           "note": "Moroccan community"
         }
       ],
+      "policies": [
+        {
+          "policy_type": "all_matches",
+          "default_cost_type": "free_open"
+        }
+      ]
+    },
+    {
+      "name": "Revere - Field of Play (Shirley Avenue)",
+      "slug": "revere-field-of-play-shirley-ave",
+      "venue_type": "community",
+      "environment": "outdoor",
+      "address": "Shirley Avenue lot",
+      "city": "Revere",
+      "region": "north_shore",
+      "latitude": 42.4088,
+      "longitude": -70.9918,
+      "serves_alcohol": false,
+      "default_min_age": null,
+      "has_food": true,
+      "source": "community-compilation-2026-06",
+      "source_url": "https://www.revere.org/departments/tourism/field-of-play",
+      "needs_review": true,
+      "notes": "Revere 'Field of Play' watch party at the Shirley Avenue lot — June 19, July 14, and July 15. Free. Matches not yet keyed.",
+      "affiliations": [],
+      "policies": [
+        {
+          "policy_type": "all_matches",
+          "default_cost_type": "free_open"
+        }
+      ]
+    },
+    {
+      "name": "Revere - Field of Play (Harry Della Russo Stadium)",
+      "slug": "revere-field-of-play-della-russo",
+      "venue_type": "community",
+      "environment": "outdoor",
+      "address": "Harry Della Russo Stadium",
+      "city": "Revere",
+      "region": "north_shore",
+      "latitude": 42.415,
+      "longitude": -71.0045,
+      "serves_alcohol": false,
+      "default_min_age": null,
+      "has_food": true,
+      "source": "community-compilation-2026-06",
+      "source_url": "https://www.revere.org/departments/tourism/field-of-play",
+      "needs_review": true,
+      "notes": "Revere 'Field of Play' watch party at Harry Della Russo Stadium — June 24, concurrent with the Youth Soccer Showcase. Free. Matches not yet keyed.",
+      "affiliations": [],
       "policies": [
         {
           "policy_type": "all_matches",
