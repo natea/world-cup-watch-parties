@@ -137,9 +137,17 @@ export default function App() {
           </a>
           , Events That Bring People Together.
         </p>
+        <p className="footer-links">
+          {/* Bundled static pages: relative links navigate in-place (same tab on
+              web, in the webview on native — the system browser can't open the
+              app's bundled files). Each page links back to "/". */}
+          <a href="/privacy_worldcup.html">Privacy Policy</a>
+          {" · "}
+          <a href="/terms.html">Terms of Use</a>
+        </p>
         {fixturesUpdatedLabel(meta?.fixtures_refreshed_at) && (
           <p className="footer-freshness">
-            Fixtures updated {fixturesUpdatedLabel(meta?.fixtures_refreshed_at)}
+            Official FIFA standings updated {fixturesUpdatedLabel(meta?.fixtures_refreshed_at)}
           </p>
         )}
       </footer>

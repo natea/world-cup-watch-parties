@@ -9,6 +9,33 @@ from Claude Code via **asc-mcp**.
 
 ---
 
+## App identity (WorldCup Watcher)
+
+The submission below is for **WorldCup Watcher**, the Massachusetts World Cup
+2026 watch-party finder (a StageHopper production, operated by Jazkarta, Inc.).
+
+| Field | Value |
+|-------|-------|
+| **App name** | WorldCup Watcher |
+| **Bundle identifier** | `app.stagehopper.worldcup` |
+| **Privacy Policy URL** | `https://worldcup.stagehopper.app/privacy_worldcup.html` |
+| **Terms of Use URL** | `https://worldcup.stagehopper.app/terms.html` |
+| **Marketing / support URL** | `https://worldcup.stagehopper.app/` |
+
+The Privacy Policy and Terms pages are committed as static files in the web app
+(`frontend/public/privacy_worldcup.html` and `frontend/public/terms.html`), so
+they ship with every web deploy and are also bundled into the iOS app; the
+footer links to both. Listing copy + the privacy questionnaire answers live in
+[`appstore/listing.md`](./appstore/listing.md) and
+[`appstore/privacy-policy.md`](./appstore/privacy-policy.md).
+
+> **WorldCup Watcher uses only privacy-friendly Umami analytics** — no PostHog,
+> Datadog, or Mapbox. Map tiles come from OpenStreetMap. Answer the App Privacy
+> questionnaire accordingly (see below): Location (App Functionality, not
+> stored) + Usage Data (Analytics), none linked to identity, no tracking.
+
+---
+
 ## App Store Connect MCP (asc-mcp)
 
 `asc-mcp` lets Claude Code drive the **App Store Connect–side** release workflow
@@ -87,10 +114,12 @@ the DO-NOT-DO doc.
 
 ## Quick iOS submission path
 
-1. `npx cap sync` (after any web/config change).
-2. Open `ios/App/App.xcworkspace` in Xcode; set Team, Version, Build.
-3. Confirm `ios/App/App/PrivacyInfo.xcprivacy` is in the App target's *Copy
-   Bundle Resources*.
+1. `bunx cap sync ios` (after any web/config change).
+2. Open `frontend/ios/App/App.xcodeproj` in Xcode; set Team, Version, Build.
+   (Capacitor 8 is SPM-based — there is **no** `.xcworkspace`; open the
+   `.xcodeproj` directly.)
+3. Confirm `frontend/ios/App/App/PrivacyInfo.xcprivacy` is in the App target's
+   *Copy Bundle Resources*.
 4. Product → Archive → Distribute → **TestFlight** first.
 5. Use asc-mcp (above) to create the version, set review details, and submit.
 
@@ -117,16 +146,22 @@ reviewed"`; the modern flow (attach an `appStoreVersion` to a
 ```
 
 **Fix (≈2 min, once per app):** App Store Connect → your app → **App Privacy →
-Edit**, then declare (StageHopper collects, none linked to identity, none used
-for tracking):
+Edit**, then declare (WorldCup Watcher collects, none linked to identity, none
+used for tracking):
 
-| Data type   | Purpose          |
-|-------------|------------------|
-| Location    | App Functionality |
-| Usage Data  | Analytics        |
-| Crash Data  | App Functionality |
+| Data type   | Purpose          | Notes |
+|-------------|------------------|-------|
+| Location    | App Functionality | Optional "use my location" for the proximity sort; sent once to compute distances, **not stored**. |
+| Usage Data  | Analytics        | Anonymous, cookie-free **Umami** page/screen views only. |
 
 → **Publish**. Until you click Publish, the API stays blocked.
+
+> No **Crash Data** row: WorldCup Watcher does not use Datadog/PostHog/Mapbox,
+> only Umami. This matches the hosted policy at
+> `https://worldcup.stagehopper.app/privacy_worldcup.html`
+> (source: [`../frontend/public/privacy_worldcup.html`](../frontend/public/privacy_worldcup.html)).
+> Enter that URL in the **Privacy Policy URL** field, and the Terms URL
+> (`https://worldcup.stagehopper.app/terms.html`) where the listing asks.
 
 ### Gotcha: `submit_for_review` leaves empty review submissions behind
 

@@ -333,7 +333,6 @@ header h1 {
   justify-content: space-between;
   align-items: center;
   gap: 10px;
-  flex-wrap: wrap;
   background: var(--panel);
   border: 1px solid var(--line);
   border-radius: 8px;
@@ -343,7 +342,12 @@ header h1 {
 .vr-left {
   display: flex;
   align-items: baseline;
-  gap: 8px;
+  flex-wrap: wrap;
+  gap: 4px 8px;
+  /* Take the slack and let the name + city wrap to a second line, so the
+     badges stay pinned flush right instead of dropping below. */
+  flex: 1 1 auto;
+  min-width: 0;
 }
 
 .vr-city {
@@ -353,8 +357,22 @@ header h1 {
 
 .vr-badges {
   display: flex;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
   gap: 6px;
+  /* Keep the badges together on the right; never wrap them under the name. */
+  flex: 0 0 auto;
+}
+
+/* A long cost label (e.g. "Free · purchase minimum") alongside a flag badge
+   ("All ages") would eat the row's width and squeeze the venue name. Stack the
+   badges right-aligned with the cost on its own line beneath the flags. */
+.vr-badges.stack-cost {
+  flex-direction: column;
+  align-items: flex-end;
+}
+
+.vr-badges.stack-cost .badge.cost {
+  order: 1;
 }
 
 .screening {
@@ -771,6 +789,15 @@ footer p {
   text-decoration: underline;
 }
 
+.footer-links a {
+  color: var(--accent);
+  text-decoration: none;
+}
+
+.footer-links a:hover {
+  text-decoration: underline;
+}
+
 @media (max-width: 720px) {
   .twocol {
     grid-template-columns: 1fr;
@@ -824,9 +851,23 @@ html[data-platform="ios"] .tabs .tab.active {
   color: var(--on-accent);
 }
 
-/* Keep content clear of the fixed bottom bar. */
-html[data-platform="ios"] main {
-  padding-bottom: calc(64px + env(safe-area-inset-bottom));
+/* Keep ALL content (including the footer, which is a sibling of <main>) clear
+   of the fixed bottom tab bar — so apply the clearance to the app container. */
+html[data-platform="ios"] .app {
+  padding-bottom: calc(72px + env(safe-area-inset-bottom));
+}
+
+/* The webview extends under the status bar (viewport-fit=cover), so a sticky
+   header pinned at top:0 slides beneath the time/wifi/battery. Offset each
+   sticky header's pin point by the top safe-area inset so it clears the status
+   bar. (Web is unaffected: the inset is 0 and these rules are iOS-gated.) */
+html[data-platform="ios"] .day h2,
+html[data-platform="ios"] .teamview .mg-head {
+  top: env(safe-area-inset-top);
+}
+
+html[data-platform="ios"] .schedule .mg-head {
+  top: calc(41px + env(safe-area-inset-top));
 }
 
 /* iOS WKWebView auto-zooms the viewport when a focused field's font-size is

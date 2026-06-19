@@ -1,8 +1,8 @@
 {
   "mcpServers": {
-    "xcode": {
-      "command": "xcrun",
-      "args": ["mcpbridge"]
+    "XcodeBuildMCP": {
+      "command": "npx",
+      "args": ["-y", "xcodebuildmcp@latest", "mcp"]
     }
   }
 }
