@@ -15,4 +15,5 @@ urlpatterns = [
     path("venues/<slug:slug>/", views.VenueDetailView.as_view(), name="venue-detail"),
     path("teams/", views.TeamListView.as_view(), name="teams"),
     path("meta/", views.MetaView.as_view(), name="meta"),
+    path("fixtures/health/", views.FixturesHealthView.as_view(), name="fixtures-health"),
 ]

@@ -11,8 +11,10 @@ from collections import OrderedDict
 from zoneinfo import ZoneInfo
 
 from django.conf import settings
+from django.db.models import Count, Q
 from django.shortcuts import get_object_or_404
 from django.shortcuts import redirect
+from django.utils import timezone
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
@@ -23,9 +25,11 @@ from .search import DEFAULT_LIMIT, build_suggestions
 from .serializers import fallback_image_url
 from .models import (
     CostType,
+    Match,
     Region,
     RefreshState,
     Screening,
+    Stage,
     Team,
     Venue,
     VenueType,
@@ -221,3 +225,95 @@ class MetaView(APIView):
                 "fixtures_refreshed_at": refreshed_at.isoformat() if refreshed_at else None,
             }
         )
+
+
+# Mirror of refreshfixtures.STALENESS_THRESHOLD: how long data may go un-refreshed
+# before we consider it stale (the cron runs every 6h, so 24h means ~4 misses).
+STALENESS_HOURS = 24
+
+
+class FixturesHealthView(APIView):
+    """At-a-glance health of the FIFA fixture refresh, so you can confirm the cron
+    is working without reading Render logs.
+
+    Reports the last refresh time + age, a staleness flag, and resolved-vs-TBD
+    fixture counts (overall and by stage). During the group stage every knockout
+    fixture is a TBD placeholder, so `tbd > 0` with `resolved` ~= the group games
+    is the expected, healthy state — not a failure.
+    """
+
+    def get(self, request):
+        now = timezone.now()
+        refreshed_at = RefreshState.get().fixtures_refreshed_at
+
+        age_seconds = (now - refreshed_at).total_seconds() if refreshed_at else None
+        stale = refreshed_at is None or age_seconds > STALENESS_HOURS * 3600
+
+        # A match is "resolved" once both teams are known (knockout opponents are
+        # TBD placeholders until group results lock in).
+        resolved_q = Q(home_team__isnull=False) & Q(away_team__isnull=False)
+        total = Match.objects.count()
+        resolved = Match.objects.filter(resolved_q).count()
+
+        # Per-stage breakdown, ordered by the canonical stage progression.
+        stage_order = [s.value for s in Stage]
+        per_stage = (
+            Match.objects.values("stage")
+            .annotate(total=Count("id"), resolved=Count("id", filter=resolved_q))
+            .order_by()
+        )
+        by_stage_map = {row["stage"]: row for row in per_stage}
+        by_stage = [
+            {
+                "stage": s,
+                "total": by_stage_map[s]["total"],
+                "resolved": by_stage_map[s]["resolved"],
+                "tbd": by_stage_map[s]["total"] - by_stage_map[s]["resolved"],
+            }
+            for s in stage_order
+            if s in by_stage_map
+        ]
+
+        # A few upcoming TBD knockout fixtures, to make the "awaiting advancement"
+        # state concrete.
+        tbd_samples = [
+            {
+                "kickoff": m.kickoff.isoformat(),
+                "stage": m.stage,
+                "matchup": f"{m.home_placeholder or 'TBD'} vs {m.away_placeholder or 'TBD'}",
+            }
+            for m in Match.objects.filter(~resolved_q).order_by("kickoff")[:6]
+        ]
+
+        return Response(
+            {
+                "fixtures_refreshed_at": refreshed_at.isoformat() if refreshed_at else None,
+                "age_seconds": int(age_seconds) if age_seconds is not None else None,
+                "age_human": _humanize_age(age_seconds),
+                "stale": stale,
+                "staleness_threshold_hours": STALENESS_HOURS,
+                "matches": {
+                    "total": total,
+                    "resolved": resolved,
+                    "tbd": total - resolved,
+                },
+                "by_stage": by_stage,
+                "generated_screenings": Screening.objects.filter(is_generated=True).count(),
+                "tbd_samples": tbd_samples,
+            }
+        )
+
+
+def _humanize_age(seconds: float | None) -> str | None:
+    """Compact 'last refresh' age, e.g. '2h ago' / 'never'."""
+    if seconds is None:
+        return "never"
+    mins = int(seconds // 60)
+    if mins < 1:
+        return "just now"
+    if mins < 60:
+        return f"{mins} min ago"
+    hours = mins // 60
+    if hours < 24:
+        return f"{hours}h ago"
+    return f"{hours // 24}d ago"
