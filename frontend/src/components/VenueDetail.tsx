@@ -106,7 +106,7 @@ export function VenueDetail({ slug, onBack }: { slug: string; onBack: () => void
                 onClick={() =>
                   shareLink({
                     title: venue.name,
-                    text: `Watch the World Cup at ${venue.name} — ${venue.city}`,
+                    text: `Watch the World Cup at ${venue.name}, ${venue.city}`,
                     url: `${PUBLIC_WEB_URL}/?venue=${venue.slug}`,
                   })
                 }
@@ -128,7 +128,7 @@ export function VenueDetail({ slug, onBack }: { slug: string; onBack: () => void
               <div>
                 📍{" "}
                 <a href={googleMapsUrl(venue)} target="_blank" rel="noreferrer">
-                  {[venue.address, venue.city].filter(Boolean).join(", ")} — open in Google Maps ↗
+                  {[venue.address, venue.city].filter(Boolean).join(", ")} · open in Google Maps ↗
                 </a>
               </div>
             )}
@@ -152,7 +152,7 @@ export function VenueDetail({ slug, onBack }: { slug: string; onBack: () => void
               {venue.affiliations.map((a, i) => (
                 <span key={i} className="badge affil-badge">
                   {a.team ? `${a.team.flag_emoji} ${a.team.name}` : `⚽ ${a.club}`}
-                  {a.note ? ` — ${a.note}` : ""}
+                  {a.note ? ` · ${a.note}` : ""}
                 </span>
               ))}
             </div>

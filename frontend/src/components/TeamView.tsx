@@ -84,7 +84,7 @@ export function TeamView({
             </div>
           ) : (
             <p className="status">
-              No Massachusetts supporter hub for {selected?.name ?? team} — only a handful of
+              No Massachusetts supporter hub for {selected?.name ?? team}. Only a handful of
               nations (e.g. USA, Scotland, Brazil, France) have a dedicated local hub. The “playing”
               list shows every venue airing their matches.
             </p>

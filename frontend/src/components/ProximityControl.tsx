@@ -31,12 +31,12 @@ export function ProximityControl({
       } else {
         setMsg(
           isZip
-            ? "That ZIP isn't in our Massachusetts list — try an address."
-            : "Couldn't find that address — try a ZIP code.",
+            ? "That ZIP isn't in our Massachusetts list. Try an address."
+            : "Couldn't find that address. Try a ZIP code.",
         );
       }
     } catch {
-      setMsg("Location lookup failed — try again.");
+      setMsg("Location lookup failed. Try again.");
     } finally {
       setBusy(false);
     }
@@ -50,7 +50,7 @@ export function ProximityControl({
       const { lat, lng } = await getCurrentPosition();
       onResolve({ lat, lng, label: "Your location", precision: "device" });
     } catch {
-      setMsg("Couldn't get your location — enter a ZIP or address.");
+      setMsg("Couldn't get your location. Enter a ZIP or address.");
     } finally {
       setBusy(false);
     }
@@ -62,7 +62,7 @@ export function ProximityControl({
         <input
           type="text"
           value={q}
-          placeholder="ZIP or address — find watch parties near you"
+          placeholder="ZIP or address to find watch parties near you"
           aria-label="ZIP code or address"
           onChange={(e) => setQ(e.target.value)}
         />
