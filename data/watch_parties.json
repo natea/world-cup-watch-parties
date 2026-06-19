@@ -960,6 +960,33 @@
       ]
     },
     {
+      "name": "Cambridge United - Inman Square",
+      "slug": "cambridge-united-inman-square",
+      "venue_type": "community",
+      "environment": "outdoor",
+      "address": "Cambridge St. between Springfield & Prospect St",
+      "city": "Cambridge",
+      "region": "cambridge_somerville",
+      "latitude": 42.3736,
+      "longitude": -71.101,
+      "serves_alcohol": false,
+      "default_min_age": null,
+      "has_food": true,
+      "source": "research-2026-06",
+      "source_url": "https://www.cambridgema.gov/departments/communitydevelopment/cambridgeunitedworldcupevents",
+      "notes": "Free family-friendly outdoor watch party; Scotland vs Morocco. Includes a Juneteenth celebration and Afro-Caribbean Night Market.",
+      "affiliations": [],
+      "policies": [
+        {
+          "policy_type": "specific",
+          "match_numbers": [
+            30
+          ],
+          "default_cost_type": "free_open"
+        }
+      ]
+    },
+    {
       "name": "Cambridge United - Kendall/MIT Open Space",
       "slug": "cambridge-united-kendall-mit",
       "venue_type": "university",
@@ -980,6 +1007,60 @@
           "policy_type": "specific",
           "match_numbers": [
             45
+          ],
+          "default_cost_type": "free_open"
+        }
+      ]
+    },
+    {
+      "name": "Cambridge United - East Cambridge (Donnelly Field)",
+      "slug": "cambridge-united-east-cambridge",
+      "venue_type": "park",
+      "environment": "outdoor",
+      "address": "Donnelly Field, York & Berkshire St",
+      "city": "Cambridge",
+      "region": "cambridge_somerville",
+      "latitude": 42.3717,
+      "longitude": -71.0895,
+      "serves_alcohol": false,
+      "default_min_age": null,
+      "has_food": true,
+      "source": "research-2026-06",
+      "source_url": "https://www.cambridgema.gov/departments/communitydevelopment/cambridgeunitedworldcupevents",
+      "notes": "Free family-friendly outdoor watch party; Round of 32.",
+      "affiliations": [],
+      "policies": [
+        {
+          "policy_type": "specific",
+          "match_numbers": [
+            74
+          ],
+          "default_cost_type": "free_open"
+        }
+      ]
+    },
+    {
+      "name": "Cambridge United - Cambridge Crossing",
+      "slug": "cambridge-united-cambridge-crossing",
+      "venue_type": "plaza",
+      "environment": "outdoor",
+      "address": "Cambridge Crossing (North Point)",
+      "city": "Cambridge",
+      "region": "cambridge_somerville",
+      "latitude": 42.3706,
+      "longitude": -71.078,
+      "serves_alcohol": false,
+      "default_min_age": null,
+      "has_food": true,
+      "source": "research-2026-06",
+      "source_url": "https://www.cambridgema.gov/departments/communitydevelopment/cambridgeunitedworldcupevents",
+      "notes": "Free family-friendly outdoor watch party; Quarterfinal.",
+      "affiliations": [],
+      "policies": [
+        {
+          "policy_type": "specific",
+          "match_numbers": [
+            97
           ],
           "default_cost_type": "free_open"
         }
