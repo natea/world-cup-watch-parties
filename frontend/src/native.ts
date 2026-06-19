@@ -13,6 +13,27 @@ export function markPlatform(): void {
   document.documentElement.setAttribute("data-platform", Capacitor.getPlatform());
 }
 
+/**
+ * Lock the viewport scale on native only.
+ *
+ * The webview otherwise lets a pinch gesture zoom the whole page, which fights
+ * the Leaflet map's own pinch-to-zoom (the map appears to "misbehave" when you
+ * pinch). Pinning maximum-scale=1 / user-scalable=no hands the gesture to the
+ * map and also stops WKWebView's focus auto-zoom on form fields.
+ *
+ * Native-only so the website keeps pinch-zoom for accessibility — the same
+ * index.html serves both, so we can't bake this into the static meta tag.
+ */
+export function lockViewportOnNative(): void {
+  if (!isNative()) return;
+  const meta = document.querySelector('meta[name="viewport"]');
+  if (!meta) return;
+  meta.setAttribute(
+    "content",
+    "width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover",
+  );
+}
+
 /** Geolocation: native plugin (proper permission flow) or browser API. */
 export async function getCurrentPosition(): Promise<{ lat: number; lng: number }> {
   if (isNative()) {
