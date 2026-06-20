@@ -1,3 +1,4 @@
+import { useState } from "react";
 import type { Filters, Meta, Team } from "../types";
 
 interface Props {
@@ -10,8 +11,39 @@ interface Props {
 
 // One control surface, bound to the shared filter set. Every view honors it.
 export function FilterBar({ filters, setFilter, clear, meta, teams }: Props) {
+  // How many filters are non-default — shown as a badge so a collapsed panel
+  // still signals that filters are applied.
+  const activeCount = [
+    filters.team,
+    filters.cost,
+    filters.environment,
+    filters.venue_type,
+    filters.region,
+    filters.family_friendly || undefined,
+    filters.exclude_bars || undefined,
+    filters.show_past || undefined,
+  ].filter(Boolean).length;
+
+  // The panel eats most of a phone screen, so on mobile it collapses behind an
+  // "Advanced search" toggle (open by default if filters arrive via the URL).
+  // On wider screens the toggle is hidden and the panel is always shown (CSS).
+  const [open, setOpen] = useState(() => activeCount > 0);
+
   return (
-    <div className="filterbar">
+    <div className="filterwrap">
+      <button
+        type="button"
+        className="filter-toggle"
+        aria-expanded={open}
+        onClick={() => setOpen((o) => !o)}
+      >
+        <span>Advanced search</span>
+        {activeCount > 0 && <span className="filter-count">{activeCount}</span>}
+        <span className={`filter-chevron${open ? " open" : ""}`} aria-hidden="true">
+          ▾
+        </span>
+      </button>
+      <div className={`filterbar${open ? "" : " collapsed"}`}>
       <label>
         Team
         <select
@@ -122,9 +154,10 @@ export function FilterBar({ filters, setFilter, clear, meta, teams }: Props) {
         Show past games
       </label>
 
-      <button className="clear" onClick={clear}>
-        Clear
-      </button>
+        <button className="clear" onClick={clear}>
+          Clear
+        </button>
+      </div>
     </div>
   );
 }

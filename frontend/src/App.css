@@ -198,6 +198,47 @@ header h1 {
   font-weight: 600;
 }
 
+.filterwrap {
+  margin-bottom: 16px;
+}
+
+/* "Advanced search" toggle: hidden on desktop (the panel always shows there);
+   revealed on phones, where it collapses the space-hungry filter panel. */
+.filter-toggle {
+  display: none;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  background: var(--panel);
+  color: var(--text);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 11px 14px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  margin-bottom: 10px;
+}
+
+.filter-count {
+  background: var(--accent);
+  color: var(--on-accent);
+  border-radius: 999px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 1px 8px;
+  line-height: 1.4;
+}
+
+.filter-chevron {
+  margin-left: auto;
+  transition: transform 0.15s ease;
+}
+
+.filter-chevron.open {
+  transform: rotate(180deg);
+}
+
 .filterbar {
   display: flex;
   flex-wrap: wrap;
@@ -207,7 +248,15 @@ header h1 {
   border: 1px solid var(--line);
   border-radius: 10px;
   padding: 12px;
-  margin-bottom: 16px;
+}
+
+@media (max-width: 720px) {
+  .filter-toggle {
+    display: flex;
+  }
+  .filterbar.collapsed {
+    display: none;
+  }
 }
 
 .filterbar label {
