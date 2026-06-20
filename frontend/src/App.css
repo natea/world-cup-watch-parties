@@ -929,3 +929,48 @@ html[data-platform="ios"] .schedule .mg-head {
     font-size: 16px;
   }
 }
+
+/* ---- Mobile web: move the nav tabs to a thumb-reachable bottom bar ----------
+   The logo + search box stay at the top; only the Schedule/Map/By-team tabs
+   drop to a fixed bottom bar. (The native iOS app already does this via the
+   data-platform rules above, which keep their safe-area specifics on phones.) */
+@media (max-width: 720px) {
+  .tabs {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 50;
+    gap: 8px;
+    justify-content: space-around;
+    padding: 8px max(12px, env(safe-area-inset-left))
+      calc(8px + env(safe-area-inset-bottom)) max(12px, env(safe-area-inset-right));
+    background: var(--bg); /* fallback if color-mix is unsupported */
+    background: color-mix(in srgb, var(--bg) 80%, transparent);
+    -webkit-backdrop-filter: blur(18px) saturate(160%);
+    backdrop-filter: blur(18px) saturate(160%);
+    border-top: 1px solid var(--line);
+  }
+
+  .tabs .tab {
+    flex: 1;
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    color: var(--text);
+    font-weight: 600;
+    font-size: 0.92rem;
+    padding: 11px 6px;
+  }
+
+  .tabs .tab.active {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: var(--on-accent);
+  }
+
+  /* Clear the fixed bottom bar so the footer/content isn't hidden behind it. */
+  .app {
+    padding-bottom: calc(72px + env(safe-area-inset-bottom));
+  }
+}
