@@ -3,7 +3,7 @@ import type { Match } from "./types";
 // Times are stored UTC; render in Massachusetts local time.
 const TZ = "America/New_York";
 
-// Expand a FIFA bracket placeholder code into plain English.
+// Expand a tournament bracket placeholder code into plain English.
 //   "1E"      → "Winner Group E"
 //   "2A"      → "Runner-up Group A"
 //   "3ABCDF"  → "3rd place (A/B/C/D/F)"  (best-third-placed team, group TBD)

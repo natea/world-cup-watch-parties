@@ -106,7 +106,7 @@ export function VenueDetail({ slug, onBack }: { slug: string; onBack: () => void
                 onClick={() =>
                   shareLink({
                     title: venue.name,
-                    text: `Watch the World Cup at ${venue.name}, ${venue.city}`,
+                    text: `Watch the matches at ${venue.name}, ${venue.city}`,
                     url: `${PUBLIC_WEB_URL}/?venue=${venue.slug}`,
                   })
                 }
