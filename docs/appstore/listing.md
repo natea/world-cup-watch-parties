@@ -50,10 +50,11 @@ Match Day MA is an independent finder and is not affiliated with, endorsed by, o
 
 ## Keywords (≤100 chars, comma-separated, no spaces after commas)
 
-soccer,watch party,football,2026,matches,fixtures,fan fest,meetup,bars,boston,massachusetts,fan zone,pub
+soccer,watch party,football,2026,matches,fixtures,fan fest,meetup,bars,boston,massachusetts,pub
 
-(99 / 100 chars. No word duplicated from Name/Subtitle. Deliberately excludes
-world, cup, fifa, gillette, and any team/sponsor/broadcaster name.)
+(95 / 100 chars. No word duplicated from Name/Subtitle. Deliberately excludes
+world, cup, fifa, gillette, and any team/sponsor/broadcaster name. Dropped
+"fan zone" to fit the 100-char limit; "fan fest" + "pub" carry similar intent.)
 
 ## URLs
 
