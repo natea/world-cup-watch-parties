@@ -71,7 +71,7 @@ export default function App() {
     <div className="app">
       <header>
         <h1>
-          ⚽ WorldCup Watcher <span className="brand-sub">· Massachusetts 2026</span>
+          ⚽ Match Day MA <span className="brand-sub">· Massachusetts 2026</span>
         </h1>
         <div className="header-row">
           <nav className="tabs">
@@ -131,7 +131,7 @@ export default function App() {
 
       <footer>
         <p className="footer-credit">
-          WorldCup Watcher is a production of{" "}
+          Match Day MA is a production of{" "}
           <a href="https://stagehopper.app" target="_blank" rel="noreferrer">
             StageHopper
           </a>
@@ -147,7 +147,7 @@ export default function App() {
         </p>
         {fixturesUpdatedLabel(meta?.fixtures_refreshed_at) && (
           <p className="footer-freshness">
-            Official FIFA standings updated {fixturesUpdatedLabel(meta?.fixtures_refreshed_at)}
+            Standings updated {fixturesUpdatedLabel(meta?.fixtures_refreshed_at)}
           </p>
         )}
       </footer>

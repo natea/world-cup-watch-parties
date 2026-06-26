@@ -1,8 +1,8 @@
-# Privacy Policy — WorldCup Watcher
+# Privacy Policy: Match Day MA
 
 _Last updated: June 18, 2026_
 
-WorldCup Watcher ("the app") helps you find World Cup 2026 watch parties across Massachusetts. We designed it to collect as little as possible. This policy explains what the app does and does not collect.
+Match Day MA ("the app") helps you find 2026 tournament watch parties across Massachusetts. We designed it to collect as little as possible. This policy explains what the app does and does not collect.
 
 ## The short version
 
@@ -48,4 +48,4 @@ If this policy changes, we'll update the date above and post the revision at thi
 
 Questions about privacy? Email **natejaune@gmail.com**.
 
-WorldCup Watcher is a production of StageHopper.
+Match Day MA is a production of StageHopper.
